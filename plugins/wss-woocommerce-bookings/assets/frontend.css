@@ -1,0 +1,387 @@
+.wss-booking-selector {
+    margin: 24px 0;
+    padding: 18px;
+    border: 1px solid currentColor;
+    border-radius: 12px;
+}
+
+.wss-booking-selector h3 {
+    margin: 0 0 12px;
+    font-size: 20px;
+}
+
+.wss-booking-calendar {
+    max-width: 460px;
+}
+
+.wss-booking-calendar-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.wss-booking-calendar-head strong {
+    font-size: 18px;
+}
+
+.wss-booking-calendar-nav {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.wss-booking-calendar-nav:disabled {
+    opacity: .35;
+    cursor: default;
+}
+
+.wss-booking-calendar-weekdays,
+.wss-booking-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.wss-booking-calendar-weekdays {
+    margin-bottom: 6px;
+    font-size: 12px;
+    opacity: .75;
+    text-align: center;
+}
+
+.wss-booking-calendar-empty,
+.wss-booking-calendar-day {
+    min-height: 42px;
+    border-radius: 10px;
+}
+
+.wss-booking-calendar-day {
+    border: 1px solid rgba(0, 0, 0, .2);
+    background: rgba(255, 255, 255, .65);
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+}
+
+.wss-booking-calendar-day.has-slots {
+    border-color: currentColor;
+}
+
+.wss-booking-calendar-day:disabled {
+    opacity: .28;
+    cursor: default;
+}
+
+.wss-booking-calendar-day.has-slots:hover,
+.wss-booking-calendar-day.has-slots:focus,
+.wss-booking-calendar-day.is-selected {
+    background: #1f3d35;
+    border-color: #1f3d35;
+    color: #fff;
+    outline: none;
+}
+
+.wss-booking-times {
+    margin-top: 18px;
+}
+
+.wss-booking-times-title {
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.wss-booking-time-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.wss-booking-time-button {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    min-width: 116px;
+    padding: 10px 14px;
+    border: 1px solid currentColor;
+    border-radius: 12px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+}
+
+.wss-booking-time-button span {
+    font-weight: 700;
+}
+
+.wss-booking-time-button small {
+    opacity: .75;
+}
+
+.wss-booking-time-button:hover,
+.wss-booking-time-button:focus,
+.wss-booking-time-button.is-selected {
+    background: #1f3d35;
+    border-color: #1f3d35;
+    color: #fff;
+    outline: none;
+}
+
+.wss-booking-hint {
+    margin-top: 12px;
+    font-size: 14px;
+    opacity: .85;
+}
+
+.wss-booking-empty {
+    margin: 0;
+}
+
+.wss-booking-cart-fallback .quantity {
+    margin: 16px 0;
+}
+
+@media (max-width: 600px) {
+    .wss-booking-selector {
+        padding: 14px;
+    }
+
+    .wss-booking-calendar-empty,
+    .wss-booking-calendar-day {
+        min-height: 38px;
+        border-radius: 8px;
+    }
+
+    .wss-booking-time-button {
+        width: calc(50% - 5px);
+        min-width: 0;
+    }
+}
+
+/* WSS Bookings 0.4.1: frontend usability fixes */
+.wss-booking-selector .wss-booking-time-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    align-items: stretch;
+}
+
+.wss-booking-selector .wss-booking-time-button {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    min-width: 0;
+    min-height: 62px;
+    box-sizing: border-box;
+    padding: 11px 14px 10px;
+    line-height: 1.25;
+    white-space: normal;
+    text-align: left;
+    overflow: visible;
+}
+
+.wss-booking-selector .wss-booking-time-button span,
+.wss-booking-selector .wss-booking-time-button small {
+    display: block;
+    width: 100%;
+    line-height: 1.25;
+    pointer-events: none;
+}
+
+.wss-booking-selector .wss-booking-time-button small {
+    font-size: 12px;
+    opacity: .78;
+}
+
+.wss-booking-selector .quantity,
+.wss-booking-cart-fallback .quantity,
+.quantity.wss-booking-quantity {
+    display: inline-flex;
+    align-items: stretch;
+    gap: 0;
+    margin: 16px 0;
+    border: 1px solid rgba(0, 0, 0, .35);
+    border-radius: 10px;
+    overflow: hidden;
+    width: max-content;
+    max-width: 100%;
+}
+
+.wss-booking-selector .quantity .qty,
+.wss-booking-cart-fallback .quantity .qty,
+.quantity.wss-booking-quantity .qty {
+    width: 58px;
+    min-height: 42px;
+    border: 0;
+    border-left: 1px solid rgba(0, 0, 0, .18);
+    border-right: 1px solid rgba(0, 0, 0, .18);
+    border-radius: 0;
+    text-align: center;
+    -moz-appearance: textfield;
+}
+
+.wss-booking-selector .quantity .qty::-webkit-outer-spin-button,
+.wss-booking-selector .quantity .qty::-webkit-inner-spin-button,
+.wss-booking-cart-fallback .quantity .qty::-webkit-outer-spin-button,
+.wss-booking-cart-fallback .quantity .qty::-webkit-inner-spin-button,
+.quantity.wss-booking-quantity .qty::-webkit-outer-spin-button,
+.quantity.wss-booking-quantity .qty::-webkit-inner-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+}
+
+.wss-booking-qty-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    min-height: 42px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.wss-booking-qty-button:hover,
+.wss-booking-qty-button:focus {
+    background: rgba(0, 0, 0, .06);
+    outline: none;
+}
+
+.wss-booking-qty-button:disabled {
+    opacity: .35;
+    cursor: default;
+}
+
+@media (max-width: 600px) {
+    .wss-booking-selector .wss-booking-time-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .wss-booking-selector .wss-booking-time-button {
+        width: 100%;
+    }
+}
+
+/* WSS Bookings 0.5.0: variables and ticket-type controls */
+.wss-booking-selector {
+    border-radius: var(--wss-booking-radius, 12px);
+}
+
+.wss-booking-calendar-day.has-slots:hover,
+.wss-booking-calendar-day.has-slots:focus,
+.wss-booking-calendar-day.is-selected,
+.wss-booking-time-button:hover,
+.wss-booking-time-button:focus,
+.wss-booking-time-button.is-selected {
+    background: var(--wss-booking-accent, #1f3d35);
+    border-color: var(--wss-booking-accent, #1f3d35);
+}
+
+.wss-booking-ticket-types {
+    margin: 18px 0;
+    max-width: 460px;
+}
+
+.wss-booking-ticket-types h4 {
+    margin: 0 0 10px;
+    font-size: 18px;
+}
+
+.wss-booking-ticket-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, .12);
+}
+
+.wss-booking-ticket-row:last-of-type {
+    border-bottom: 0;
+}
+
+.wss-booking-ticket-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.wss-booking-ticket-info span {
+    font-size: 13px;
+    opacity: .75;
+}
+
+.wss-booking-ticket-qty {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid rgba(0, 0, 0, .35);
+    border-radius: 10px;
+    overflow: hidden;
+    flex: 0 0 auto;
+}
+
+.wss-booking-ticket-qty button {
+    width: 38px;
+    min-height: 38px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.wss-booking-ticket-qty button:disabled {
+    opacity: .35;
+    cursor: default;
+}
+
+.wss-booking-ticket-qty input {
+    width: 48px;
+    min-height: 38px;
+    border: 0;
+    border-left: 1px solid rgba(0, 0, 0, .18);
+    border-right: 1px solid rgba(0, 0, 0, .18);
+    text-align: center;
+    -moz-appearance: textfield;
+}
+
+.wss-booking-ticket-qty input::-webkit-outer-spin-button,
+.wss-booking-ticket-qty input::-webkit-inner-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+}
+
+.wss-booking-ticket-summary {
+    margin: 10px 0 0;
+    font-size: 14px;
+    opacity: .85;
+}
+
+form.cart.wss-booking-has-ticket-types > .quantity,
+form.cart.wss-booking-has-ticket-types .wss-booking-selector ~ .quantity {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .wss-booking-ticket-row {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

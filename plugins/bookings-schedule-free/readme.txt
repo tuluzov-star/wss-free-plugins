@@ -1,0 +1,45 @@
+=== WSS Bookings Schedule Lite for WooCommerce Bookings ===
+Contributors: WSS
+Tags: woocommerce, bookings, schedule, availability
+Requires at least: 6.0
+Tested up to: 6.8
+Requires PHP: 7.4
+Stable tag: 0.2.0
+License: GPLv2 or later
+
+Бесплатная витрина расписания для оригинального WooCommerce Bookings.
+
+== Описание ==
+
+Плагин выводит доступные слоты товаров WooCommerce Bookings через шорткод [wss_bookings_schedule].
+
+В Lite-версии:
+* выводятся обычные bookable products;
+* товары с ресурсами по умолчанию скрываются;
+* расписание группируется по дням;
+* есть навигация по неделям;
+* мобильная версия показывает выбранную дату;
+* кнопка ведет на страницу товара с датой и временем в URL;
+* можно изменить основные тексты навигации без правки кода;
+* можно показывать или скрывать цену и длительность.
+
+В Pro доступны фильтр по экскурсиям, остаток мест, выбор товаров и категорий, настройка таймзоны, корректировка timestamp WooCommerce Bookings, цвета и расширенные настройки внешнего вида.
+
+== Установка ==
+
+1. Установить WooCommerce и оригинальный WooCommerce Bookings.
+2. Установить и активировать этот плагин.
+3. Перейти в WooCommerce → WSS Bookings Schedule.
+4. Добавить на страницу шорткод: [wss_bookings_schedule].
+
+== Шорткод ==
+
+[wss_bookings_schedule]
+
+Lite-версия выводит до 7 дней.
+
+== Ограничения ==
+
+* Ресурсы WooCommerce Bookings не учитываются.
+* Остаток мест и фильтр по экскурсиям доступны в Pro.
+* Быстрое добавление бронирования сразу в checkout не включено.

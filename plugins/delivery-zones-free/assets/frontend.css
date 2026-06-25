@@ -1,0 +1,82 @@
+.ydzs-address-helper {
+	margin: 6px 0 0;
+	font-size: 13px;
+	line-height: 1.4;
+	color: #646970;
+}
+
+.ydzs-address-helper--warning {
+	color: #8a5a00;
+}
+
+.ydzs-address-helper--success {
+	color: #008a20;
+}
+
+.ydzs-address-helper--error {
+	color: #b32d2e;
+}
+
+.ydzs-address-helper--loading {
+	color: #2271b1;
+}
+
+.ydzs-address-suggestions {
+	display: none;
+	margin: 6px 0 0;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	background: #fff;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+	max-height: 260px;
+	overflow-y: auto;
+	font-size: 13px;
+	line-height: 1.35;
+	z-index: 20;
+}
+
+.ydzs-address-suggestions.is-active {
+	display: block;
+}
+
+.ydzs-address-suggestions__item {
+	display: block;
+	width: 100%;
+	padding: 10px 12px;
+	border: 0;
+	border-bottom: 1px solid #f0f0f1;
+	background: transparent;
+	color: inherit;
+	text-align: left;
+	cursor: pointer;
+}
+
+.ydzs-address-suggestions__item:last-child {
+	border-bottom: 0;
+}
+
+.ydzs-address-suggestions__item:hover,
+.ydzs-address-suggestions__item:focus {
+	background: #f6f7f7;
+	outline: none;
+}
+
+.ydzs-address-suggestions__address,
+.ydzs-address-suggestions__zone {
+	display: block;
+}
+
+.ydzs-address-suggestions__address {
+	font-weight: 600;
+}
+
+.ydzs-address-suggestions__zone {
+	margin-top: 3px;
+	font-size: 12px;
+	color: #646970;
+}
+
+.ydzs-address-suggestions__empty {
+	padding: 10px 12px;
+	color: #646970;
+}
