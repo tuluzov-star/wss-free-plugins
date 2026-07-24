@@ -5,6 +5,18 @@
 		return String(value || '').replace(/\s+/g, ' ').trim().toLowerCase();
 	}
 
+	function controlText(control) {
+		if (!control) {
+			return '';
+		}
+
+		return normalizeText(control.textContent || control.value || control.getAttribute('aria-label'));
+	}
+
+	function isDeleteControl(control) {
+		return controlText(control) === 'удалить';
+	}
+
 	function findSlotsTable() {
 		var direct = document.querySelector('.wss-bookings-slots-table');
 		if (direct) {
@@ -32,17 +44,87 @@
 
 		return Array.prototype.slice.call(document.querySelectorAll('.wrap table')).find(function (table) {
 			var header = normalizeText(table.querySelector('thead') ? table.querySelector('thead').textContent : '');
-			var hasDelete = Array.prototype.slice.call(table.querySelectorAll('a, button')).some(function (control) {
-				return normalizeText(control.textContent) === 'удалить';
-			});
+			var hasDelete = Array.prototype.slice.call(table.querySelectorAll('a[href], button, input[type="submit"], input[type="button"]')).some(isDeleteControl);
 			return header.indexOf('дата') !== -1 && header.indexOf('действ') !== -1 && hasDelete;
 		}) || null;
 	}
 
-	function findDeleteLink(row) {
-		return Array.prototype.slice.call(row.querySelectorAll('a[href]')).find(function (link) {
-			return normalizeText(link.textContent) === 'удалить';
-		}) || null;
+	function findDeleteControl(row) {
+		return Array.prototype.slice.call(row.querySelectorAll('a[href], button, input[type="submit"], input[type="button"]')).find(isDeleteControl) || null;
+	}
+
+	function appendSubmitControl(formData, control) {
+		if (!control || !control.name) {
+			return;
+		}
+
+		formData.append(control.name, control.value || '');
+	}
+
+	function requestFromControl(control) {
+		if (!control) {
+			return null;
+		}
+
+		if (control.matches('a[href]')) {
+			return {
+				url: control.href,
+				options: {
+					method: 'GET',
+					credentials: 'same-origin',
+					redirect: 'follow'
+				}
+			};
+		}
+
+		var directUrl = control.getAttribute('data-href') || control.getAttribute('data-url');
+		var form = control.form || control.closest('form');
+
+		if (!form && directUrl) {
+			return {
+				url: new URL(directUrl, window.location.href).toString(),
+				options: {
+					method: 'GET',
+					credentials: 'same-origin',
+					redirect: 'follow'
+				}
+			};
+		}
+
+		if (!form) {
+			return null;
+		}
+
+		var method = String(control.getAttribute('formmethod') || form.getAttribute('method') || 'GET').toUpperCase();
+		var action = control.getAttribute('formaction') || form.getAttribute('action') || window.location.href;
+		var url = new URL(action, window.location.href);
+		var formData = new FormData(form);
+		appendSubmitControl(formData, control);
+
+		if (method === 'GET') {
+			formData.forEach(function (value, key) {
+				url.searchParams.append(key, String(value));
+			});
+
+			return {
+				url: url.toString(),
+				options: {
+					method: 'GET',
+					credentials: 'same-origin',
+					redirect: 'follow'
+				}
+			};
+		}
+
+		return {
+			url: url.toString(),
+			options: {
+				method: method,
+				body: formData,
+				credentials: 'same-origin',
+				redirect: 'follow'
+			}
+		};
 	}
 
 	function initBulkDelete(table) {
@@ -50,7 +132,12 @@
 			return;
 		}
 
-		var headers = Array.prototype.slice.call(table.querySelectorAll('thead tr:first-child th'));
+		var headerRow = table.querySelector('thead tr:first-child');
+		if (!headerRow) {
+			return;
+		}
+
+		var headers = Array.prototype.slice.call(headerRow.children);
 		var dateIndex = headers.findIndex(function (header) {
 			return normalizeText(header.textContent) === 'дата';
 		});
@@ -64,8 +151,8 @@
 		rows.forEach(function (row) {
 			var cells = Array.prototype.slice.call(row.children);
 			var dateCell = cells[dateIndex];
-			var deleteLink = findDeleteLink(row);
-			if (!dateCell || !deleteLink) {
+			var deleteControl = findDeleteControl(row);
+			if (!dateCell || !deleteControl || !requestFromControl(deleteControl)) {
 				return;
 			}
 
@@ -77,7 +164,7 @@
 			if (!groups.has(dateLabel)) {
 				groups.set(dateLabel, []);
 			}
-			groups.get(dateLabel).push({ row: row, deleteLink: deleteLink });
+			groups.get(dateLabel).push({ row: row, deleteControl: deleteControl });
 		});
 
 		if (!groups.size) {
@@ -87,7 +174,6 @@
 		table.dataset.wssBulkDatesReady = '1';
 		document.body.classList.add('wss-bs-schedule-admin-enhanced');
 
-		var headerRow = table.querySelector('thead tr:first-child');
 		var selectHeader = document.createElement('th');
 		selectHeader.className = 'wss-bs-bulk-check-column';
 		var selectAll = document.createElement('input');
@@ -165,10 +251,17 @@
 			var requests = [];
 			dates.forEach(function (dateLabel) {
 				(groups.get(dateLabel) || []).forEach(function (item) {
-					requests.push(item.deleteLink.href);
+					var request = requestFromControl(item.deleteControl);
+					if (request) {
+						requests.push(request);
+					}
 				});
 			});
-			requests = Array.from(new Set(requests));
+
+			if (!requests.length) {
+				window.alert('Не удалось определить действия удаления для выбранных строк.');
+				return;
+			}
 
 			if (!window.confirm('Удалить выбранные даты (' + dates.length + ') и все слоты в них? Действие необратимо.')) {
 				return;
@@ -183,11 +276,7 @@
 
 			try {
 				for (var index = 0; index < requests.length; index += 1) {
-					var response = await window.fetch(requests[index], {
-						method: 'GET',
-						credentials: 'same-origin',
-						redirect: 'follow'
-					});
+					var response = await window.fetch(requests[index].url, requests[index].options);
 					if (!response.ok) {
 						throw new Error('HTTP ' + response.status);
 					}
