@@ -1,1 +1,0 @@
-Professional GitHub profile README should live in a repository named tuluzov-star/tuluzov-star. This note can be removed after that profile repository is created.
