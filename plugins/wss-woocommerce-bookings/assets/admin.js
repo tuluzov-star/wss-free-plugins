@@ -2,8 +2,8 @@
     'use strict';
 
     var MONTHS = [
-        'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+        wp.i18n.__( "Январь", "wss-wc-bookings" ), wp.i18n.__( "Февраль", "wss-wc-bookings" ), wp.i18n.__( "Март", "wss-wc-bookings" ), wp.i18n.__( "Апрель", "wss-wc-bookings" ), wp.i18n.__( "Май", "wss-wc-bookings" ), wp.i18n.__( "Июнь", "wss-wc-bookings" ),
+        wp.i18n.__( "Июль", "wss-wc-bookings" ), wp.i18n.__( "Август", "wss-wc-bookings" ), wp.i18n.__( "Сентябрь", "wss-wc-bookings" ), wp.i18n.__( "Октябрь", "wss-wc-bookings" ), wp.i18n.__( "Ноябрь", "wss-wc-bookings" ), wp.i18n.__( "Декабрь", "wss-wc-bookings" )
     ];
 
     function pad(number) {
@@ -61,7 +61,7 @@
             }
 
             if (selectedText) {
-                selectedText.textContent = sorted.length ? sorted.map(formatDate).join(', ') : 'Пока ничего не выбрано';
+                selectedText.textContent = sorted.length ? sorted.map(formatDate).join(', ') : wp.i18n.__( "Пока ничего не выбрано", "wss-wc-bookings" );
             }
 
             if (error) {
@@ -181,18 +181,18 @@
                 var checkbox = form.querySelector('input[name="confirm_delete_all"]');
                 var text = form.querySelector('input[name="confirm_delete_text"]');
 
-                if (!checkbox || !checkbox.checked || !text || text.value.trim() !== 'УДАЛИТЬ') {
+                if (!checkbox || !checkbox.checked || !text || text.value.trim() !== wp.i18n.__( "УДАЛИТЬ", "wss-wc-bookings" )) {
                     event.preventDefault();
-                    alert('Для удаления всех расписаний поставьте галку и введите УДАЛИТЬ.');
+                    alert(wp.i18n.__( "Для удаления всех расписаний поставьте галку и введите УДАЛИТЬ.", "wss-wc-bookings" ));
                     return;
                 }
 
-                if (!confirm('Первое подтверждение: удалить ВСЕ расписания WSS Bookings для всех товаров?')) {
+                if (!confirm(wp.i18n.__( "Первое подтверждение: удалить ВСЕ расписания WSS Bookings для всех товаров?", "wss-wc-bookings" ))) {
                     event.preventDefault();
                     return;
                 }
 
-                if (!confirm('Второе подтверждение: действие необратимо. Точно удалить все слоты расписания?')) {
+                if (!confirm(wp.i18n.__( "Второе подтверждение: действие необратимо. Точно удалить все слоты расписания?", "wss-wc-bookings" ))) {
                     event.preventDefault();
                 }
             });
@@ -200,7 +200,7 @@
 
         document.querySelectorAll('.wss-bookings-import-form').forEach(function (form) {
             form.addEventListener('submit', function (event) {
-                if (!confirm('Импорт заменит текущие WSS-слоты у импортируемых товаров расписанием из WooCommerce Bookings. Продолжить?')) {
+                if (!confirm(wp.i18n.__( "Импорт заменит текущие WSS-слоты у импортируемых товаров расписанием из WooCommerce Bookings. Продолжить?", "wss-wc-bookings" ))) {
                     event.preventDefault();
                 }
             });
@@ -212,3 +212,4 @@
         initDangerForms();
     });
 })();
+

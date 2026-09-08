@@ -96,3 +96,10 @@ Free-ядро оставляет только безопасные хуки и U
 - Добавлена кнопка «Сохранить текущий вид карты» над картой зоны.
 - Центр карты и масштаб сохраняются AJAX-запросом после подтверждения координат.
 - Поле «Центр карты» дополнительно валидируется по диапазонам широты/долготы.
+
+
+
+## 1.4.24 — English localization
+
+English PHP and JavaScript translations are bundled. Russian remains available.
+Existing plugin directory and main file are unchanged.

@@ -32,7 +32,7 @@ class WSS_BS_Shortcode {
 
     public static function render( $atts = array() ) {
         if ( ! class_exists( 'WooCommerce' ) ) {
-            return '<div class="wss-bs-notice">Для вывода расписания нужен WooCommerce.</div>';
+            return __( '<div class="wss-bs-notice">Для вывода расписания нужен WooCommerce.</div>', 'wss-bookings-schedule' );
         }
 
         $options = WSS_BS_Plugin::get_options();
@@ -119,7 +119,7 @@ class WSS_BS_Shortcode {
 
                 <div class="wss-bs__range"><?php echo esc_html( $range_label ); ?></div>
 
-                <nav class="wss-bs__nav" aria-label="Навигация расписания">
+                <nav class="wss-bs__nav" aria-label="<?php echo esc_attr__( 'Навигация расписания', 'wss-bookings-schedule' ); ?>">
                     <a class="wss-bs__nav-link" href="<?php echo esc_url( add_query_arg( 'wss_bs_start', $prev->format( 'Y-m-d' ), $base_url ) ); ?>">
                         <span aria-hidden="true">←</span>
                         <span><?php echo esc_html( $options['label_prev'] ); ?></span>
@@ -150,7 +150,7 @@ class WSS_BS_Shortcode {
             <?php if ( empty( $schedule['events'] ) ) : ?>
                 <div class="wss-bs__empty"><?php echo esc_html( $options['label_no_events'] ); ?></div>
             <?php else : ?>
-                <div class="wss-bs__day-tabs" aria-label="Дни расписания">
+                <div class="wss-bs__day-tabs" aria-label="<?php echo esc_attr__( 'Дни расписания', 'wss-bookings-schedule' ); ?>">
                     <?php foreach ( $display_days as $day ) : ?>
                         <?php
                         $is_active = $day['key'] === $active_day_key;
@@ -277,3 +277,4 @@ class WSS_BS_Shortcode {
         return $css;
     }
 }
+

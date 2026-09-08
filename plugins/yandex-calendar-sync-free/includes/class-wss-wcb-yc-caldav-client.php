@@ -38,7 +38,7 @@ class WSS_WCB_YC_CalDAV_Client
         if (!in_array($code, [200, 207, 301, 302], true)) {
             return new WP_Error(
                 'wss_wcb_yc_caldav_test_failed',
-                sprintf('CalDAV вернул код %d. Ответ: %s', $code, wp_strip_all_tags(wp_remote_retrieve_body($response)))
+                sprintf(__( 'CalDAV вернул код %d. Ответ: %s', 'wss-wcb-yandex-calendar' ), $code, wp_strip_all_tags(wp_remote_retrieve_body($response)))
             );
         }
 
@@ -67,7 +67,7 @@ class WSS_WCB_YC_CalDAV_Client
         if (!in_array($code, [200, 201, 204], true)) {
             return new WP_Error(
                 'wss_wcb_yc_caldav_put_failed',
-                sprintf('Не удалось записать событие в Яндекс.Календарь. Код %d. Ответ: %s', $code, wp_strip_all_tags(wp_remote_retrieve_body($response)))
+                sprintf(__( 'Не удалось записать событие в Яндекс.Календарь. Код %d. Ответ: %s', 'wss-wcb-yandex-calendar' ), $code, wp_strip_all_tags(wp_remote_retrieve_body($response)))
             );
         }
 
@@ -92,3 +92,4 @@ class WSS_WCB_YC_CalDAV_Client
         ];
     }
 }
+

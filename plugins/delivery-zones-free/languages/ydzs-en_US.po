@@ -1,0 +1,594 @@
+msgid ""
+msgstr "Project-Id-Version: WSS plugins\nLanguage: en_US\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: yd-zones-shipping.php
+msgid "Доставка"
+msgstr "Delivery"
+
+#: yd-zones-shipping.php
+msgid "Например: Санкт-Петербург, Невский проспект, 10"
+msgstr "For example: Saint Petersburg, Nevsky Prospekt, 10"
+
+#: yd-zones-shipping.php
+msgid "Начните вводить адрес и выберите подходящий вариант из списка. Обязательно укажите населённый пункт, улицу и номер дома."
+msgstr "Start typing an address and select a suggestion. Include the town or city, street and house number."
+
+#: yd-zones-shipping.php
+msgid "Добавьте номер дома — без него карта может определить только улицу, и доставка может не рассчитаться."
+msgstr "Add a house number. Without it, the map may only identify the street and delivery may not be calculated."
+
+#: yd-zones-shipping.php
+msgid "Яндекс"
+msgstr "Yandex"
+
+#: assets/frontend.js yd-zones-shipping.php
+msgid "Адрес отсутствует в зонах доставки. Для этого адреса доступен только самовывоз."
+msgstr "The address is outside the delivery zones. Only local pickup is available for this address."
+
+#: assets/frontend.js yd-zones-shipping.php
+msgid "Адрес входит в зону доставки"
+msgstr "The address is within a delivery zone"
+
+#: yd-zones-shipping.php
+msgid ". Доставка по этому адресу доступна при сумме заказа от "
+msgstr ". Delivery to this address requires an order total of at least "
+
+#: yd-zones-shipping.php
+msgid " Сейчас в корзине "
+msgstr " Current cart total: "
+
+#: yd-zones-shipping.php
+msgid ", осталось добавить товаров на "
+msgstr ", add products worth another "
+
+#: yd-zones-shipping.php
+msgid ". Можно выбрать самовывоз."
+msgstr ". You can choose local pickup."
+
+#: yd-zones-shipping.php
+msgid " Или выберите самовывоз."
+msgstr " Or choose local pickup."
+
+#: yd-zones-shipping.php
+msgid "По указанному адресу доставка не осуществляется. Выберите точный адрес из выпадающего списка, проверьте населённый пункт, улицу и номер дома, либо выберите самовывоз."
+msgstr "Delivery is unavailable at this address. Select the exact address from the suggestions, check the town or city, street and house number, or choose local pickup."
+
+#: yd-zones-shipping.php
+msgid "Доставка по зонам на карте"
+msgstr "Map-based delivery zones"
+
+#: yd-zones-shipping.php
+msgid "Стоимость доставки рассчитывается по нарисованным полигонам на карте и сумме корзины."
+msgstr "Delivery prices are calculated using map polygons and the cart total."
+
+#: yd-zones-shipping.php
+msgid "Включить"
+msgstr "Enable"
+
+#: yd-zones-shipping.php
+msgid "Включить доставку по зонам на карте"
+msgstr "Enable map-based delivery zones"
+
+#: yd-zones-shipping.php
+msgid "Название метода"
+msgstr "Method title"
+
+#: yd-zones-shipping.php
+msgid "Показывается пользователю в корзине и на оформлении заказа."
+msgstr "Shown to customers in the cart and at checkout."
+
+#: yd-zones-shipping.php
+msgid "Не нашли точный вариант адреса в зонах доставки. Уточните населённый пункт, улицу и дом или выберите адрес из списка подсказок."
+msgstr "No exact address match was found in the delivery zones. Check the town or city, street and house number, or select an address from the suggestions."
+
+#: yd-zones-shipping.php
+msgid "Адрес будет проверен при пересчёте доставки. Для живой проверки нужен API-ключ карт."
+msgstr "The address will be checked when shipping is recalculated. Live validation requires a maps API key."
+
+#: yd-zones-shipping.php
+msgid "Не удалось определить адрес. Проверьте населённый пункт, улицу и номер дома."
+msgstr "Could not resolve the address. Check the town or city, street and house number."
+
+#: yd-zones-shipping.php
+msgid "Не удалось найти точный адрес в зонах доставки. Уточните населённый пункт, улицу и дом или выберите адрес из списка подсказок."
+msgstr "Could not find the exact address in the delivery zones. Check the town or city, street and house number, or select an address from the suggestions."
+
+#: yd-zones-shipping.php
+msgid "Найден похожий адрес в зоне доставки. Выберите точный вариант из списка подсказок, чтобы мы не рассчитали доставку по другому адресу."
+msgstr "A similar address was found in a delivery zone. Choose the exact address from the suggestions so that delivery is calculated for the correct address."
+
+#: yd-zones-shipping.php
+msgid "Зоны доставки на карте"
+msgstr "Delivery zones on a map"
+
+#: yd-zones-shipping.php
+msgid "Недостаточно прав."
+msgstr "You do not have permission to perform this action."
+
+#: yd-zones-shipping.php
+msgid "Добавить новую"
+msgstr "Add new"
+
+#: yd-zones-shipping.php
+msgid "WooCommerce не активен. Расчет доставки работать не будет."
+msgstr "WooCommerce is not active. Shipping calculation will not work."
+
+#: yd-zones-shipping.php
+msgid "Укажите API-ключ выбранного провайдера карт/геокодирования. Без него карта и расчет по адресу не заработают."
+msgstr "Enter an API key for the selected map/geocoding provider. The map and address-based calculation require it."
+
+#: yd-zones-shipping.php
+msgid "Зоны импортированы:"
+msgstr "Zones imported:"
+
+#: yd-zones-shipping.php
+msgid "Настройки"
+msgstr "Settings"
+
+#: yd-zones-shipping.php
+msgid "Провайдер карт и геокодирования"
+msgstr "Map and geocoding provider"
+
+#: yd-zones-shipping.php
+msgid "В обычном режиме выбранный провайдер используется и для карты, и для геокодирования, и для проверки адреса. Для РФ/СНГ обычно удобнее Яндекс, для зарубежных проектов — Google в Pro."
+msgstr "Normally, the selected provider handles the map, geocoding and address validation. Yandex is often convenient for Russia/CIS; Google is available in Pro for international projects."
+
+#: yd-zones-shipping.php
+msgid "Расширенные настройки провайдеров"
+msgstr "Advanced provider settings"
+
+#: yd-zones-shipping.php
+msgid "Расширенные настройки провайдеров доступны в Pro."
+msgstr "Advanced provider settings are available in Pro."
+
+#: yd-zones-shipping.php
+msgid "Провайдер карты"
+msgstr "Map provider"
+
+#: yd-zones-shipping.php
+msgid "Провайдер геокодирования"
+msgstr "Geocoding provider"
+
+#: yd-zones-shipping.php
+msgid "API-ключ Яндекс"
+msgstr "Yandex API key"
+
+#: yd-zones-shipping.php
+msgid "Нужен для Яндекс.Карт и Яндекс Геокодера."
+msgstr "Required for Yandex Maps and the Yandex Geocoder."
+
+#: yd-zones-shipping.php
+msgid "API-ключ Google"
+msgstr "Google API key"
+
+#: yd-zones-shipping.php
+msgid "Нужен для Google Maps JavaScript API и Google Geocoding API. В Google Cloud должен быть включен billing."
+msgstr "Required for the Google Maps JavaScript API and Google Geocoding API. Billing must be enabled in Google Cloud."
+
+#: yd-zones-shipping.php
+msgid "Регион Google"
+msgstr "Google region"
+
+#: yd-zones-shipping.php
+msgid "Например: ru, nl, ee. Используется как подсказка региона для Google Geocoding API."
+msgstr "For example: ru, nl, ee. Used as a region hint for the Google Geocoding API."
+
+#: yd-zones-shipping.php
+msgid "Google Maps и Google Geocoding доступны в Pro-дополнении."
+msgstr "Google Maps and Google Geocoding are available in the Pro add-on."
+
+#: yd-zones-shipping.php
+msgid "Центр карты"
+msgstr "Map center"
+
+#: yd-zones-shipping.php
+msgid "Формат: широта,долгота. Например: 55.751244,37.618423. Можно также переместить карту и нажать «Сохранить текущий вид карты»."
+msgstr "Format: latitude,longitude. Example: 55.751244,37.618423. You can also move the map and click Save current map view."
+
+#: yd-zones-shipping.php
+msgid "Масштаб карты"
+msgstr "Map zoom"
+
+#: yd-zones-shipping.php
+msgid "Название доставки"
+msgstr "Delivery title"
+
+#: yd-zones-shipping.php
+msgid "Имена полей адреса"
+msgstr "Address field names"
+
+#: yd-zones-shipping.php
+msgid "Через запятую или с новой строки. Нужно для кастомных checkout-страниц, где адрес хранится не в стандартном shipping_address_1."
+msgstr "Separate with commas or new lines. Used for custom checkout pages where the address is stored outside the standard shipping_address_1 field."
+
+#: yd-zones-shipping.php
+msgid "CSS-селекторы поля адреса"
+msgstr "Address field CSS selectors"
+
+#: yd-zones-shipping.php
+msgid "Необязательно. Например: #delivery-address, input[name=\"your_delivery_address\"]. При изменении этих полей плагин будет запускать пересчет checkout."
+msgstr "Optional. For example: #delivery-address, input[name=\"your_delivery_address\"]. Changes to these fields trigger checkout recalculation."
+
+#: yd-zones-shipping.php
+msgid "Автоподсказки адреса"
+msgstr "Address suggestions"
+
+#: yd-zones-shipping.php
+msgid "Показывать покупателю выпадающий список адресов Яндекс.Карт при вводе"
+msgstr "Show Yandex Maps address suggestions while the customer types"
+
+#: yd-zones-shipping.php
+msgid "Для работы нужен API-ключ Яндекс.Карт. Покупателю проще выбрать полный адрес из списка, а плагин сразу проверит, входит ли выбранный адрес в зону доставки."
+msgstr "A Yandex Maps API key is required. Customers can select a full address from the suggestions, and the plugin will check whether it is within a delivery zone."
+
+#: yd-zones-shipping.php
+msgid "Границы поиска адреса"
+msgstr "Address search boundaries"
+
+#: yd-zones-shipping.php
+msgid "Искать и подсказывать адреса в пределах нарисованных зон доставки"
+msgstr "Search and suggest addresses within the drawn delivery zones"
+
+#: yd-zones-shipping.php
+msgid "Плагин строит техническую рамку по полигонам зон и передаёт её в Яндекс.Карты/геокодер. Это лучше, чем общий регион вроде «Ленинградская область», потому что одинаковые улицы из других районов не должны попадать в приоритет."
+msgstr "The plugin calculates a bounding box from the zone polygons and passes it to Yandex Maps/the geocoder. This provides a more precise search area than a broad region such as Leningrad Oblast, reducing matches from other districts."
+
+#: yd-zones-shipping.php
+msgid "Текстовый контекст для коротких адресов"
+msgstr "Text context for short addresses"
+
+#: yd-zones-shipping.php
+msgid "Необязательно. Это только дополнительный текстовый хвост для совсем коротких адресов. Основное уточнение теперь делается по границам нарисованных зон доставки."
+msgstr "Optional. Additional address context for very short addresses. The drawn delivery zone boundaries provide the primary location context."
+
+#: yd-zones-shipping.php
+msgid "Пример адреса"
+msgstr "Example address"
+
+#: yd-zones-shipping.php
+msgid "Этот текст подставляется в placeholder поля адреса, если у поля ещё нет своего placeholder."
+msgstr "Used as the address field placeholder when the field does not already have one."
+
+#: yd-zones-shipping.php
+msgid "Подсказка под полем адреса"
+msgstr "Hint below the address field"
+
+#: yd-zones-shipping.php
+msgid "Показывается покупателю в checkout рядом с найденным полем адреса."
+msgstr "Shown to customers at checkout next to the detected address field."
+
+#: yd-zones-shipping.php
+msgid "Подсказка без номера дома"
+msgstr "Missing house number hint"
+
+#: yd-zones-shipping.php
+msgid "Показывается, когда покупатель ввёл адрес без цифр. Это мягкая подсказка, а не блокировка оформления."
+msgstr "Shown when a customer enters an address without digits. This is a hint and does not block checkout."
+
+#: yd-zones-shipping.php
+msgid "Логирование"
+msgstr "Logging"
+
+#: yd-zones-shipping.php
+msgid "Писать лог WooCommerce → Статус → Журналы → yd-zones-shipping"
+msgstr "Write logs to WooCommerce → Status → Logs → yd-zones-shipping"
+
+#: yd-zones-shipping.php
+msgid "Сохранить настройки"
+msgstr "Save settings"
+
+#: yd-zones-shipping.php
+msgid "Редактировать зону"
+msgstr "Edit zone"
+
+#: yd-zones-shipping.php
+msgid "Добавить зону"
+msgstr "Add zone"
+
+#: yd-zones-shipping.php
+msgid "Название зоны"
+msgstr "Zone name"
+
+#: yd-zones-shipping.php
+msgid "Активность"
+msgstr "Activity"
+
+#: yd-zones-shipping.php
+msgid "Зона включена"
+msgstr "Zone enabled"
+
+#: yd-zones-shipping.php
+msgid "Полигон"
+msgstr "Polygon"
+
+#: yd-zones-shipping.php
+msgid "Нарисовать / перерисовать"
+msgstr "Draw / redraw"
+
+#: yd-zones-shipping.php
+msgid "Очистить"
+msgstr "Clear"
+
+#: yd-zones-shipping.php
+msgid "Сохранить текущий вид карты"
+msgstr "Save current map view"
+
+#: yd-zones-shipping.php
+msgid "Нажмите «Нарисовать», кликами поставьте точки полигона. Двойной клик завершает рисование. Потом вершины можно двигать."
+msgstr "Click Draw, then click to place polygon points. Double-click to finish. You can then move the vertices."
+
+#: yd-zones-shipping.php
+msgid "Правила стоимости"
+msgstr "Pricing rules"
+
+#: yd-zones-shipping.php
+msgid "Правило выбирается по максимальной подходящей сумме «от». Например: от 0 — 300 ₽, от 3000 — 0 ₽."
+msgstr "The rule with the highest matching minimum cart total is used. Example: from 0 — 300 RUB; from 3000 — 0 RUB."
+
+#: yd-zones-shipping.php
+msgid "Сумма корзины от"
+msgstr "Minimum cart total"
+
+#: yd-zones-shipping.php
+msgid "Стоимость доставки"
+msgstr "Delivery price"
+
+#: yd-zones-shipping.php
+msgid "Удалить"
+msgstr "Delete"
+
+#: yd-zones-shipping.php
+msgid "Добавить правило"
+msgstr "Add rule"
+
+#: yd-zones-shipping.php
+msgid "Сохранить зону"
+msgstr "Save zone"
+
+#: yd-zones-shipping.php
+msgid "Созданные зоны"
+msgstr "Existing zones"
+
+#: yd-zones-shipping.php
+msgid "Название"
+msgstr "Name"
+
+#: yd-zones-shipping.php
+msgid "Статус"
+msgstr "Status"
+
+#: yd-zones-shipping.php
+msgid "Точек полигона"
+msgstr "Polygon points"
+
+#: yd-zones-shipping.php
+msgid "Правила"
+msgstr "Rules"
+
+#: yd-zones-shipping.php
+msgid "Действия"
+msgstr "Actions"
+
+#: yd-zones-shipping.php
+msgid "Зоны пока не созданы."
+msgstr "No zones have been created yet."
+
+#: yd-zones-shipping.php
+msgid "Включена"
+msgstr "Enabled"
+
+#: yd-zones-shipping.php
+msgid "Отключена"
+msgstr "Disabled"
+
+#: yd-zones-shipping.php
+msgid "от "
+msgstr "from "
+
+#: yd-zones-shipping.php
+msgid "Редактировать"
+msgstr "Edit"
+
+#: yd-zones-shipping.php
+msgid "Проверка адреса"
+msgstr "Address check"
+
+#: yd-zones-shipping.php
+msgid "Диагностика показывает, как текущий геокодер понимает адрес, в какую зону он попадает и какая стоимость будет применена."
+msgstr "Diagnostics show how the current geocoder resolves an address, which zone it matches and the price that will apply."
+
+#: yd-zones-shipping.php
+msgid "Введите адрес для проверки"
+msgstr "Enter an address to check"
+
+#: yd-zones-shipping.php
+msgid "Сумма корзины"
+msgstr "Cart total"
+
+#: yd-zones-shipping.php
+msgid "Проверить"
+msgstr "Check"
+
+#: yd-zones-shipping.php
+msgid "Диагностика адреса доступна в Pro: видно координаты, выбранную зону, правило стоимости и причину отказа доставки."
+msgstr "Address diagnostics are available in Pro: coordinates, the matched zone, pricing rule and the reason delivery is unavailable."
+
+#: yd-zones-shipping.php
+msgid "Экспорт / импорт зон"
+msgstr "Export / import zones"
+
+#: yd-zones-shipping.php
+msgid "Экспортируются только нарисованные зоны с полигонами и правилами стоимости. API-ключи карт и остальные настройки сайта в файл не попадают."
+msgstr "Only drawn polygon zones and their pricing rules are exported. Map API keys and other site settings are excluded."
+
+#: yd-zones-shipping.php
+msgid "Скачать зоны JSON"
+msgstr "Download zones as JSON"
+
+#: yd-zones-shipping.php
+msgid "JSON-файл"
+msgstr "JSON file"
+
+#: yd-zones-shipping.php
+msgid "Режим импорта"
+msgstr "Import mode"
+
+#: yd-zones-shipping.php
+msgid "Добавить к текущим зонам"
+msgstr "Add to existing zones"
+
+#: yd-zones-shipping.php
+msgid "Заменить все текущие зоны"
+msgstr "Replace all existing zones"
+
+#: yd-zones-shipping.php
+msgid "При добавлении к текущим зонам дублирующиеся ID будут заменены, чтобы не перезаписать существующие зоны."
+msgstr "When adding to existing zones, duplicate IDs are replaced with new IDs to avoid overwriting existing zones."
+
+#: yd-zones-shipping.php
+msgid "Импортировать зоны"
+msgstr "Import zones"
+
+#: yd-zones-shipping.php
+msgid "Импорт зон доступен в Pro. В бесплатной версии можно экспортировать настройки зон в JSON."
+msgstr "Zone import is available in Pro. The free edition can export zone settings to JSON."
+
+#: yd-zones-shipping.php
+msgid "Подключение в WooCommerce"
+msgstr "WooCommerce integration"
+
+#: yd-zones-shipping.php
+msgid "Откройте WooCommerce → Настройки → Доставка → Зоны доставки."
+msgstr "Open WooCommerce → Settings → Shipping → Shipping zones."
+
+#: yd-zones-shipping.php
+msgid "Добавьте или откройте нужную стандартную зону WooCommerce, например «Россия» или «Санкт-Петербург»."
+msgstr "Create or open the required standard WooCommerce shipping zone, such as Russia or Saint Petersburg."
+
+#: yd-zones-shipping.php
+msgid "Добавьте метод доставки «Доставка по зонам на карте»."
+msgstr "Add the Map-based delivery zones shipping method."
+
+#: yd-zones-shipping.php
+msgid "На чекауте WooCommerce передаст адрес в этот метод, плагин геокодирует адрес и проверит попадание в нарисованный полигон."
+msgstr "At checkout, WooCommerce passes the address to this shipping method. The plugin geocodes it and checks whether it is inside a drawn polygon."
+
+#: yd-zones-shipping.php
+msgid "Не удалось определить центр карты."
+msgstr "Could not determine the map center."
+
+#: yd-zones-shipping.php
+msgid "Центр карты сохранён."
+msgstr "Map center saved."
+
+#: yd-zones-shipping.php
+msgid "В бесплатной версии можно создать до 3 зон. Для большего количества зон нужен Pro."
+msgstr "The free edition supports up to 3 zones. More zones require Pro."
+
+#: includes/class-ydzs-updater.php
+msgid "Доставка WooCommerce по нарисованным зонам на карте."
+msgstr "WooCommerce delivery based on zones drawn on a map."
+
+#: includes/class-ydzs-updater.php
+msgid "Плагин рассчитывает доставку WooCommerce по зонам на карте, поддерживает правила стоимости и проверку адреса."
+msgstr "Calculates WooCommerce shipping using map zones, pricing rules and address validation."
+
+#: assets/admin.js
+msgid "Нужно нарисовать полигон минимум из 3 точек."
+msgstr "Draw a polygon with at least 3 points."
+
+#: assets/admin.js
+msgid "<td><button type=\"button\" class=\"button ydzs-remove-rule\">Удалить</button></td>"
+msgstr "<td><button type=\"button\" class=\"button ydzs-remove-rule\">Delete</button></td>"
+
+#: assets/admin.js
+msgid "Карта не загружена. Проверьте API-ключ Яндекс.Карт и перезагрузите страницу."
+msgstr "The map did not load. Check your Yandex Maps API key and reload the page."
+
+#: assets/admin.js
+msgid "Зона доставки"
+msgstr "Delivery zone"
+
+#: assets/admin.js
+msgid "Не удалось сохранить центр карты."
+msgstr "Could not save the map center."
+
+#: assets/admin.js
+msgid ", масштаб "
+msgstr ", zoom "
+
+#: assets/admin.js
+msgid "Сохранено: "
+msgstr "Saved: "
+
+#: assets/admin.js
+msgid "Сохраняю центр карты..."
+msgstr "Saving map center..."
+
+#: assets/admin.js
+msgid " и масштаб "
+msgstr " and zoom level "
+
+#: assets/admin.js
+msgid "Сохранить текущий центр карты "
+msgstr "Save the current map center "
+
+#: assets/admin.js
+msgid "Не удалось определить текущий центр карты. Проверьте, что карта загружена."
+msgstr "Could not determine the current map center. Check that the map has loaded."
+
+#: assets/admin.js
+msgid "Не удалось определить текущий центр карты."
+msgstr "Could not determine the current map center."
+
+#: assets/frontend.js
+msgid "Не удалось проверить адрес сейчас. Попробуйте ещё раз."
+msgstr "Could not check the address right now. Please try again."
+
+#: assets/frontend.js
+msgid "Проверяем адрес..."
+msgstr "Checking address..."
+
+#: assets/frontend.js
+msgid "Адрес будет проверен при оформлении заказа."
+msgstr "The address will be checked at checkout."
+
+#: assets/frontend.js
+msgid "Поле адреса не найдено."
+msgstr "Address field not found."
+
+#: assets/frontend.js
+msgid "Проверяем выбранный адрес..."
+msgstr "Checking selected address..."
+
+#: assets/frontend.js
+msgid "Выберите точный адрес из списка подсказок, чтобы мы не рассчитали доставку по другому адресу."
+msgstr "Choose the exact address from the suggestions so that delivery is calculated for the correct address."
+
+#: assets/frontend.js
+msgid "Не удалось проверить адрес сейчас. Уточните адрес или попробуйте оформить заказ ещё раз."
+msgstr "Could not check the address right now. Check the address or try placing the order again."
+
+#: assets/frontend.js
+msgid "Уточните адрес и выберите вариант из списка."
+msgstr "Check the address and select a suggestion."
+
+#: assets/frontend.js
+msgid "Не нашли точный адрес в зонах доставки. Уточните населённый пункт, улицу и дом или выберите адрес из списка подсказок."
+msgstr "No exact address was found in the delivery zones. Check the town or city, street and house number, or select an address from the suggestions."
+
+#: assets/frontend.js
+msgid "Зона доставки: "
+msgstr "Delivery zone: "
+
+#: assets/frontend.js
+msgid "Подсказки адреса"
+msgstr "Address suggestions"
+
+#: assets/frontend.js
+msgid "Не удалось найти подходящий адрес. Уточните населённый пункт, улицу и дом или выберите адрес из списка подсказок."
+msgstr "Could not find a matching address. Check the town or city, street and house number, or select an address from the suggestions."
+
+#: yd-zones-shipping.php
+msgid "Доставка WooCommerce по нарисованным зонам на карте: полигоны, правила стоимости от суммы корзины, геокодирование адреса и запрет доставки вне зон. Бесплатная версия использует Яндекс; Google, импорт и диагностика подключаются отдельным Pro-дополнением."
+msgstr "WooCommerce shipping with map-drawn zones: polygons, cart-based pricing, address geocoding and delivery boundaries. The free edition uses Yandex; Google, imports and diagnostics are provided by the separate Pro add-on."

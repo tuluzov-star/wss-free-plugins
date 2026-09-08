@@ -1,0 +1,58 @@
+{
+  "title": [
+    "Расписание экскурсий",
+    "Tour schedule"
+  ],
+  "label_prev": [
+    "Предыдущая неделя",
+    "Previous week"
+  ],
+  "label_current": [
+    "Эта неделя",
+    "This week"
+  ],
+  "label_next": [
+    "Следующая неделя",
+    "Next week"
+  ],
+  "label_no_events": [
+    "На выбранные даты доступных экскурсий нет.",
+    "No tours are available on the selected dates."
+  ],
+  "label_no_product_events": [
+    "На эту дату нет выбранной экскурсии.",
+    "The selected tour is not available on this date."
+  ],
+  "label_book": [
+    "Забронировать",
+    "Book now"
+  ],
+  "label_select": [
+    "Выбрать",
+    "Select"
+  ],
+  "label_all_products": [
+    "Все экскурсии",
+    "All tours"
+  ],
+  "label_time": [
+    "Время",
+    "Time"
+  ],
+  "label_price": [
+    "Цена",
+    "Price"
+  ],
+  "label_capacity": [
+    "Осталось мест: %s",
+    "Places remaining: %s"
+  ],
+  "label_sold_out": [
+    "Мест нет",
+    "Sold out"
+  ],
+  "label_resource_skipped": [
+    "Товар использует ресурсы и скрыт в расписании.",
+    "This product uses resources and is hidden from the schedule."
+  ]
+}

@@ -14,7 +14,7 @@
 	}
 
 	function isDeleteControl(control) {
-		return controlText(control) === 'удалить';
+		return controlText(control) === wp.i18n.__( "удалить", "wss-bookings-schedule" );
 	}
 
 	function findSlotsTable() {
@@ -25,7 +25,7 @@
 
 		var headings = Array.prototype.slice.call(document.querySelectorAll('.wrap h2, .wrap h3'));
 		var heading = headings.find(function (item) {
-			return normalizeText(item.textContent).indexOf('слоты, созданные wss') !== -1;
+			return normalizeText(item.textContent).indexOf(wp.i18n.__( "слоты, созданные wss", "wss-bookings-schedule" )) !== -1;
 		});
 
 		if (heading) {
@@ -45,7 +45,7 @@
 		return Array.prototype.slice.call(document.querySelectorAll('.wrap table')).find(function (table) {
 			var header = normalizeText(table.querySelector('thead') ? table.querySelector('thead').textContent : '');
 			var hasDelete = Array.prototype.slice.call(table.querySelectorAll('a[href], button, input[type="submit"], input[type="button"]')).some(isDeleteControl);
-			return header.indexOf('дата') !== -1 && header.indexOf('действ') !== -1 && hasDelete;
+			return header.indexOf(wp.i18n.__( "дата", "wss-bookings-schedule" )) !== -1 && header.indexOf(wp.i18n.__( "действ", "wss-bookings-schedule" )) !== -1 && hasDelete;
 		}) || null;
 	}
 
@@ -139,7 +139,7 @@
 
 		var headers = Array.prototype.slice.call(headerRow.children);
 		var dateIndex = headers.findIndex(function (header) {
-			return normalizeText(header.textContent) === 'дата';
+			return normalizeText(header.textContent) === wp.i18n.__( "дата", "wss-bookings-schedule" );
 		});
 		if (dateIndex < 0) {
 			return;
@@ -178,7 +178,7 @@
 		selectHeader.className = 'wss-bs-bulk-check-column';
 		var selectAll = document.createElement('input');
 		selectAll.type = 'checkbox';
-		selectAll.setAttribute('aria-label', 'Выбрать все даты');
+		selectAll.setAttribute('aria-label', wp.i18n.__( "Выбрать все даты", "wss-bookings-schedule" ));
 		selectHeader.appendChild(selectAll);
 		headerRow.insertBefore(selectHeader, headerRow.firstChild);
 
@@ -193,7 +193,7 @@
 					checkbox.type = 'checkbox';
 					checkbox.value = dateLabel;
 					checkbox.dataset.wssBulkDate = dateLabel;
-					checkbox.setAttribute('aria-label', 'Выбрать дату ' + dateLabel);
+					checkbox.setAttribute('aria-label', wp.i18n.__( "Выбрать дату ", "wss-bookings-schedule" ) + dateLabel);
 					cell.appendChild(checkbox);
 					dateCheckboxes.push(checkbox);
 				}
@@ -206,11 +206,11 @@
 		var deleteButton = document.createElement('button');
 		deleteButton.type = 'button';
 		deleteButton.className = 'button wss-bs-delete-selected-dates';
-		deleteButton.textContent = 'Удалить выбранные';
+		deleteButton.textContent = wp.i18n.__( "Удалить выбранные", "wss-bookings-schedule" );
 		deleteButton.disabled = true;
 		var counter = document.createElement('span');
 		counter.className = 'description';
-		counter.textContent = 'Выбрано дат: 0';
+		counter.textContent = wp.i18n.__( "Выбрано дат: 0", "wss-bookings-schedule" );
 		toolbar.appendChild(deleteButton);
 		toolbar.appendChild(counter);
 		table.parentNode.insertBefore(toolbar, table);
@@ -226,7 +226,7 @@
 		function sync() {
 			var selected = selectedDates().length;
 			deleteButton.disabled = selected === 0;
-			counter.textContent = 'Выбрано дат: ' + selected;
+			counter.textContent = wp.i18n.__( "Выбрано дат: ", "wss-bookings-schedule" ) + selected;
 			selectAll.checked = selected === dateCheckboxes.length;
 			selectAll.indeterminate = selected > 0 && selected < dateCheckboxes.length;
 		}
@@ -259,11 +259,11 @@
 			});
 
 			if (!requests.length) {
-				window.alert('Не удалось определить действия удаления для выбранных строк.');
+				window.alert(wp.i18n.__( "Не удалось определить действия удаления для выбранных строк.", "wss-bookings-schedule" ));
 				return;
 			}
 
-			if (!window.confirm('Удалить выбранные даты (' + dates.length + ') и все слоты в них? Действие необратимо.')) {
+			if (!window.confirm(wp.i18n.__( "Удалить выбранные даты (", "wss-bookings-schedule" ) + dates.length + wp.i18n.__( ") и все слоты в них? Действие необратимо.", "wss-bookings-schedule" ))) {
 				return;
 			}
 
@@ -272,7 +272,7 @@
 			dateCheckboxes.forEach(function (checkbox) {
 				checkbox.disabled = true;
 			});
-			deleteButton.textContent = 'Удаление…';
+			deleteButton.textContent = wp.i18n.__( "Удаление…", "wss-bookings-schedule" );
 
 			try {
 				for (var index = 0; index < requests.length; index += 1) {
@@ -283,8 +283,8 @@
 				}
 				window.location.reload();
 			} catch (error) {
-				window.alert('Не удалось удалить все выбранные даты. Обновите страницу и повторите попытку.');
-				deleteButton.textContent = 'Удалить выбранные';
+				window.alert(wp.i18n.__( "Не удалось удалить все выбранные даты. Обновите страницу и повторите попытку.", "wss-bookings-schedule" ));
+				deleteButton.textContent = wp.i18n.__( "Удалить выбранные", "wss-bookings-schedule" );
 				selectAll.disabled = false;
 				dateCheckboxes.forEach(function (checkbox) {
 					checkbox.disabled = false;
@@ -303,3 +303,4 @@
 		}
 	});
 })();
+

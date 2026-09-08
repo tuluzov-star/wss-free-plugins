@@ -1,0 +1,10 @@
+{
+  "title_template": [
+    "Экскурсия: {product_name} — {persons} {persons_label} — заказ #{order_id}",
+    "Tour: {product_name} — {persons} {persons_label} — order #{order_id}"
+  ],
+  "description_template": [
+    "Бронирование: #{booking_id}\nЗаказ: #{order_id}\nЭкскурсия: {product_name}\n\nДата и время:\n{start_datetime} — {end_datetime}\n\nКоличество билетов/людей: {persons}\n\nКлиент:\n{customer_name}\n{customer_phone}\n{customer_email}\n\nСтатус заказа: {order_status}\nСтатус бронирования: {booking_status}\n\nАдминка:\nЗаказ: {admin_order_url}\nБронирование: {admin_booking_url}",
+    "Booking: #{booking_id}\nOrder: #{order_id}\nTour: {product_name}\n\nDate and time:\n{start_datetime} — {end_datetime}\n\nTickets/people: {persons}\n\nCustomer:\n{customer_name}\n{customer_phone}\n{customer_email}\n\nOrder status: {order_status}\nBooking status: {booking_status}\n\nAdmin:\nOrder: {admin_order_url}\nBooking: {admin_booking_url}"
+  ]
+}

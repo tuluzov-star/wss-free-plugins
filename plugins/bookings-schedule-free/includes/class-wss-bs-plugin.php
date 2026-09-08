@@ -20,10 +20,10 @@ class WSS_BS_Plugin {
 
     public static function render_missing_engine_notice() {
         if ( ! class_exists( 'WooCommerce' ) ) {
-            return '<div class="wss-bs-notice">Для вывода расписания нужен активный WooCommerce.</div>';
+            return __( '<div class="wss-bs-notice">Для вывода расписания нужен активный WooCommerce.</div>', 'wss-bookings-schedule' );
         }
 
-        return '<div class="wss-bs-notice">Для вывода расписания нужен активный WSS WooCommerce Bookings или WooCommerce Bookings.</div>';
+        return __( '<div class="wss-bs-notice">Для вывода расписания нужен активный WSS WooCommerce Bookings или WooCommerce Bookings.</div>', 'wss-bookings-schedule' );
     }
 
     public static function activate() {
@@ -52,20 +52,20 @@ class WSS_BS_Plugin {
             'timezone_string'         => '',
             'wc_time_mode'            => 'local_wall',
             'show_title'              => 'no',
-            'title'                   => 'Расписание экскурсий',
-            'label_prev'              => 'Предыдущая неделя',
-            'label_current'           => 'Эта неделя',
-            'label_next'              => 'Следующая неделя',
-            'label_all_products'      => 'Все экскурсии',
-            'label_no_events'         => 'На выбранные даты доступных экскурсий нет.',
-            'label_no_product_events' => 'На эту дату нет выбранной экскурсии.',
-            'label_book'              => 'Забронировать',
-            'label_select'            => 'Выбрать',
-            'label_time'              => 'Время',
-            'label_price'             => 'Цена',
-            'label_capacity'          => 'Осталось мест: %s',
-            'label_sold_out'          => 'Мест нет',
-            'label_resource_skipped'  => 'Товар использует ресурсы и скрыт в расписании.',
+            'title'                   => __( 'Расписание экскурсий', 'wss-bookings-schedule' ),
+            'label_prev'              => __( 'Предыдущая неделя', 'wss-bookings-schedule' ),
+            'label_current'           => __( 'Эта неделя', 'wss-bookings-schedule' ),
+            'label_next'              => __( 'Следующая неделя', 'wss-bookings-schedule' ),
+            'label_all_products'      => __( 'Все экскурсии', 'wss-bookings-schedule' ),
+            'label_no_events'         => __( 'На выбранные даты доступных экскурсий нет.', 'wss-bookings-schedule' ),
+            'label_no_product_events' => __( 'На эту дату нет выбранной экскурсии.', 'wss-bookings-schedule' ),
+            'label_book'              => __( 'Забронировать', 'wss-bookings-schedule' ),
+            'label_select'            => __( 'Выбрать', 'wss-bookings-schedule' ),
+            'label_time'              => __( 'Время', 'wss-bookings-schedule' ),
+            'label_price'             => __( 'Цена', 'wss-bookings-schedule' ),
+            'label_capacity'          => __( 'Осталось мест: %s', 'wss-bookings-schedule' ),
+            'label_sold_out'          => __( 'Мест нет', 'wss-bookings-schedule' ),
+            'label_resource_skipped'  => __( 'Товар использует ресурсы и скрыт в расписании.', 'wss-bookings-schedule' ),
             'date_format'             => 'j F, Y',
             'range_date_format'       => 'j M',
             'time_format'             => 'H:i',
@@ -87,7 +87,7 @@ class WSS_BS_Plugin {
 
         $options = wp_parse_args( $options, self::defaults() );
 
-        return self::apply_lite_limits( $options );
+        return self::apply_lite_limits( WSS_Plugin_I18n_202609::defaults( $options, 'wss-bookings-schedule' ) );
     }
 
     private static function apply_lite_limits( $options ) {
@@ -120,12 +120,12 @@ class WSS_BS_Plugin {
         }
 
         if ( ! class_exists( 'WooCommerce' ) ) {
-            echo '<div class="notice notice-error"><p><strong>WSS Bookings Schedule Lite:</strong> требуется установленный и активный WooCommerce.</p></div>';
+            echo __( '<div class="notice notice-error"><p><strong>WSS Bookings Schedule Lite:</strong> требуется установленный и активный WooCommerce.</p></div>', 'wss-bookings-schedule' );
             return;
         }
 
         if ( ! self::is_bookings_engine_available() ) {
-            echo '<div class="notice notice-warning"><p><strong>WSS Bookings Schedule Lite:</strong> требуется активный WSS WooCommerce Bookings или WooCommerce Bookings. Данные расписания в базе сами по себе не считаются активным движком бронирований.</p></div>';
+            echo __( '<div class="notice notice-warning"><p><strong>WSS Bookings Schedule Lite:</strong> требуется активный WSS WooCommerce Bookings или WooCommerce Bookings. Данные расписания в базе сами по себе не считаются активным движком бронирований.</p></div>', 'wss-bookings-schedule' );
         }
     }
 
@@ -136,3 +136,4 @@ class WSS_BS_Plugin {
             || function_exists( 'get_wc_booking' );
     }
 }
+

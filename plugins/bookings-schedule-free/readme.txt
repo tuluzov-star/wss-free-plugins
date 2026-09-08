@@ -4,7 +4,7 @@ Tags: woocommerce, bookings, schedule, availability
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.3.7
+Stable tag: 0.3.8
 License: GPLv2 or later
 
 Бесплатная витрина расписания для оригинального WooCommerce Bookings.
@@ -53,3 +53,10 @@ Lite-версия выводит до 7 дней.
 * Ресурсы WooCommerce Bookings не учитываются.
 * Остаток мест и фильтр по экскурсиям доступны в Pro.
 * Быстрое добавление бронирования сразу в checkout не включено.
+
+
+
+## 0.3.8 — English localization
+
+English PHP and JavaScript translations are bundled. Russian remains available.
+Existing plugin directory and main file are unchanged.

@@ -31,7 +31,7 @@ class WSS_WCB_YC_ICS_Builder
         ];
 
         if (!empty($event['cancelled'])) {
-            $lines[] = 'CATEGORIES:' . self::escape_text('Отменено');
+            $lines[] = 'CATEGORIES:' . self::escape_text(__( 'Отменено', 'wss-wcb-yandex-calendar' ));
         }
 
         $lines[] = 'END:VEVENT';
@@ -112,3 +112,4 @@ class WSS_WCB_YC_ICS_Builder
         return implode("\r\n ", $chunks);
     }
 }
+

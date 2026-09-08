@@ -14,3 +14,10 @@
 ## Pro-расширение
 
 Pro добавляет импорт из WooCommerce Bookings, массовые действия, блокировки дат, календарь броней, списки гостей, экспорт, типы билетов, режим “весь день” и настройки внешнего вида.
+
+
+
+## 0.5.2 — English localization
+
+English PHP and JavaScript translations are bundled. Russian remains available.
+Existing plugin directory and main file are unchanged.

@@ -14,9 +14,9 @@
     function getNoEventsText($schedule) {
         var productId = String($schedule.find('[data-wss-bs-filter]').val() || '');
         if (productId) {
-            return String($schedule.data('wss-bs-no-product-events') || 'На эту дату нет выбранной экскурсии.');
+            return String($schedule.data('wss-bs-no-product-events') || wp.i18n.__( "На эту дату нет выбранной экскурсии.", "wss-bookings-schedule" ));
         }
-        return String($schedule.data('wss-bs-no-events') || 'На выбранную дату доступных экскурсий нет.');
+        return String($schedule.data('wss-bs-no-events') || wp.i18n.__( "На выбранную дату доступных экскурсий нет.", "wss-bookings-schedule" ));
     }
 
     function showDayHelper($schedule) {
@@ -295,3 +295,4 @@
         prefillBookingForm();
     });
 })(jQuery);
+

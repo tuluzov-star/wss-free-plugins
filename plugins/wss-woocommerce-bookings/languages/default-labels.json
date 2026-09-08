@@ -1,0 +1,26 @@
+{
+  "title_time": [
+    "Выберите дату и время",
+    "Choose a date and time"
+  ],
+  "title_date": [
+    "Выберите дату",
+    "Choose a date"
+  ],
+  "no_slots": [
+    "Сейчас нет доступных дат для бронирования.",
+    "No booking dates are currently available."
+  ],
+  "hint_time": [
+    "Сначала выберите дату в календаре.",
+    "Select a date in the calendar first."
+  ],
+  "hint_date": [
+    "Выберите дату в календаре. Время для этой услуги не указывается.",
+    "Choose a date in the calendar. No time selection is required for this service."
+  ],
+  "button_text": [
+    "Забронировать",
+    "Book now"
+  ]
+}

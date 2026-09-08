@@ -2,8 +2,8 @@
     'use strict';
 
     var MONTHS = [
-        'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+        wp.i18n.__( "Январь", "wss-wc-bookings" ), wp.i18n.__( "Февраль", "wss-wc-bookings" ), wp.i18n.__( "Март", "wss-wc-bookings" ), wp.i18n.__( "Апрель", "wss-wc-bookings" ), wp.i18n.__( "Май", "wss-wc-bookings" ), wp.i18n.__( "Июнь", "wss-wc-bookings" ),
+        wp.i18n.__( "Июль", "wss-wc-bookings" ), wp.i18n.__( "Август", "wss-wc-bookings" ), wp.i18n.__( "Сентябрь", "wss-wc-bookings" ), wp.i18n.__( "Октябрь", "wss-wc-bookings" ), wp.i18n.__( "Ноябрь", "wss-wc-bookings" ), wp.i18n.__( "Декабрь", "wss-wc-bookings" )
     ];
 
     function pad(number) {
@@ -177,13 +177,13 @@
         var minus = document.createElement('button');
         minus.type = 'button';
         minus.className = 'wss-booking-qty-button wss-booking-qty-minus';
-        minus.setAttribute('aria-label', 'Уменьшить количество билетов');
+        minus.setAttribute('aria-label', wp.i18n.__( "Уменьшить количество билетов", "wss-wc-bookings" ));
         minus.textContent = '−';
 
         var plus = document.createElement('button');
         plus.type = 'button';
         plus.className = 'wss-booking-qty-button wss-booking-qty-plus';
-        plus.setAttribute('aria-label', 'Увеличить количество билетов');
+        plus.setAttribute('aria-label', wp.i18n.__( "Увеличить количество билетов", "wss-wc-bookings" ));
         plus.textContent = '+';
 
         wrapper.insertBefore(minus, qty);
@@ -253,9 +253,9 @@
             }
             if (summary) {
                 if (total > 0) {
-                    summary.textContent = 'Выбрано билетов: ' + total + '.';
+                    summary.textContent = wp.i18n.__( "Выбрано билетов: ", "wss-wc-bookings" ) + total + '.';
                 } else {
-                    summary.textContent = 'Выберите количество билетов.';
+                    summary.textContent = wp.i18n.__( "Выберите количество билетов.", "wss-wc-bookings" );
                 }
             }
             rows.forEach(function (row) {
@@ -415,10 +415,10 @@
 
                 if (grouped[key]) {
                     button.classList.add('has-slots');
-                    button.setAttribute('aria-label', 'Выбрать дату ' + grouped[key][0].dateLabel);
+                    button.setAttribute('aria-label', wp.i18n.__( "Выбрать дату ", "wss-wc-bookings" ) + grouped[key][0].dateLabel);
                 } else {
                     button.disabled = true;
-                    button.setAttribute('aria-label', 'Нет доступных слотов');
+                    button.setAttribute('aria-label', wp.i18n.__( "Нет доступных слотов", "wss-wc-bookings" ));
                 }
 
                 if (selectedDate === key) {
@@ -483,7 +483,7 @@
             updateQuantityMax(parseInt(slot.available, 10));
 
             if (hint) {
-                hint.textContent = 'Выбрано: ' + slot.dateLabel + ', ' + slot.rangeLabel + '. Свободно: ' + slot.availableLabel + '.';
+                hint.textContent = wp.i18n.__( "Выбрано: ", "wss-wc-bookings" ) + slot.dateLabel + ', ' + slot.rangeLabel + wp.i18n.__( ". Свободно: ", "wss-wc-bookings" ) + slot.availableLabel + '.';
             }
         }
 
@@ -494,7 +494,7 @@
             if (!selectedDate || !grouped[selectedDate]) {
                 timesWrap.hidden = true;
                 if (hint) {
-                    hint.textContent = 'Сначала выберите дату в календаре.';
+                    hint.textContent = wp.i18n.__( "Сначала выберите дату в календаре.", "wss-wc-bookings" );
                 }
                 return;
             }
@@ -518,17 +518,17 @@
                 timesWrap.hidden = true;
 
                 if (hint) {
-                    hint.textContent = 'Выбрана дата: ' + allDaySlot.dateLabel + '. Время не указывается. Свободно: ' + allDaySlot.availableLabel + '.';
+                    hint.textContent = wp.i18n.__( "Выбрана дата: ", "wss-wc-bookings" ) + allDaySlot.dateLabel + wp.i18n.__( ". Время не указывается. Свободно: ", "wss-wc-bookings" ) + allDaySlot.availableLabel + '.';
                 }
                 return;
             }
 
             timesWrap.hidden = false;
             if (timesTitle) {
-                timesTitle.textContent = dateSlots[0].dateLabel + ': выберите время';
+                timesTitle.textContent = dateSlots[0].dateLabel + wp.i18n.__( ": выберите время", "wss-wc-bookings" );
             }
             if (hint) {
-                hint.textContent = dateSlots[0].dateLabel + ': выберите время экскурсии.';
+                hint.textContent = dateSlots[0].dateLabel + wp.i18n.__( ": выберите время экскурсии.", "wss-wc-bookings" );
             }
 
             dateSlots.forEach(function (slot) {
@@ -536,7 +536,7 @@
                 button.type = 'button';
                 button.className = 'wss-booking-time-button';
                 button.setAttribute('data-slot-id', String(slot.id));
-                button.innerHTML = '<span>' + slot.timeLabel + '</span><small>Свободно: ' + slot.availableLabel + '</small>';
+                button.innerHTML = '<span>' + slot.timeLabel + wp.i18n.__( "</span><small>Свободно: ", "wss-wc-bookings" ) + slot.availableLabel + '</small>';
 
                 button.addEventListener('click', function () {
                     setSelectedSlot(slot, button);
@@ -572,7 +572,7 @@
                 if (!input.value) {
                     event.preventDefault();
                     if (hint) {
-                        hint.textContent = selectedDate ? 'Выберите время экскурсии.' : 'Выберите дату бронирования.';
+                        hint.textContent = selectedDate ? wp.i18n.__( "Выберите время экскурсии.", "wss-wc-bookings" ) : wp.i18n.__( "Выберите дату бронирования.", "wss-wc-bookings" );
                     }
                     root.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     return;
@@ -580,7 +580,7 @@
                 if (ticketControls && ticketControls.getTotal() <= 0) {
                     event.preventDefault();
                     if (hint) {
-                        hint.textContent = 'Выберите количество билетов.';
+                        hint.textContent = wp.i18n.__( "Выберите количество билетов.", "wss-wc-bookings" );
                     }
                     root.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
@@ -599,3 +599,4 @@
         document.querySelectorAll('.wss-booking-selector').forEach(initBookingCalendar);
     });
 })();
+

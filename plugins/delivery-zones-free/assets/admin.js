@@ -101,16 +101,16 @@
 		const view = getYandexMapView();
 
 		if (!view || !view.center) {
-			setMapSaveStatus('Не удалось определить текущий центр карты.', true);
-			alert('Не удалось определить текущий центр карты. Проверьте, что карта загружена.');
+			setMapSaveStatus(wp.i18n.__( "Не удалось определить текущий центр карты.", "ydzs" ), true);
+			alert(wp.i18n.__( "Не удалось определить текущий центр карты. Проверьте, что карта загружена.", "ydzs" ));
 			return;
 		}
 
-		if (!window.confirm('Сохранить текущий центр карты ' + view.center + ' и масштаб ' + view.zoom + '?')) {
+		if (!window.confirm(wp.i18n.__( "Сохранить текущий центр карты ", "ydzs" ) + view.center + wp.i18n.__( " и масштаб ", "ydzs" ) + view.zoom + '?')) {
 			return;
 		}
 
-		setMapSaveStatus('Сохраняю центр карты...', false);
+		setMapSaveStatus(wp.i18n.__( "Сохраняю центр карты...", "ydzs" ), false);
 
 		$.post(window.YDZS_ADMIN.ajaxUrl, {
 			action: 'ydzs_save_map_view',
@@ -123,14 +123,14 @@
 			const zoom = data.map_zoom || view.zoom;
 
 			if (!response || !response.success) {
-				setMapSaveStatus(data.message || 'Не удалось сохранить центр карты.', true);
+				setMapSaveStatus(data.message || wp.i18n.__( "Не удалось сохранить центр карты.", "ydzs" ), true);
 				return;
 			}
 
 			syncSavedMapViewFields(center, zoom);
-			setMapSaveStatus('Сохранено: ' + center + ', масштаб ' + zoom + '.', false);
+			setMapSaveStatus(wp.i18n.__( "Сохранено: ", "ydzs" ) + center + wp.i18n.__( ", масштаб ", "ydzs" ) + zoom + '.', false);
 		}).fail(function (xhr) {
-			let message = 'Не удалось сохранить центр карты.';
+			let message = wp.i18n.__( "Не удалось сохранить центр карты.", "ydzs" );
 
 			if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
 				message = xhr.responseJSON.data.message;
@@ -179,7 +179,7 @@
 		polygon = new ymaps.Polygon(
 			[coords || []],
 			{
-				hintContent: 'Зона доставки'
+				hintContent: wp.i18n.__( "Зона доставки", "ydzs" )
 			},
 			{
 				fillColor: '#2f80ed44',
@@ -264,7 +264,7 @@
 		e.preventDefault();
 
 		if (!map || !window.ymaps) {
-			alert('Карта не загружена. Проверьте API-ключ Яндекс.Карт и перезагрузите страницу.');
+			alert(wp.i18n.__( "Карта не загружена. Проверьте API-ключ Яндекс.Карт и перезагрузите страницу.", "ydzs" ));
 			return;
 		}
 
@@ -297,7 +297,7 @@
 			'<tr>' +
 				'<td><input type="text" name="rules_min[]" value="0"></td>' +
 				'<td><input type="text" name="rules_cost[]" value="0"></td>' +
-				'<td><button type="button" class="button ydzs-remove-rule">Удалить</button></td>' +
+				wp.i18n.__( "<td><button type=\"button\" class=\"button ydzs-remove-rule\">Удалить</button></td>", "ydzs" ) +
 			'</tr>'
 		);
 	});
@@ -326,7 +326,7 @@
 
 		if (coords.length < 3) {
 			e.preventDefault();
-			alert('Нужно нарисовать полигон минимум из 3 точек.');
+			alert(wp.i18n.__( "Нужно нарисовать полигон минимум из 3 точек.", "ydzs" ));
 			return false;
 		}
 
@@ -338,3 +338,4 @@
 		initMap();
 	});
 })(jQuery);
+

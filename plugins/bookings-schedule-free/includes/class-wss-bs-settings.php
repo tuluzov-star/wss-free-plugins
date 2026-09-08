@@ -56,33 +56,33 @@ class WSS_BS_Settings {
 		?>
 		<div class="wrap wss-bs-admin">
 			<h1>WSS Bookings Schedule</h1>
-			<p>Шорткод для вывода расписания:</p><p><code>[wss_bookings_schedule]</code></p>
-			<div class="notice notice-info inline"><p><strong>Установлена Lite-версия.</strong> На этой же странице отображаются возможности текущей версии. После перехода на Pro здесь появятся дополнительные вкладки и блок лицензии.</p><p><a class="button button-primary" href="<?php echo esc_url( WSS_BS_UPGRADE_URL ); ?>" target="_blank" rel="noopener">Посмотреть Pro-версию</a></p></div>
+			<p><?php echo esc_html__( 'Шорткод для вывода расписания:', 'wss-bookings-schedule' ); ?></p><p><code>[wss_bookings_schedule]</code></p>
+			<div class="notice notice-info inline"><p><strong><?php echo esc_html__( 'Установлена Lite-версия.', 'wss-bookings-schedule' ); ?></strong> <?php echo esc_html__( 'На этой же странице отображаются возможности текущей версии. После перехода на Pro здесь появятся дополнительные вкладки и блок лицензии.', 'wss-bookings-schedule' ); ?></p><p><a class="button button-primary" href="<?php echo esc_url( WSS_BS_UPGRADE_URL ); ?>" target="_blank" rel="noopener"><?php echo esc_html__( 'Посмотреть Pro-версию', 'wss-bookings-schedule' ); ?></a></p></div>
 			<h2 class="nav-tab-wrapper">
-				<a href="#wss-bs-main" class="nav-tab nav-tab-active">Основные</a>
-				<a href="#wss-bs-texts" class="nav-tab">Тексты</a>
-				<a href="#wss-bs-view" class="nav-tab">Вывод</a>
+				<a href="#wss-bs-main" class="nav-tab nav-tab-active"><?php echo esc_html__( 'Основные', 'wss-bookings-schedule' ); ?></a>
+				<a href="#wss-bs-texts" class="nav-tab"><?php echo esc_html__( 'Тексты', 'wss-bookings-schedule' ); ?></a>
+				<a href="#wss-bs-view" class="nav-tab"><?php echo esc_html__( 'Вывод', 'wss-bookings-schedule' ); ?></a>
 				<a href="#wss-bs-free-pro" class="nav-tab">Free / Pro</a>
 			</h2>
 			<form method="post" action="options.php" class="wss-bs-settings-form">
 				<?php settings_fields( 'wss_bs_settings_group' ); ?>
 				<div id="wss-bs-main" class="wss-bs-tab is-active"><table class="form-table" role="presentation">
-					<?php self::number_row( 'days', 'Количество дней для показа', $options['days'], 1, 7, 'В Lite доступно до 7 дней.' ); ?>
-					<?php self::select_row( 'start_mode', 'Начало периода по умолчанию', $options['start_mode'], array( 'week' => 'С начала недели', 'today' => 'С сегодняшнего дня' ) ); ?>
-					<?php self::checkbox_row( 'hide_past_today', 'Скрывать прошедшие слоты текущего дня', $options['hide_past_today'] ); ?>
-					<?php self::checkbox_row( 'show_empty_days', 'Показывать дни без доступных экскурсий', $options['show_empty_days'] ); ?>
+					<?php self::number_row( 'days', __( 'Количество дней для показа', 'wss-bookings-schedule' ), $options['days'], 1, 7, __( 'В Lite доступно до 7 дней.', 'wss-bookings-schedule' ) ); ?>
+					<?php self::select_row( 'start_mode', __( 'Начало периода по умолчанию', 'wss-bookings-schedule' ), $options['start_mode'], array( 'week' => __( 'С начала недели', 'wss-bookings-schedule' ), 'today' => __( 'С сегодняшнего дня', 'wss-bookings-schedule' ) ) ); ?>
+					<?php self::checkbox_row( 'hide_past_today', __( 'Скрывать прошедшие слоты текущего дня', 'wss-bookings-schedule' ), $options['hide_past_today'] ); ?>
+					<?php self::checkbox_row( 'show_empty_days', __( 'Показывать дни без доступных экскурсий', 'wss-bookings-schedule' ), $options['show_empty_days'] ); ?>
 				</table></div>
 				<div id="wss-bs-texts" class="wss-bs-tab"><table class="form-table" role="presentation">
-					<?php self::checkbox_row( 'show_title', 'Показывать заголовок расписания', $options['show_title'], 'Обычно выключено, если на странице уже есть H1.' ); ?>
-					<?php foreach ( array( 'title'=>'Заголовок расписания, если включен', 'label_prev'=>'Кнопка назад', 'label_current'=>'Кнопка текущего периода', 'label_next'=>'Кнопка вперед', 'label_no_events'=>'Нет событий', 'label_no_product_events'=>'Нет выбранной экскурсии на дату', 'label_book'=>'Кнопка бронирования', 'label_select'=>'Кнопка выбора', 'date_format'=>'Формат даты дня', 'range_date_format'=>'Формат даты в диапазоне', 'time_format'=>'Формат времени' ) as $key => $label ) { self::text_row( $key, $label, $options[ $key ] ); } ?>
+					<?php self::checkbox_row( 'show_title', __( 'Показывать заголовок расписания', 'wss-bookings-schedule' ), $options['show_title'], __( 'Обычно выключено, если на странице уже есть H1.', 'wss-bookings-schedule' ) ); ?>
+					<?php foreach ( array( 'title'=>__( 'Заголовок расписания, если включен', 'wss-bookings-schedule' ), 'label_prev'=>__( 'Кнопка назад', 'wss-bookings-schedule' ), 'label_current'=>__( 'Кнопка текущего периода', 'wss-bookings-schedule' ), 'label_next'=>__( 'Кнопка вперед', 'wss-bookings-schedule' ), 'label_no_events'=>__( 'Нет событий', 'wss-bookings-schedule' ), 'label_no_product_events'=>__( 'Нет выбранной экскурсии на дату', 'wss-bookings-schedule' ), 'label_book'=>__( 'Кнопка бронирования', 'wss-bookings-schedule' ), 'label_select'=>__( 'Кнопка выбора', 'wss-bookings-schedule' ), 'date_format'=>__( 'Формат даты дня', 'wss-bookings-schedule' ), 'range_date_format'=>__( 'Формат даты в диапазоне', 'wss-bookings-schedule' ), 'time_format'=>__( 'Формат времени', 'wss-bookings-schedule' ) ) as $key => $label ) { self::text_row( $key, $label, $options[ $key ] ); } ?>
 				</table></div>
-				<div id="wss-bs-view" class="wss-bs-tab"><table class="form-table" role="presentation"><?php self::checkbox_row( 'show_price', 'Показывать цену', $options['show_price'] ); self::checkbox_row( 'show_duration', 'Показывать длительность', $options['show_duration'] ); ?></table></div>
-				<?php submit_button( 'Сохранить настройки', 'primary', 'submit', true, array( 'data-wss-bs-settings-submit' => '1' ) ); ?>
+				<div id="wss-bs-view" class="wss-bs-tab"><table class="form-table" role="presentation"><?php self::checkbox_row( 'show_price', __( 'Показывать цену', 'wss-bookings-schedule' ), $options['show_price'] ); self::checkbox_row( 'show_duration', __( 'Показывать длительность', 'wss-bookings-schedule' ), $options['show_duration'] ); ?></table></div>
+				<?php submit_button( __( 'Сохранить настройки', 'wss-bookings-schedule' ), 'primary', 'submit', true, array( 'data-wss-bs-settings-submit' => '1' ) ); ?>
 			</form>
 			<div id="wss-bs-free-pro" class="wss-bs-tab">
 				<h2>Free / Pro</h2>
-				<table class="widefat striped" style="max-width:900px"><tbody><tr><td>Недельное расписание</td><td><strong>Lite</strong></td></tr><tr><td>Фильтр по экскурсиям на фронте</td><td><strong>Pro</strong></td></tr><tr><td>Показ остатка мест</td><td><strong>Pro</strong></td></tr><tr><td>Выбор/исключение товаров и категорий</td><td><strong>Pro</strong></td></tr><tr><td>Настройка таймзоны и режима времени WooCommerce Bookings</td><td><strong>Pro</strong></td></tr><tr><td>Цвета, скругления карточек и кнопок</td><td><strong>Pro</strong></td></tr><tr><td>Период вывода до 31 дня</td><td><strong>Pro</strong></td></tr></tbody></table>
-				<p><a class="button button-primary" href="<?php echo esc_url( WSS_BS_UPGRADE_URL ); ?>" target="_blank" rel="noopener">Перейти к Pro-версии</a></p>
+				<table class="widefat striped" style="max-width:900px"><tbody><tr><td><?php echo esc_html__( 'Недельное расписание', 'wss-bookings-schedule' ); ?></td><td><strong>Lite</strong></td></tr><tr><td><?php echo esc_html__( 'Фильтр по экскурсиям на фронте', 'wss-bookings-schedule' ); ?></td><td><strong>Pro</strong></td></tr><tr><td><?php echo esc_html__( 'Показ остатка мест', 'wss-bookings-schedule' ); ?></td><td><strong>Pro</strong></td></tr><tr><td><?php echo esc_html__( 'Выбор/исключение товаров и категорий', 'wss-bookings-schedule' ); ?></td><td><strong>Pro</strong></td></tr><tr><td><?php echo esc_html__( 'Настройка таймзоны и режима времени WooCommerce Bookings', 'wss-bookings-schedule' ); ?></td><td><strong>Pro</strong></td></tr><tr><td><?php echo esc_html__( 'Цвета, скругления карточек и кнопок', 'wss-bookings-schedule' ); ?></td><td><strong>Pro</strong></td></tr><tr><td><?php echo esc_html__( 'Период вывода до 31 дня', 'wss-bookings-schedule' ); ?></td><td><strong>Pro</strong></td></tr></tbody></table>
+				<p><a class="button button-primary" href="<?php echo esc_url( WSS_BS_UPGRADE_URL ); ?>" target="_blank" rel="noopener"><?php echo esc_html__( 'Перейти к Pro-версии', 'wss-bookings-schedule' ); ?></a></p>
 			</div>
 		</div>
 		<?php self::admin_assets(); ?>
@@ -93,6 +93,7 @@ class WSS_BS_Settings {
 	private static function field_name( $key ) { return WSS_BS_Plugin::OPTION_NAME . '[' . esc_attr( $key ) . ']'; }
 	private static function text_row( $key, $label, $value, $description = '' ) { ?><tr><th scope="row"><label for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $label ); ?></label></th><td><input class="regular-text" type="text" id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( self::field_name( $key ) ); ?>" value="<?php echo esc_attr( $value ); ?>"><?php if ( $description ) : ?><p class="description"><?php echo esc_html( $description ); ?></p><?php endif; ?></td></tr><?php }
 	private static function number_row( $key, $label, $value, $min, $max, $description = '' ) { ?><tr><th scope="row"><label for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $label ); ?></label></th><td><input type="number" id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( self::field_name( $key ) ); ?>" value="<?php echo esc_attr( $value ); ?>" min="<?php echo esc_attr( $min ); ?>" max="<?php echo esc_attr( $max ); ?>"><?php if ( $description ) : ?><p class="description"><?php echo esc_html( $description ); ?></p><?php endif; ?></td></tr><?php }
-	private static function checkbox_row( $key, $label, $value, $description = '' ) { ?><tr><th scope="row"><?php echo esc_html( $label ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::field_name( $key ) ); ?>" value="1" <?php checked( $value, 'yes' ); ?>> Включено</label><?php if ( $description ) : ?><p class="description"><?php echo esc_html( $description ); ?></p><?php endif; ?></td></tr><?php }
+	private static function checkbox_row( $key, $label, $value, $description = '' ) { ?><tr><th scope="row"><?php echo esc_html( $label ); ?></th><td><label><input type="checkbox" name="<?php echo esc_attr( self::field_name( $key ) ); ?>" value="1" <?php checked( $value, 'yes' ); ?>> <?php echo esc_html__( 'Включено', 'wss-bookings-schedule' ); ?></label><?php if ( $description ) : ?><p class="description"><?php echo esc_html( $description ); ?></p><?php endif; ?></td></tr><?php }
 	private static function select_row( $key, $label, $value, $choices, $description = '' ) { ?><tr><th scope="row"><label for="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $label ); ?></label></th><td><select id="<?php echo esc_attr( $key ); ?>" name="<?php echo esc_attr( self::field_name( $key ) ); ?>"><?php foreach ( $choices as $choice_value => $choice_label ) : ?><option value="<?php echo esc_attr( $choice_value ); ?>" <?php selected( $value, $choice_value ); ?>><?php echo esc_html( $choice_label ); ?></option><?php endforeach; ?></select><?php if ( $description ) : ?><p class="description"><?php echo esc_html( $description ); ?></p><?php endif; ?></td></tr><?php }
 }
+

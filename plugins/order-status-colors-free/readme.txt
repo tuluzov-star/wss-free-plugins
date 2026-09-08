@@ -31,3 +31,10 @@ Pro-дополнение добавляет создание собственн�
 
 = 1.0.0 =
 * Первый релиз.
+
+
+
+## 1.1.2 — English localization
+
+English PHP and JavaScript translations are bundled. Russian remains available.
+Existing plugin directory and main file are unchanged.

@@ -53,8 +53,8 @@ class WSS_WCB_YC_Plugin
             'active_statuses' => ['processing', 'completed'],
             'auto_sync_after_save' => '1',
             'batch_size'      => 50,
-            'title_template'  => 'Экскурсия: {product_name} — {persons} {persons_label} — заказ #{order_id}',
-            'description_template' => "Бронирование: #{booking_id}\nЗаказ: #{order_id}\nЭкскурсия: {product_name}\n\nДата и время:\n{start_datetime} — {end_datetime}\n\nКоличество билетов/людей: {persons}\n\nКлиент:\n{customer_name}\n{customer_phone}\n{customer_email}\n\nСтатус заказа: {order_status}\nСтатус бронирования: {booking_status}\n\nАдминка:\nЗаказ: {admin_order_url}\nБронирование: {admin_booking_url}",
+            'title_template'  => __( 'Экскурсия: {product_name} — {persons} {persons_label} — заказ #{order_id}', 'wss-wcb-yandex-calendar' ),
+            'description_template' => __( "Бронирование: #{booking_id}\nЗаказ: #{order_id}\nЭкскурсия: {product_name}\n\nДата и время:\n{start_datetime} — {end_datetime}\n\nКоличество билетов/людей: {persons}\n\nКлиент:\n{customer_name}\n{customer_phone}\n{customer_email}\n\nСтатус заказа: {order_status}\nСтатус бронирования: {booking_status}\n\nАдминка:\nЗаказ: {admin_order_url}\nБронирование: {admin_booking_url}", 'wss-wcb-yandex-calendar' ),
         ];
     }
 
@@ -77,7 +77,7 @@ class WSS_WCB_YC_Plugin
             $options['description_template'] = $defaults['description_template'];
         }
 
-        return $options;
+        return WSS_Plugin_I18n_202609::defaults($options, 'wss-wcb-yandex-calendar');
     }
 
     public function admin_menu(): void
@@ -159,7 +159,7 @@ class WSS_WCB_YC_Plugin
         }
 
         if (!$this->is_pro()) {
-            $this->redirect_notice('warning', 'Первичная синхронизация будущих бронирований доступна в Pro-версии.');
+            $this->redirect_notice('warning', __( 'Первичная синхронизация будущих бронирований доступна в Pro-версии.', 'wss-wcb-yandex-calendar' ));
         }
 
         $result = $this->schedule_future_sync();
@@ -168,13 +168,13 @@ class WSS_WCB_YC_Plugin
             return;
         }
 
-        set_transient(self::LAST_NOTICE, ['type' => 'success', 'message' => sprintf('Настройки сохранены. Будущие бронирования поставлены в очередь синхронизации. Найдено: %d.', (int) $result)], 60);
+        set_transient(self::LAST_NOTICE, ['type' => 'success', 'message' => sprintf(__( 'Настройки сохранены. Будущие бронирования поставлены в очередь синхронизации. Найдено: %d.', 'wss-wcb-yandex-calendar' ), (int) $result)], 60);
     }
 
     public function render_settings_page(): void
     {
         if (!current_user_can('manage_woocommerce')) {
-            wp_die('Недостаточно прав.');
+            wp_die(__( 'Недостаточно прав.', 'wss-wcb-yandex-calendar' ));
         }
 
         $options = self::options();
@@ -187,55 +187,55 @@ class WSS_WCB_YC_Plugin
             <?php $this->render_inline_notice(); ?>
 
             <?php if (!$is_pro) : ?>
-                <div class="notice notice-info inline"><p><strong>Free-версия.</strong> В бесплатной версии доступны один Яндекс.Календарь, проверка подключения и отправка новых активных бронирований со статусами заказа «Обработка» и «Выполнен». Первичная синхронизация будущих броней, шаблоны, настраиваемые статусы, пометка отменённых событий и очистка связей доступны в Pro.</p></div>
+                <div class="notice notice-info inline"><p><strong><?php echo esc_html__( 'Free-версия.', 'wss-wcb-yandex-calendar' ); ?></strong> <?php echo esc_html__( 'В бесплатной версии доступны один Яндекс.Календарь, проверка подключения и отправка новых активных бронирований со статусами заказа «Обработка» и «Выполнен». Первичная синхронизация будущих броней, шаблоны, настраиваемые статусы, пометка отменённых событий и очистка связей доступны в Pro.', 'wss-wcb-yandex-calendar' ); ?></p></div>
             <?php else : ?>
-                <div class="notice notice-success inline"><p><strong>Pro-версия активна.</strong> Доступны первичная синхронизация, шаблоны, настройка статусов и обработка отмен.</p></div>
+                <div class="notice notice-success inline"><p><strong><?php echo esc_html__( 'Pro-версия активна.', 'wss-wcb-yandex-calendar' ); ?></strong> <?php echo esc_html__( 'Доступны первичная синхронизация, шаблоны, настройка статусов и обработка отмен.', 'wss-wcb-yandex-calendar' ); ?></p></div>
             <?php endif; ?>
 
             <?php if (!class_exists('WC_Booking')) : ?>
-                <div class="notice notice-warning"><p>Плагин WooCommerce Bookings не обнаружен. Настройки можно сохранить, но синхронизация начнёт работать только после активации WooCommerce Bookings.</p></div>
+                <div class="notice notice-warning"><p><?php echo esc_html__( 'Плагин WooCommerce Bookings не обнаружен. Настройки можно сохранить, но синхронизация начнёт работать только после активации WooCommerce Bookings.', 'wss-wcb-yandex-calendar' ); ?></p></div>
             <?php endif; ?>
 
             <form method="post" action="options.php">
                 <?php settings_fields('wss_wcb_yc_settings'); ?>
                 <table class="form-table" role="presentation">
                     <tr>
-                        <th scope="row">Синхронизация</th>
+                        <th scope="row"><?php echo esc_html__( 'Синхронизация', 'wss-wcb-yandex-calendar' ); ?></th>
                         <td>
                             <label>
                                 <input type="checkbox" name="<?php echo esc_attr(self::OPTION); ?>[enabled]" value="1" <?php checked($options['enabled'], '1'); ?>>
-                                Включить отправку будущих бронирований в Яндекс.Календарь
+                                <?php echo esc_html__( 'Включить отправку будущих бронирований в Яндекс.Календарь', 'wss-wcb-yandex-calendar' ); ?>
                             </label>
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="wss-wcb-yc-email">Email Яндекса</label></th>
+                        <th scope="row"><label for="wss-wcb-yc-email"><?php echo esc_html__( 'Email Яндекса', 'wss-wcb-yandex-calendar' ); ?></label></th>
                         <td><input id="wss-wcb-yc-email" class="regular-text" type="email" name="<?php echo esc_attr(self::OPTION); ?>[email]" value="<?php echo esc_attr($options['email']); ?>" autocomplete="off"></td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="wss-wcb-yc-password">Пароль приложения</label></th>
+                        <th scope="row"><label for="wss-wcb-yc-password"><?php echo esc_html__( 'Пароль приложения', 'wss-wcb-yandex-calendar' ); ?></label></th>
                         <td>
                             <input id="wss-wcb-yc-password" class="regular-text" type="password" name="<?php echo esc_attr(self::OPTION); ?>[app_password]" value="" autocomplete="new-password" placeholder="Оставьте пустым, чтобы не менять">
                             <?php if (!empty($options['app_password'])) : ?>
-                                <p class="description">Пароль приложения уже сохранён. Для замены введите новый.</p>
+                                <p class="description"><?php echo esc_html__( 'Пароль приложения уже сохранён. Для замены введите новый.', 'wss-wcb-yandex-calendar' ); ?></p>
                             <?php else : ?>
-                                <p class="description">Пароль приложения ещё не сохранён. Вставьте пароль и нажмите «Сохранить настройки» перед проверкой подключения.</p>
+                                <p class="description"><?php echo esc_html__( 'Пароль приложения ещё не сохранён. Вставьте пароль и нажмите «Сохранить настройки» перед проверкой подключения.', 'wss-wcb-yandex-calendar' ); ?></p>
                             <?php endif; ?>
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="wss-wcb-yc-caldav">CalDAV URL календаря</label></th>
+                        <th scope="row"><label for="wss-wcb-yc-caldav"><?php echo esc_html__( 'CalDAV URL календаря', 'wss-wcb-yandex-calendar' ); ?></label></th>
                         <td>
                             <input id="wss-wcb-yc-caldav" class="large-text" type="url" name="<?php echo esc_attr(self::OPTION); ?>[caldav_url]" value="<?php echo esc_attr($options['caldav_url']); ?>" placeholder="https://caldav.yandex.ru/calendars/.../">
-                            <p class="description">Вставьте URL конкретного календаря. События будут записываться в этот один календарь.</p>
+                            <p class="description"><?php echo esc_html__( 'Вставьте URL конкретного календаря. События будут записываться в этот один календарь.', 'wss-wcb-yandex-calendar' ); ?></p>
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="wss-wcb-yc-timezone">Часовой пояс</label></th>
+                        <th scope="row"><label for="wss-wcb-yc-timezone"><?php echo esc_html__( 'Часовой пояс', 'wss-wcb-yandex-calendar' ); ?></label></th>
                         <td><input id="wss-wcb-yc-timezone" class="regular-text" type="text" name="<?php echo esc_attr(self::OPTION); ?>[timezone]" value="<?php echo esc_attr($options['timezone']); ?>" placeholder="Europe/Moscow"></td>
                     </tr>
                     <tr>
-                        <th scope="row">Статусы заказов</th>
+                        <th scope="row"><?php echo esc_html__( 'Статусы заказов', 'wss-wcb-yandex-calendar' ); ?></th>
                         <td>
                             <?php if ($is_pro) : ?>
                                 <?php foreach ($statuses as $key => $label) : ?>
@@ -244,46 +244,46 @@ class WSS_WCB_YC_Plugin
                                         <?php echo esc_html($label); ?>
                                     </label>
                                 <?php endforeach; ?>
-                                <p class="description">Если заказ выходит из этих статусов или бронь отменена, ранее созданное событие будет оставлено с пометкой [ОТМЕНЕНО].</p>
+                                <p class="description"><?php echo esc_html__( 'Если заказ выходит из этих статусов или бронь отменена, ранее созданное событие будет оставлено с пометкой [ОТМЕНЕНО].', 'wss-wcb-yandex-calendar' ); ?></p>
                             <?php else : ?>
-                                <p><strong>Обработка</strong> и <strong>Выполнен</strong>.</p>
-                                <p class="description">Изменение списка статусов и корректная пометка отменённых событий доступны в Pro.</p>
+                                <p><strong><?php echo esc_html__( 'Обработка', 'wss-wcb-yandex-calendar' ); ?></strong> <?php echo esc_html__( 'и', 'wss-wcb-yandex-calendar' ); ?> <strong><?php echo esc_html__( 'Выполнен', 'wss-wcb-yandex-calendar' ); ?></strong>.</p>
+                                <p class="description"><?php echo esc_html__( 'Изменение списка статусов и корректная пометка отменённых событий доступны в Pro.', 'wss-wcb-yandex-calendar' ); ?></p>
                             <?php endif; ?>
                         </td>
                     </tr>
 
                     <?php if ($is_pro) : ?>
                         <tr>
-                            <th scope="row">Первичная синхронизация</th>
+                            <th scope="row"><?php echo esc_html__( 'Первичная синхронизация', 'wss-wcb-yandex-calendar' ); ?></th>
                             <td>
                                 <label>
                                     <input type="checkbox" name="<?php echo esc_attr(self::OPTION); ?>[auto_sync_after_save]" value="1" <?php checked($options['auto_sync_after_save'], '1'); ?>>
-                                    После сохранения настроек поставить в очередь будущие бронирования за сегодня и дальше
+                                    <?php echo esc_html__( 'После сохранения настроек поставить в очередь будущие бронирования за сегодня и дальше', 'wss-wcb-yandex-calendar' ); ?>
                                 </label>
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="wss-wcb-yc-batch">Размер пакета</label></th>
-                            <td><input id="wss-wcb-yc-batch" class="small-text" type="number" min="5" max="200" name="<?php echo esc_attr(self::OPTION); ?>[batch_size]" value="<?php echo esc_attr((string) $options['batch_size']); ?>"> бронирований</td>
+                            <th scope="row"><label for="wss-wcb-yc-batch"><?php echo esc_html__( 'Размер пакета', 'wss-wcb-yandex-calendar' ); ?></label></th>
+                            <td><input id="wss-wcb-yc-batch" class="small-text" type="number" min="5" max="200" name="<?php echo esc_attr(self::OPTION); ?>[batch_size]" value="<?php echo esc_attr((string) $options['batch_size']); ?>"> <?php echo esc_html__( 'бронирований', 'wss-wcb-yandex-calendar' ); ?></td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="wss-wcb-yc-title">Шаблон заголовка</label></th>
+                            <th scope="row"><label for="wss-wcb-yc-title"><?php echo esc_html__( 'Шаблон заголовка', 'wss-wcb-yandex-calendar' ); ?></label></th>
                             <td>
                                 <input id="wss-wcb-yc-title" class="large-text" type="text" name="<?php echo esc_attr(self::OPTION); ?>[title_template]" value="<?php echo esc_attr($options['title_template']); ?>">
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><label for="wss-wcb-yc-desc">Шаблон описания</label></th>
+                            <th scope="row"><label for="wss-wcb-yc-desc"><?php echo esc_html__( 'Шаблон описания', 'wss-wcb-yandex-calendar' ); ?></label></th>
                             <td>
                                 <textarea id="wss-wcb-yc-desc" class="large-text code" rows="12" name="<?php echo esc_attr(self::OPTION); ?>[description_template]"><?php echo esc_textarea($options['description_template']); ?></textarea>
-                                <p class="description">Доступные переменные: {booking_id}, {order_id}, {product_name}, {persons}, {persons_label}, {customer_name}, {customer_phone}, {customer_email}, {order_status}, {booking_status}, {start_datetime}, {end_datetime}, {admin_order_url}, {admin_booking_url}.</p>
+                                <p class="description"><?php echo esc_html__( 'Доступные переменные: {booking_id}, {order_id}, {product_name}, {persons}, {persons_label}, {customer_name}, {customer_phone}, {customer_email}, {order_status}, {booking_status}, {start_datetime}, {end_datetime}, {admin_order_url}, {admin_booking_url}.', 'wss-wcb-yandex-calendar' ); ?></p>
                             </td>
                         </tr>
                     <?php else : ?>
                         <tr>
-                            <th scope="row">Pro-функции</th>
+                            <th scope="row"><?php echo esc_html__( 'Pro-функции', 'wss-wcb-yandex-calendar' ); ?></th>
                             <td>
-                                <p>В Pro доступны первичная синхронизация будущих броней, размер пакета, шаблоны заголовка/описания, выбор статусов заказов, обработка отмен и очистка связей.</p>
+                                <p><?php echo esc_html__( 'В Pro доступны первичная синхронизация будущих броней, размер пакета, шаблоны заголовка/описания, выбор статусов заказов, обработка отмен и очистка связей.', 'wss-wcb-yandex-calendar' ); ?></p>
                             </td>
                         </tr>
                     <?php endif; ?>
@@ -291,43 +291,43 @@ class WSS_WCB_YC_Plugin
                     <?php do_action('wss_wcb_yc_after_settings_fields', $options, $is_pro); ?>
                 </table>
 
-                <?php submit_button('Сохранить настройки'); ?>
+                <?php submit_button(__( 'Сохранить настройки', 'wss-wcb-yandex-calendar' )); ?>
             </form>
 
             <hr>
 
-            <h2>Действия</h2>
-            <p>Используйте кнопки после сохранения email, пароля приложения и CalDAV URL.</p>
+            <h2><?php echo esc_html__( 'Действия', 'wss-wcb-yandex-calendar' ); ?></h2>
+            <p><?php echo esc_html__( 'Используйте кнопки после сохранения email, пароля приложения и CalDAV URL.', 'wss-wcb-yandex-calendar' ); ?></p>
 
             <div class="wss-wcb-yc-actions" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
                 <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="margin:0;">
                     <input type="hidden" name="action" value="wss_wcb_yc_test_connection">
                     <?php wp_nonce_field('wss_wcb_yc_test_connection'); ?>
-                    <?php submit_button('Проверить подключение', 'secondary', 'submit', false); ?>
+                    <?php submit_button(__( 'Проверить подключение', 'wss-wcb-yandex-calendar' ), 'secondary', 'submit', false); ?>
                 </form>
 
                 <?php if ($is_pro) : ?>
                     <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="margin:0;">
                         <input type="hidden" name="action" value="wss_wcb_yc_sync_future">
                         <?php wp_nonce_field('wss_wcb_yc_sync_future'); ?>
-                        <?php submit_button('Синхронизировать будущие бронирования', 'primary', 'submit', false); ?>
+                        <?php submit_button(__( 'Синхронизировать будущие бронирования', 'wss-wcb-yandex-calendar' ), 'primary', 'submit', false); ?>
                     </form>
 
                     <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="margin:0;" onsubmit="return confirm('Удалить только связь booking → Yandex UID? События в Яндекс.Календаре не будут удалены.');">
                         <input type="hidden" name="action" value="wss_wcb_yc_clear_links">
                         <?php wp_nonce_field('wss_wcb_yc_clear_links'); ?>
-                        <?php submit_button('Очистить связь у броней', 'secondary', 'submit', false); ?>
+                        <?php submit_button(__( 'Очистить связь у броней', 'wss-wcb-yandex-calendar' ), 'secondary', 'submit', false); ?>
                     </form>
                 <?php else : ?>
-                    <button type="button" class="button button-primary" disabled>Синхронизировать будущие бронирования — Pro</button>
-                    <button type="button" class="button" disabled>Очистить связь у броней — Pro</button>
+                    <button type="button" class="button button-primary" disabled><?php echo esc_html__( 'Синхронизировать будущие бронирования — Pro', 'wss-wcb-yandex-calendar' ); ?></button>
+                    <button type="button" class="button" disabled><?php echo esc_html__( 'Очистить связь у броней — Pro', 'wss-wcb-yandex-calendar' ); ?></button>
                 <?php endif; ?>
             </div>
-            <p class="description">Кнопки используют уже сохранённые настройки. Если вы только что вставили email, пароль или CalDAV URL, сначала нажмите «Сохранить настройки».</p>
+            <p class="description"><?php echo esc_html__( 'Кнопки используют уже сохранённые настройки. Если вы только что вставили email, пароль или CalDAV URL, сначала нажмите «Сохранить настройки».', 'wss-wcb-yandex-calendar' ); ?></p>
             <?php do_action('wss_wcb_yc_after_actions', $options, $is_pro); ?>
 
-            <h2>Как работает отмена</h2>
-            <p>В Free-версии отправляются новые активные бронирования. В Pro-версии событие не удаляется из календаря: заголовок обновляется с префиксом <code>[ОТМЕНЕНО]</code>. Если позже появится новая активная бронь на то же время, она будет создана отдельным событием, потому что UID привязан к ID бронирования.</p>
+            <h2><?php echo esc_html__( 'Как работает отмена', 'wss-wcb-yandex-calendar' ); ?></h2>
+            <p><?php echo esc_html__( 'В Free-версии отправляются новые активные бронирования. В Pro-версии событие не удаляется из календаря: заголовок обновляется с префиксом', 'wss-wcb-yandex-calendar' ); ?> <code><?php echo esc_html__( '[ОТМЕНЕНО]', 'wss-wcb-yandex-calendar' ); ?></code><?php echo esc_html__( '. Если позже появится новая активная бронь на то же время, она будет создана отдельным событием, потому что UID привязан к ID бронирования.', 'wss-wcb-yandex-calendar' ); ?></p>
         </div>
         <?php
     }
@@ -395,7 +395,7 @@ class WSS_WCB_YC_Plugin
     public function handle_test_connection(): void
     {
         if (!current_user_can('manage_woocommerce')) {
-            wp_die('Недостаточно прав.');
+            wp_die(__( 'Недостаточно прав.', 'wss-wcb-yandex-calendar' ));
         }
         check_admin_referer('wss_wcb_yc_test_connection');
 
@@ -409,18 +409,18 @@ class WSS_WCB_YC_Plugin
             $this->redirect_notice('error', $result->get_error_message());
         }
 
-        $this->redirect_notice('success', 'Подключение к Яндекс.Календарю успешно проверено.');
+        $this->redirect_notice('success', __( 'Подключение к Яндекс.Календарю успешно проверено.', 'wss-wcb-yandex-calendar' ));
     }
 
     public function handle_manual_sync_future(): void
     {
         if (!current_user_can('manage_woocommerce')) {
-            wp_die('Недостаточно прав.');
+            wp_die(__( 'Недостаточно прав.', 'wss-wcb-yandex-calendar' ));
         }
         check_admin_referer('wss_wcb_yc_sync_future');
 
         if (!$this->is_pro()) {
-            $this->redirect_notice('warning', 'Первичная синхронизация будущих бронирований доступна в Pro-версии.');
+            $this->redirect_notice('warning', __( 'Первичная синхронизация будущих бронирований доступна в Pro-версии.', 'wss-wcb-yandex-calendar' ));
         }
 
         $result = $this->schedule_future_sync();
@@ -428,18 +428,18 @@ class WSS_WCB_YC_Plugin
             $this->redirect_notice('error', $result->get_error_message());
         }
 
-        $this->redirect_notice('success', sprintf('Будущие бронирования поставлены в очередь синхронизации. Найдено: %d.', (int) $result));
+        $this->redirect_notice('success', sprintf(__( 'Будущие бронирования поставлены в очередь синхронизации. Найдено: %d.', 'wss-wcb-yandex-calendar' ), (int) $result));
     }
 
     public function handle_clear_links(): void
     {
         if (!current_user_can('manage_woocommerce')) {
-            wp_die('Недостаточно прав.');
+            wp_die(__( 'Недостаточно прав.', 'wss-wcb-yandex-calendar' ));
         }
         check_admin_referer('wss_wcb_yc_clear_links');
 
         if (!$this->is_pro()) {
-            $this->redirect_notice('warning', 'Очистка связей доступна в Pro-версии.');
+            $this->redirect_notice('warning', __( 'Очистка связей доступна в Pro-версии.', 'wss-wcb-yandex-calendar' ));
         }
 
         $query = new WP_Query([
@@ -465,7 +465,7 @@ class WSS_WCB_YC_Plugin
             $count++;
         }
 
-        $this->redirect_notice('success', sprintf('Связь с Яндекс UID очищена у %d бронирований. События в календаре не удалялись.', $count));
+        $this->redirect_notice('success', sprintf(__( 'Связь с Яндекс UID очищена у %d бронирований. События в календаре не удалялись.', 'wss-wcb-yandex-calendar' ), $count));
     }
 
     public function queue_booking_sync_from_save(int $post_id, WP_Post $post, bool $update): void
@@ -524,17 +524,17 @@ class WSS_WCB_YC_Plugin
     {
         $booking_id = $this->normalize_booking_id($booking_id);
         if (!$booking_id || !$this->is_enabled()) {
-            return new WP_Error('wss_wcb_yc_disabled', 'Синхронизация выключена.');
+            return new WP_Error('wss_wcb_yc_disabled', __( 'Синхронизация выключена.', 'wss-wcb-yandex-calendar' ));
         }
 
         $booking = $this->get_booking($booking_id);
         if (!$booking) {
-            return new WP_Error('wss_wcb_yc_booking_not_found', 'Бронирование не найдено.');
+            return new WP_Error('wss_wcb_yc_booking_not_found', __( 'Бронирование не найдено.', 'wss-wcb-yandex-calendar' ));
         }
 
         $start_ts = $this->get_booking_start_ts($booking, $booking_id);
         if (!$this->is_current_or_future($start_ts)) {
-            return new WP_Error('wss_wcb_yc_past_booking', 'Прошедшие бронирования не синхронизируются.');
+            return new WP_Error('wss_wcb_yc_past_booking', __( 'Прошедшие бронирования не синхронизируются.', 'wss-wcb-yandex-calendar' ));
         }
 
         $order_id = $this->get_booking_order_id($booking, $booking_id);
@@ -547,12 +547,12 @@ class WSS_WCB_YC_Plugin
         $is_order_active = $order && in_array($order_status, self::options()['active_statuses'], true);
 
         if (!$is_order_active && !$has_existing_event) {
-            return new WP_Error('wss_wcb_yc_not_active', 'У бронирования нет активного заказа и ещё нет события в календаре.');
+            return new WP_Error('wss_wcb_yc_not_active', __( 'У бронирования нет активного заказа и ещё нет события в календаре.', 'wss-wcb-yandex-calendar' ));
         }
 
         $cancelled = $is_booking_cancelled || !$is_order_active;
         if ($cancelled && !$this->is_pro()) {
-            return new WP_Error('wss_wcb_yc_cancel_pro_required', 'Пометка отменённых событий доступна в Pro-версии.');
+            return new WP_Error('wss_wcb_yc_cancel_pro_required', __( 'Пометка отменённых событий доступна в Pro-версии.', 'wss-wcb-yandex-calendar' ));
         }
         $event = $this->build_event_data($booking, $booking_id, $order, $cancelled);
 
@@ -581,16 +581,16 @@ class WSS_WCB_YC_Plugin
     public function schedule_future_sync()
     {
         if (!$this->is_pro()) {
-            return new WP_Error('wss_wcb_yc_pro_required', 'Первичная синхронизация будущих бронирований доступна в Pro-версии.');
+            return new WP_Error('wss_wcb_yc_pro_required', __( 'Первичная синхронизация будущих бронирований доступна в Pro-версии.', 'wss-wcb-yandex-calendar' ));
         }
 
         if (!$this->is_enabled()) {
-            return new WP_Error('wss_wcb_yc_disabled', 'Синхронизация выключена.');
+            return new WP_Error('wss_wcb_yc_disabled', __( 'Синхронизация выключена.', 'wss-wcb-yandex-calendar' ));
         }
 
         $options = self::options();
         if (!$this->has_required_settings($options)) {
-            return new WP_Error('wss_wcb_yc_missing_settings', 'Заполните Email Яндекса, пароль приложения и CalDAV URL календаря.');
+            return new WP_Error('wss_wcb_yc_missing_settings', __( 'Заполните Email Яндекса, пароль приложения и CalDAV URL календаря.', 'wss-wcb-yandex-calendar' ));
         }
 
         $today_start = $this->today_start_booking_value();
@@ -644,7 +644,7 @@ class WSS_WCB_YC_Plugin
 
         $product_name = $this->get_booking_product_name($booking, $booking_id);
         $persons = $this->get_booking_persons_count($booking, $booking_id);
-        $persons_label = $this->plural_ru($persons, 'билет', 'билета', 'билетов');
+        $persons_label = $this->plural_ru($persons, __( 'билет', 'wss-wcb-yandex-calendar' ), __( 'билета', 'wss-wcb-yandex-calendar' ), __( 'билетов', 'wss-wcb-yandex-calendar' ));
 
         $order_id = $order ? $order->get_id() : $this->get_booking_order_id($booking, $booking_id);
         $customer_name = $this->get_customer_name($order);
@@ -677,8 +677,8 @@ class WSS_WCB_YC_Plugin
         $summary = strtr($options['title_template'], $replacements);
         $description = strtr($options['description_template'], $replacements);
 
-        if ($cancelled && mb_stripos($summary, '[ОТМЕНЕНО]', 0, 'UTF-8') === false) {
-            $summary = '[ОТМЕНЕНО] ' . $summary;
+        if ($cancelled && mb_stripos($summary, __( '[ОТМЕНЕНО]', 'wss-wcb-yandex-calendar' ), 0, 'UTF-8') === false) {
+            $summary = __( '[ОТМЕНЕНО] ', 'wss-wcb-yandex-calendar' ) . $summary;
         }
 
         return [
@@ -708,8 +708,8 @@ class WSS_WCB_YC_Plugin
         }
 
         return [
-            'processing' => 'Обработка',
-            'completed'  => 'Выполнен',
+            'processing' => __( 'Обработка', 'wss-wcb-yandex-calendar' ),
+            'completed'  => __( 'Выполнен', 'wss-wcb-yandex-calendar' ),
         ];
     }
 
@@ -726,7 +726,7 @@ class WSS_WCB_YC_Plugin
     {
         $options = self::options();
         if (!$this->has_required_settings($options)) {
-            return new WP_Error('wss_wcb_yc_missing_settings', 'Заполните Email Яндекса, пароль приложения и CalDAV URL календаря.');
+            return new WP_Error('wss_wcb_yc_missing_settings', __( 'Заполните Email Яндекса, пароль приложения и CalDAV URL календаря.', 'wss-wcb-yandex-calendar' ));
         }
         return new WSS_WCB_YC_CalDAV_Client($options['caldav_url'], $options['email'], $options['app_password']);
     }
@@ -976,7 +976,7 @@ class WSS_WCB_YC_Plugin
             return get_the_title($product_id);
         }
 
-        return 'Бронирование';
+        return __( 'Бронирование', 'wss-wcb-yandex-calendar' );
     }
 
     private function get_booking_persons_count($booking, int $booking_id): int
@@ -1049,6 +1049,9 @@ class WSS_WCB_YC_Plugin
 
     private function plural_ru(int $number, string $one, string $few, string $many): string
     {
+        if (strpos(determine_locale(), 'en') === 0) {
+            return abs($number) === 1 ? $one : $many;
+        }
         $n = abs($number) % 100;
         $n1 = $n % 10;
         if ($n > 10 && $n < 20) {
@@ -1099,3 +1102,4 @@ class WSS_WCB_YC_Plugin
         exit;
     }
 }
+

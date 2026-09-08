@@ -421,7 +421,7 @@ class WSS_BS_Query {
 		$start = (string) ( $slot->start_time ?? '' );
 		$end   = (string) ( $slot->end_time ?? '' );
 		$note  = (string) ( $slot->note ?? '' );
-		return ( '00:00:00' === $start && in_array( $end, array( '23:59:00', '23:59:59' ), true ) ) || false !== strpos( $note, 'Автоматический слот на весь день' );
+		return ( '00:00:00' === $start && in_array( $end, array( '23:59:00', '23:59:59' ), true ) ) || false !== strpos( $note, __( 'Автоматический слот на весь день', 'wss-bookings-schedule' ) );
 	}
 
 	private static function should_hide_past_slot( $start, $end, $all_day, $options ) {
@@ -526,3 +526,4 @@ class WSS_BS_Query {
 		return $a['start'] === $b['start'] ? strcasecmp( $a['product_name'], $b['product_name'] ) : $a['start'] <=> $b['start'];
 	}
 }
+

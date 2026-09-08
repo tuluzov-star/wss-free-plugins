@@ -30,3 +30,10 @@
 5. Нажать `Проверить подключение`.
 
 Пароль приложения хранится в настройках WordPress. Не отправляйте его в переписку и не храните в публичных репозиториях.
+
+
+
+## 1.0.2 — English localization
+
+English PHP and JavaScript translations are bundled. Russian remains available.
+Existing plugin directory and main file are unchanged.

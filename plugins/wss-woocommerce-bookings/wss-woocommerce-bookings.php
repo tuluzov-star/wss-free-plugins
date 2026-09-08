@@ -2,10 +2,11 @@
 /**
  * Plugin Name: WSS WooCommerce Bookings
  * Description: Lightweight booking slots manager for WooCommerce products: schedule slots, frontend calendar, capacity checks and order item metadata. Pro add-on unlocks migrations, blocks, booking calendar, ticket types and exports.
- * Version: 0.5.1
+ * Version: 0.5.2
  * Author: WSS
  * Author URI: https://website-support.ru/
  * Text Domain: wss-wc-bookings
+ * Domain Path: /languages
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * WC requires at least: 6.0
@@ -15,8 +16,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+require_once __DIR__ . '/includes/wss-i18n.php';
+WSS_Plugin_I18n_202609::register(__FILE__, 'wss-wc-bookings');
+
 final class WSS_WooCommerce_Bookings {
-    const VERSION = '0.5.1';
+    const VERSION = '0.5.2';
     const PRODUCT_META_ENABLED = '_wss_booking_enabled';
     const PRODUCT_META_DISABLE_AUTO_ALL_DAY = '_wss_booking_disable_auto_all_day';
     const ORDER_META_RESERVED = '_wss_booking_reserved';
@@ -72,6 +76,7 @@ final class WSS_WooCommerce_Bookings {
         add_action('wp_enqueue_scripts', [$this, 'frontend_assets']);
 
         if ($this->is_woocommerce_active()) {
+            add_filter('woocommerce_order_item_display_meta_key', [$this, 'translate_order_meta_label'], 10, 3);
             add_filter('woocommerce_product_class', [$this, 'maybe_map_legacy_booking_product_class'], 20, 4);
             add_filter('woocommerce_is_purchasable', [$this, 'booking_product_is_purchasable'], 20, 2);
             add_filter('woocommerce_product_get_price', [$this, 'fallback_booking_price'], 20, 2);
@@ -172,7 +177,7 @@ final class WSS_WooCommerce_Bookings {
         if (!current_user_can('activate_plugins') || $this->is_woocommerce_active()) {
             return;
         }
-        echo '<div class="notice notice-warning"><p><strong>WSS WooCommerce Bookings:</strong> для работы плагина нужен активный WooCommerce.</p></div>';
+        echo __( '<div class="notice notice-warning"><p><strong>WSS WooCommerce Bookings:</strong> для работы плагина нужен активный WooCommerce.</p></div>', 'wss-wc-bookings' );
     }
 
     public static function table_name(): string {
@@ -244,8 +249,8 @@ final class WSS_WooCommerce_Bookings {
 
         add_submenu_page(
             self::ADMIN_PAGE_MAIN,
-            'Расписание',
-            'Расписание',
+            __( 'Расписание', 'wss-wc-bookings' ),
+            __( 'Расписание', 'wss-wc-bookings' ),
             'manage_woocommerce',
             self::ADMIN_PAGE_MAIN,
             [$this, 'render_admin_page']
@@ -254,8 +259,8 @@ final class WSS_WooCommerce_Bookings {
         if ($this->is_pro_active()) {
             add_submenu_page(
                 self::ADMIN_PAGE_MAIN,
-                'Массовые действия',
-                'Массовые действия',
+                __( 'Массовые действия', 'wss-wc-bookings' ),
+                __( 'Массовые действия', 'wss-wc-bookings' ),
                 'manage_woocommerce',
                 self::ADMIN_PAGE_TOOLS,
                 [$this, 'render_tools_page']
@@ -263,8 +268,8 @@ final class WSS_WooCommerce_Bookings {
 
             add_submenu_page(
                 self::ADMIN_PAGE_MAIN,
-                'Блокировки',
-                'Блокировки',
+                __( 'Блокировки', 'wss-wc-bookings' ),
+                __( 'Блокировки', 'wss-wc-bookings' ),
                 'manage_woocommerce',
                 self::ADMIN_PAGE_BLOCKS,
                 [$this, 'render_blocks_page']
@@ -272,8 +277,8 @@ final class WSS_WooCommerce_Bookings {
 
             add_submenu_page(
                 self::ADMIN_PAGE_MAIN,
-                'Календарь броней',
-                'Календарь броней',
+                __( 'Календарь броней', 'wss-wc-bookings' ),
+                __( 'Календарь броней', 'wss-wc-bookings' ),
                 'manage_woocommerce',
                 self::ADMIN_PAGE_CALENDAR,
                 [$this, 'render_bookings_calendar_page']
@@ -281,8 +286,8 @@ final class WSS_WooCommerce_Bookings {
 
             add_submenu_page(
                 self::ADMIN_PAGE_MAIN,
-                'Списки гостей',
-                'Списки гостей',
+                __( 'Списки гостей', 'wss-wc-bookings' ),
+                __( 'Списки гостей', 'wss-wc-bookings' ),
                 'manage_woocommerce',
                 self::ADMIN_PAGE_GUESTS,
                 [$this, 'render_guests_page']
@@ -290,8 +295,8 @@ final class WSS_WooCommerce_Bookings {
 
             add_submenu_page(
                 self::ADMIN_PAGE_MAIN,
-                'Настройки',
-                'Настройки',
+                __( 'Настройки', 'wss-wc-bookings' ),
+                __( 'Настройки', 'wss-wc-bookings' ),
                 'manage_woocommerce',
                 self::ADMIN_PAGE_SETTINGS,
                 [$this, 'render_settings_page']
@@ -299,8 +304,8 @@ final class WSS_WooCommerce_Bookings {
         } else {
             add_submenu_page(
                 self::ADMIN_PAGE_MAIN,
-                'Возможности Pro',
-                'Возможности Pro',
+                __( 'Возможности Pro', 'wss-wc-bookings' ),
+                __( 'Возможности Pro', 'wss-wc-bookings' ),
                 'manage_woocommerce',
                 self::ADMIN_PAGE_PRO,
                 [$this, 'render_pro_page']
@@ -369,17 +374,17 @@ final class WSS_WooCommerce_Bookings {
         woocommerce_wp_checkbox([
             'id' => self::PRODUCT_META_ENABLED,
             'label' => 'WSS Bookings',
-            'description' => 'Включить выбор даты и времени бронирования для этого товара.',
+            'description' => __( 'Включить выбор даты и времени бронирования для этого товара.', 'wss-wc-bookings' ),
             'desc_tip' => true,
         ]);
 
         if ($this->is_pro_active()) {
             $ticket_lines = $this->ticket_types_to_text($this->get_ticket_types((int) get_the_ID()));
-            echo '<p class="form-field wss-booking-ticket-types-field"><label for="wss_booking_ticket_types_text">Типы билетов</label>';
-            echo '<textarea id="wss_booking_ticket_types_text" name="wss_booking_ticket_types_text" rows="4" style="width:50%;" placeholder="Взрослый|1000&#10;Детский|700">' . esc_textarea($ticket_lines) . '</textarea>';
-            echo '<span class="description">Pro: один тип билета на строку в формате <code>Название|Цена</code>. Если поле пустое, используется обычное количество товара WooCommerce.</span></p>';
+            echo __( '<p class="form-field wss-booking-ticket-types-field"><label for="wss_booking_ticket_types_text">Типы билетов</label>', 'wss-wc-bookings' );
+            echo __( '<textarea id="wss_booking_ticket_types_text" name="wss_booking_ticket_types_text" rows="4" style="width:50%;" placeholder="Взрослый|1000&#10;Детский|700">', 'wss-wc-bookings' ) . esc_textarea($ticket_lines) . '</textarea>';
+            echo __( '<span class="description">Pro: один тип билета на строку в формате <code>Название|Цена</code>. Если поле пустое, используется обычное количество товара WooCommerce.</span></p>', 'wss-wc-bookings' );
         } else {
-            echo '<p class="form-field"><label>Типы билетов</label><span class="description">Типы билетов, разные цены и списки гостей доступны в WSS WooCommerce Bookings Pro.</span></p>';
+            echo __( '<p class="form-field"><label>Типы билетов</label><span class="description">Типы билетов, разные цены и списки гостей доступны в WSS WooCommerce Bookings Pro.</span></p>', 'wss-wc-bookings' );
         }
         echo '</div>';
     }
@@ -564,7 +569,7 @@ final class WSS_WooCommerce_Bookings {
             $checked = !empty($_POST['confirm_delete_all']);
             $confirm_text = isset($_POST['confirm_delete_text']) ? trim(sanitize_text_field(wp_unslash($_POST['confirm_delete_text']))) : '';
 
-            if (!$checked || $confirm_text !== 'УДАЛИТЬ') {
+            if (!$checked || $confirm_text !== __( 'УДАЛИТЬ', 'wss-wc-bookings' )) {
                 $this->redirect_admin(0, 'delete_all_confirm_error', [], self::ADMIN_PAGE_TOOLS);
             }
 
@@ -630,19 +635,19 @@ final class WSS_WooCommerce_Bookings {
 
     private function render_admin_tabs(string $current_page): void {
         $tabs = [
-            self::ADMIN_PAGE_MAIN => 'Расписание',
+            self::ADMIN_PAGE_MAIN => __( 'Расписание', 'wss-wc-bookings' ),
         ];
 
         if ($this->is_pro_active()) {
             $tabs += [
-                self::ADMIN_PAGE_TOOLS => 'Массовые действия',
-                self::ADMIN_PAGE_BLOCKS => 'Блокировки',
-                self::ADMIN_PAGE_CALENDAR => 'Календарь броней',
-                self::ADMIN_PAGE_GUESTS => 'Списки гостей',
-                self::ADMIN_PAGE_SETTINGS => 'Настройки',
+                self::ADMIN_PAGE_TOOLS => __( 'Массовые действия', 'wss-wc-bookings' ),
+                self::ADMIN_PAGE_BLOCKS => __( 'Блокировки', 'wss-wc-bookings' ),
+                self::ADMIN_PAGE_CALENDAR => __( 'Календарь броней', 'wss-wc-bookings' ),
+                self::ADMIN_PAGE_GUESTS => __( 'Списки гостей', 'wss-wc-bookings' ),
+                self::ADMIN_PAGE_SETTINGS => __( 'Настройки', 'wss-wc-bookings' ),
             ];
         } else {
-            $tabs[self::ADMIN_PAGE_PRO] = 'Возможности Pro';
+            $tabs[self::ADMIN_PAGE_PRO] = __( 'Возможности Pro', 'wss-wc-bookings' );
         }
 
         echo '<nav class="nav-tab-wrapper wss-bookings-tabs">';
@@ -704,7 +709,7 @@ final class WSS_WooCommerce_Bookings {
     }
 
     private function weekday_label(int $weekday): string {
-        $labels = [1 => 'Пн', 2 => 'Вт', 3 => 'Ср', 4 => 'Чт', 5 => 'Пт', 6 => 'Сб', 7 => 'Вс'];
+        $labels = [1 => __( 'Пн', 'wss-wc-bookings' ), 2 => __( 'Вт', 'wss-wc-bookings' ), 3 => __( 'Ср', 'wss-wc-bookings' ), 4 => __( 'Чт', 'wss-wc-bookings' ), 5 => __( 'Пт', 'wss-wc-bookings' ), 6 => __( 'Сб', 'wss-wc-bookings' ), 7 => __( 'Вс', 'wss-wc-bookings' )];
         return $labels[$weekday] ?? '';
     }
 
@@ -1238,7 +1243,7 @@ final class WSS_WooCommerce_Bookings {
                 if (in_array($slug, ['archive', 'archived', 'arhiv', 'arhivnye', 'arhivnye-tovary'], true)) {
                     return true;
                 }
-                if (strpos($name, 'архив') !== false || strpos($slug, 'archive') !== false || strpos($slug, 'arhiv') !== false) {
+                if (strpos($name, __( 'архив', 'wss-wc-bookings' )) !== false || strpos($slug, 'archive') !== false || strpos($slug, 'arhiv') !== false) {
                     return true;
                 }
             }
@@ -1307,20 +1312,20 @@ final class WSS_WooCommerce_Bookings {
     private function product_status_label(int $product_id): string {
         $status = (string) get_post_status($product_id);
         $labels = [
-            'publish' => 'Опубликован',
-            'draft' => 'Черновик',
-            'pending' => 'На утверждении',
-            'private' => 'Приватный',
-            'future' => 'Запланирован',
-            'trash' => 'В корзине',
-            'archive' => 'Архив',
-            'archived' => 'Архив',
-            'wc-archived' => 'Архив',
+            'publish' => __( 'Опубликован', 'wss-wc-bookings' ),
+            'draft' => __( 'Черновик', 'wss-wc-bookings' ),
+            'pending' => __( 'На утверждении', 'wss-wc-bookings' ),
+            'private' => __( 'Приватный', 'wss-wc-bookings' ),
+            'future' => __( 'Запланирован', 'wss-wc-bookings' ),
+            'trash' => __( 'В корзине', 'wss-wc-bookings' ),
+            'archive' => __( 'Архив', 'wss-wc-bookings' ),
+            'archived' => __( 'Архив', 'wss-wc-bookings' ),
+            'wc-archived' => __( 'Архив', 'wss-wc-bookings' ),
         ];
 
-        $label = $labels[$status] ?? ($status ?: 'Неизвестно');
+        $label = $labels[$status] ?? ($status ?: __( 'Неизвестно', 'wss-wc-bookings' ));
         if ($this->is_archived_product($product_id)) {
-            $label .= ' / архивный или скрытый';
+            $label .= __( ' / архивный или скрытый', 'wss-wc-bookings' );
         }
 
         return $label;
@@ -2170,12 +2175,12 @@ final class WSS_WooCommerce_Bookings {
 
     private function get_default_settings(): array {
         return [
-            'title_time' => 'Выберите дату и время',
-            'title_date' => 'Выберите дату',
-            'no_slots' => 'Сейчас нет доступных дат для бронирования.',
-            'hint_time' => 'Сначала выберите дату в календаре.',
-            'hint_date' => 'Выберите дату в календаре. Время для этой услуги не указывается.',
-            'button_text' => 'Забронировать',
+            'title_time' => __( 'Выберите дату и время', 'wss-wc-bookings' ),
+            'title_date' => __( 'Выберите дату', 'wss-wc-bookings' ),
+            'no_slots' => __( 'Сейчас нет доступных дат для бронирования.', 'wss-wc-bookings' ),
+            'hint_time' => __( 'Сначала выберите дату в календаре.', 'wss-wc-bookings' ),
+            'hint_date' => __( 'Выберите дату в календаре. Время для этой услуги не указывается.', 'wss-wc-bookings' ),
+            'button_text' => __( 'Забронировать', 'wss-wc-bookings' ),
             'accent_color' => '#1f3d35',
             'radius' => 12,
         ];
@@ -2186,7 +2191,7 @@ final class WSS_WooCommerce_Bookings {
         if (!is_array($stored)) {
             $stored = [];
         }
-        return array_merge($this->get_default_settings(), $stored);
+        return WSS_Plugin_I18n_202609::defaults(array_merge($this->get_default_settings(), $stored), 'wss-wc-bookings');
     }
 
     private function get_public_text(string $key): string {
@@ -2337,7 +2342,7 @@ final class WSS_WooCommerce_Bookings {
             return;
         }
         echo '<div class="wss-booking-ticket-types" data-wss-ticket-types>';
-        echo '<h4>Билеты</h4>';
+        echo __( '<h4>Билеты</h4>', 'wss-wc-bookings' );
         foreach ($types as $type) {
             echo '<div class="wss-booking-ticket-row" data-wss-ticket-row data-price="' . esc_attr((string) $type['price']) . '">';
             echo '<div class="wss-booking-ticket-info"><strong>' . esc_html($type['name']) . '</strong><span>' . wp_kses_post(wc_price((float) $type['price'])) . '</span></div>';
@@ -2345,7 +2350,7 @@ final class WSS_WooCommerce_Bookings {
             echo '</div>';
         }
         echo '<input type="hidden" name="wss_booking_ticket_total_qty" data-wss-ticket-total-qty value="0">';
-        echo '<p class="wss-booking-ticket-summary" data-wss-ticket-summary>Выберите количество билетов.</p>';
+        echo __( '<p class="wss-booking-ticket-summary" data-wss-ticket-summary>Выберите количество билетов.</p>', 'wss-wc-bookings' );
         echo '</div>';
     }
 
@@ -2389,7 +2394,7 @@ final class WSS_WooCommerce_Bookings {
                     'product' => get_the_title((int) $slot->product_id),
                     'product_id' => (int) $slot->product_id,
                     'date' => (string) $slot->slot_date,
-                    'time' => $this->is_all_day_slot($slot) ? 'Весь день' : $this->format_time($slot->start_time) . '–' . $this->format_time($slot->end_time),
+                    'time' => $this->is_all_day_slot($slot) ? __( 'Весь день', 'wss-wc-bookings' ) : $this->format_time($slot->start_time) . '–' . $this->format_time($slot->end_time),
                     'qty' => (int) $item->get_quantity(),
                     'tickets' => (string) $item->get_meta('Билеты', true),
                 ];
@@ -2407,7 +2412,7 @@ final class WSS_WooCommerce_Bookings {
         header('Content-Disposition: attachment; filename=wss-booking-guests-' . ($date ?: current_time('Y-m-d')) . '.csv');
         $out = fopen('php://output', 'w');
         fwrite($out, "\xEF\xBB\xBF");
-        fputcsv($out, ['Заказ', 'Статус', 'Имя', 'Телефон', 'Email', 'Экскурсия', 'Дата', 'Время', 'Кол-во', 'Билеты'], ';');
+        fputcsv($out, [__( 'Заказ', 'wss-wc-bookings' ), __( 'Статус', 'wss-wc-bookings' ), __( 'Имя', 'wss-wc-bookings' ), __( 'Телефон', 'wss-wc-bookings' ), 'Email', __( 'Экскурсия', 'wss-wc-bookings' ), __( 'Дата', 'wss-wc-bookings' ), __( 'Время', 'wss-wc-bookings' ), __( 'Кол-во', 'wss-wc-bookings' ), __( 'Билеты', 'wss-wc-bookings' )], ';');
         foreach ($rows as $row) {
             fputcsv($out, [$row['order_id'], $row['status'], $row['name'], $row['phone'], $row['email'], $row['product'], $this->format_date($row['date']), $row['time'], $row['qty'], $row['tickets']], ';');
         }
@@ -2420,10 +2425,10 @@ final class WSS_WooCommerce_Bookings {
         echo '<h1>WSS WooCommerce Bookings Pro</h1>';
         $this->render_admin_tabs(self::ADMIN_PAGE_PRO);
         echo '<div class="wss-bookings-card" style="max-width:900px">';
-        echo '<h2>Что открывает Pro</h2>';
-        echo '<p>Бесплатная версия содержит базовое расписание, календарь на сайте, кнопки времени, вместимость и запись даты/времени в заказ.</p>';
-        echo '<ul class="ul-disc"><li>Импорт из стандартного WooCommerce Bookings</li><li>Массовые действия и безопасная очистка расписаний</li><li>Блокировки дат и дней недели</li><li>Календарь броней в админке</li><li>Режим “весь день, без времени”</li><li>Типы билетов и разные цены</li><li>Настройки текстов и внешнего вида</li><li>Списки гостей и экспорт CSV</li></ul>';
-        echo '<p><strong>Установите и активируйте WSS WooCommerce Bookings Pro</strong>, чтобы разблокировать эти разделы.</p>';
+        echo __( '<h2>Что открывает Pro</h2>', 'wss-wc-bookings' );
+        echo __( '<p>Бесплатная версия содержит базовое расписание, календарь на сайте, кнопки времени, вместимость и запись даты/времени в заказ.</p>', 'wss-wc-bookings' );
+        echo __( '<ul class="ul-disc"><li>Импорт из стандартного WooCommerce Bookings</li><li>Массовые действия и безопасная очистка расписаний</li><li>Блокировки дат и дней недели</li><li>Календарь броней в админке</li><li>Режим “весь день, без времени”</li><li>Типы билетов и разные цены</li><li>Настройки текстов и внешнего вида</li><li>Списки гостей и экспорт CSV</li></ul>', 'wss-wc-bookings' );
+        echo __( '<p><strong>Установите и активируйте WSS WooCommerce Bookings Pro</strong>, чтобы разблокировать эти разделы.</p>', 'wss-wc-bookings' );
         echo '</div></div>';
     }
 
@@ -2436,22 +2441,22 @@ final class WSS_WooCommerce_Bookings {
         echo '<form method="post" class="wss-bookings-card" style="max-width:900px">';
         wp_nonce_field('wss_wc_bookings_action');
         echo '<input type="hidden" name="wss_booking_action" value="update_settings">';
-        echo '<h2>Тексты и внешний вид</h2>';
+        echo __( '<h2>Тексты и внешний вид</h2>', 'wss-wc-bookings' );
         foreach ([
-            'title_time' => 'Заголовок для расписания со временем',
-            'title_date' => 'Заголовок для услуг без времени',
-            'no_slots' => 'Текст, если дат нет',
-            'hint_time' => 'Подсказка до выбора даты',
-            'hint_date' => 'Подсказка для услуг без времени',
-            'button_text' => 'Текст кнопки бронирования',
+            'title_time' => __( 'Заголовок для расписания со временем', 'wss-wc-bookings' ),
+            'title_date' => __( 'Заголовок для услуг без времени', 'wss-wc-bookings' ),
+            'no_slots' => __( 'Текст, если дат нет', 'wss-wc-bookings' ),
+            'hint_time' => __( 'Подсказка до выбора даты', 'wss-wc-bookings' ),
+            'hint_date' => __( 'Подсказка для услуг без времени', 'wss-wc-bookings' ),
+            'button_text' => __( 'Текст кнопки бронирования', 'wss-wc-bookings' ),
         ] as $key => $label) {
             echo '<p><label>' . esc_html($label) . '<br><input type="text" name="' . esc_attr($key) . '" value="' . esc_attr((string) $settings[$key]) . '" class="large-text"></label></p>';
         }
         echo '<div class="wss-bookings-two-cols">';
-        echo '<p><label>Акцентный цвет<br><input type="text" name="accent_color" value="' . esc_attr((string) $settings['accent_color']) . '" placeholder="#1f3d35"></label></p>';
-        echo '<p><label>Скругление, px<br><input type="number" name="radius" min="0" max="32" value="' . esc_attr((string) $settings['radius']) . '"></label></p>';
+        echo __( '<p><label>Акцентный цвет<br><input type="text" name="accent_color" value="', 'wss-wc-bookings' ) . esc_attr((string) $settings['accent_color']) . '" placeholder="#1f3d35"></label></p>';
+        echo __( '<p><label>Скругление, px<br><input type="number" name="radius" min="0" max="32" value="', 'wss-wc-bookings' ) . esc_attr((string) $settings['radius']) . '"></label></p>';
         echo '</div>';
-        submit_button('Сохранить настройки', 'primary', '', false);
+        submit_button(__( 'Сохранить настройки', 'wss-wc-bookings' ), 'primary', '', false);
         echo '</form></div>';
     }
 
@@ -2465,21 +2470,21 @@ final class WSS_WooCommerce_Bookings {
         echo '<div class="wrap wss-bookings-admin">';
         echo '<h1>WSS WooCommerce Bookings</h1>';
         $this->render_admin_tabs(self::ADMIN_PAGE_GUESTS);
-        echo '<p class="description">Список гостей строится по заказам WooCommerce, в которых есть WSS-слот бронирования.</p>';
+        echo __( '<p class="description">Список гостей строится по заказам WooCommerce, в которых есть WSS-слот бронирования.</p>', 'wss-wc-bookings' );
         echo '<form method="get" class="wss-bookings-product-select">';
         echo '<input type="hidden" name="page" value="' . esc_attr(self::ADMIN_PAGE_GUESTS) . '">';
-        echo '<label><strong>Дата</strong> <input type="date" name="wss_date" value="' . esc_attr($date) . '"></label> ';
-        echo '<label><strong>Экскурсия</strong> <select name="product_id"><option value="0">Все экскурсии</option>';
+        echo __( '<label><strong>Дата</strong> <input type="date" name="wss_date" value="', 'wss-wc-bookings' ) . esc_attr($date) . '"></label> ';
+        echo __( '<label><strong>Экскурсия</strong> <select name="product_id"><option value="0">Все экскурсии</option>', 'wss-wc-bookings' );
         foreach ($products as $product) {
             printf('<option value="%d" %s>%s</option>', (int) $product->get_id(), selected($product_id, (int) $product->get_id(), false), esc_html($product->get_name()));
         }
         echo '</select></label> ';
-        submit_button('Показать', 'secondary', '', false);
+        submit_button(__( 'Показать', 'wss-wc-bookings' ), 'secondary', '', false);
         $export_url = wp_nonce_url(add_query_arg(['page' => self::ADMIN_PAGE_GUESTS, 'wss_booking_action' => 'export_guests_csv', 'wss_date' => $date, 'product_id' => $product_id], admin_url('admin.php')), 'wss_wc_bookings_action');
-        echo ' <a class="button" href="' . esc_url($export_url) . '">Экспорт CSV</a>';
+        echo ' <a class="button" href="' . esc_url($export_url) . __( '">Экспорт CSV</a>', 'wss-wc-bookings' );
         echo '</form>';
-        if (!$rows) { echo '<p>На выбранную дату бронирований не найдено.</p></div>'; return; }
-        echo '<table class="widefat striped wss-bookings-summary-table"><thead><tr><th>Заказ</th><th>Статус</th><th>Гость</th><th>Контакты</th><th>Экскурсия</th><th>Время</th><th>Кол-во</th><th>Билеты</th></tr></thead><tbody>';
+        if (!$rows) { echo __( '<p>На выбранную дату бронирований не найдено.</p></div>', 'wss-wc-bookings' ); return; }
+        echo __( '<table class="widefat striped wss-bookings-summary-table"><thead><tr><th>Заказ</th><th>Статус</th><th>Гость</th><th>Контакты</th><th>Экскурсия</th><th>Время</th><th>Кол-во</th><th>Билеты</th></tr></thead><tbody>', 'wss-wc-bookings' );
         foreach ($rows as $row) {
             $order_link = admin_url('post.php?post=' . (int) $row['order_id'] . '&action=edit');
             echo '<tr><td><a href="' . esc_url($order_link) . '">#' . esc_html((string) $row['order_id']) . '</a></td><td>' . esc_html($row['status']) . '</td><td>' . esc_html($row['name']) . '</td><td>' . esc_html($row['phone']) . '<br>' . esc_html($row['email']) . '</td><td>' . esc_html($row['product']) . '</td><td>' . esc_html($row['time']) . '</td><td>' . esc_html((string) $row['qty']) . '</td><td>' . esc_html($row['tickets']) . '</td></tr>';
@@ -2512,7 +2517,7 @@ final class WSS_WooCommerce_Bookings {
         echo '<div class="wrap wss-bookings-admin">';
         echo '<h1>WSS WooCommerce Bookings</h1>';
         $this->render_admin_tabs(self::ADMIN_PAGE_MAIN);
-        echo '<p class="description">Расписание слотов, календарь дат в админке и на сайте, кнопки времени, вместимость и запись бронирования в заказ WooCommerce.' . ($this->is_pro_active() ? ' Pro активен: доступны массовые действия, блокировки, календарь броней, билеты и экспорт гостей.' : ' Расширенные функции доступны в Pro.') . '</p>';
+        echo __( '<p class="description">Расписание слотов, календарь дат в админке и на сайте, кнопки времени, вместимость и запись бронирования в заказ WooCommerce.', 'wss-wc-bookings' ) . ($this->is_pro_active() ? __( ' Pro активен: доступны массовые действия, блокировки, календарь броней, билеты и экспорт гостей.', 'wss-wc-bookings' ) : __( ' Расширенные функции доступны в Pro.', 'wss-wc-bookings' )) . '</p>';
 
         if ($message) {
             $notice_class = in_array($message, ['delete_all_confirm_error', 'slot_error'], true) ? 'notice-error' : 'notice-success';
@@ -2520,22 +2525,22 @@ final class WSS_WooCommerce_Bookings {
         }
 
         if (!$this->is_woocommerce_active()) {
-            echo '<div class="notice notice-warning"><p>WooCommerce не активен. Управление расписанием доступно после включения WooCommerce.</p></div>';
+            echo __( '<div class="notice notice-warning"><p>WooCommerce не активен. Управление расписанием доступно после включения WooCommerce.</p></div>', 'wss-wc-bookings' );
             echo '</div>';
             return;
         }
 
 
         if (!$products) {
-            echo '<div class="notice notice-info"><p>Пока нет товаров, у которых включен <strong>WSS Bookings</strong>. Включите чекбокс вручную в нужной экскурсии' . ($this->is_pro_active() ? ' или воспользуйтесь импортом из стандартного WooCommerce Bookings в разделе “Массовые действия”' : '') . '.</p></div>';
-            echo '<p><a class="button button-primary" href="' . esc_url(admin_url('edit.php?post_type=product')) . '">Открыть товары WooCommerce</a></p>';
+            echo __( '<div class="notice notice-info"><p>Пока нет товаров, у которых включен <strong>WSS Bookings</strong>. Включите чекбокс вручную в нужной экскурсии', 'wss-wc-bookings' ) . ($this->is_pro_active() ? __( ' или воспользуйтесь импортом из стандартного WooCommerce Bookings в разделе “Массовые действия”', 'wss-wc-bookings' ) : '') . '.</p></div>';
+            echo '<p><a class="button button-primary" href="' . esc_url(admin_url('edit.php?post_type=product')) . __( '">Открыть товары WooCommerce</a></p>', 'wss-wc-bookings' );
             echo '</div>';
             return;
         }
 
         echo '<form method="get" class="wss-bookings-product-select">';
         echo '<input type="hidden" name="page" value="wss-wc-bookings">';
-        echo '<label for="wss-product-id"><strong>Товар / экскурсия</strong></label> ';
+        echo __( '<label for="wss-product-id"><strong>Товар / экскурсия</strong></label> ', 'wss-wc-bookings' );
         echo '<select id="wss-product-id" name="product_id">';
         foreach ($products as $product) {
             printf(
@@ -2546,12 +2551,12 @@ final class WSS_WooCommerce_Bookings {
             );
         }
         echo '</select> ';
-        submit_button('Показать', 'secondary', '', false);
-        echo '<span class="description wss-bookings-product-select-note">Показаны только опубликованные товары с включенным WSS Bookings или будущими слотами.</span>';
+        submit_button(__( 'Показать', 'wss-wc-bookings' ), 'secondary', '', false);
+        echo __( '<span class="description wss-bookings-product-select-note">Показаны только опубликованные товары с включенным WSS Bookings или будущими слотами.</span>', 'wss-wc-bookings' );
         echo '</form>';
 
         if (!$selected_product_id) {
-            echo '<p>Сначала включите WSS Bookings хотя бы у одного товара WooCommerce.</p>';
+            echo __( '<p>Сначала включите WSS Bookings хотя бы у одного товара WooCommerce.</p>', 'wss-wc-bookings' );
             echo '</div>';
             return;
         }
@@ -2561,8 +2566,8 @@ final class WSS_WooCommerce_Bookings {
         $this->render_generate_slots_card($selected_product_id);
         echo '</div>';
 
-        echo '<h2>Ближайшие слоты</h2>';
-        echo '<p class="description">Показаны ближайшие слоты для экскурсии: <strong>' . esc_html(get_the_title($selected_product_id)) . '</strong> (ID ' . esc_html((string) $selected_product_id) . ').</p>';
+        echo __( '<h2>Ближайшие слоты</h2>', 'wss-wc-bookings' );
+        echo __( '<p class="description">Показаны ближайшие слоты для экскурсии: <strong>', 'wss-wc-bookings' ) . esc_html(get_the_title($selected_product_id)) . '</strong> (ID ' . esc_html((string) $selected_product_id) . ').</p>';
         $this->render_slots_table($selected_product_id, $slots);
 
         echo '</div>';
@@ -2578,7 +2583,7 @@ final class WSS_WooCommerce_Bookings {
         echo '<div class="wrap wss-bookings-admin">';
         echo '<h1>WSS WooCommerce Bookings</h1>';
         $this->render_admin_tabs(self::ADMIN_PAGE_TOOLS);
-        echo '<p class="description">Массовые операции вынесены отдельно от текущего расписания: импорт из WooCommerce Bookings, очистка, проставление меток и удаление слотов.</p>';
+        echo __( '<p class="description">Массовые операции вынесены отдельно от текущего расписания: импорт из WooCommerce Bookings, очистка, проставление меток и удаление слотов.</p>', 'wss-wc-bookings' );
 
         if ($message) {
             $notice_class = in_array($message, ['delete_all_confirm_error', 'slot_error'], true) ? 'notice-error' : 'notice-success';
@@ -2586,7 +2591,7 @@ final class WSS_WooCommerce_Bookings {
         }
 
         if (!$this->is_woocommerce_active()) {
-            echo '<div class="notice notice-warning"><p>WooCommerce не активен. Массовые действия доступны после включения WooCommerce.</p></div>';
+            echo __( '<div class="notice notice-warning"><p>WooCommerce не активен. Массовые действия доступны после включения WooCommerce.</p></div>', 'wss-wc-bookings' );
             echo '</div>';
             return;
         }
@@ -2609,7 +2614,7 @@ final class WSS_WooCommerce_Bookings {
         echo '<div class="wrap wss-bookings-admin">';
         echo '<h1>WSS WooCommerce Bookings</h1>';
         $this->render_admin_tabs(self::ADMIN_PAGE_BLOCKS);
-        echo '<p class="description">Блокировки перекрывают расписание: если день заблокирован, бронирование на фронте будет недоступно, даже если слоты на эту дату уже созданы.</p>';
+        echo __( '<p class="description">Блокировки перекрывают расписание: если день заблокирован, бронирование на фронте будет недоступно, даже если слоты на эту дату уже созданы.</p>', 'wss-wc-bookings' );
 
         if ($message) {
             echo '<div class="notice notice-success is-dismissible"><p>' . esc_html($this->admin_message_text($message)) . '</p></div>';
@@ -2617,55 +2622,55 @@ final class WSS_WooCommerce_Bookings {
 
         echo '<div class="wss-bookings-grid">';
         echo '<div class="wss-bookings-card">';
-        echo '<h2>Заблокировать конкретные даты</h2>';
+        echo __( '<h2>Заблокировать конкретные даты</h2>', 'wss-wc-bookings' );
         echo '<form method="post" class="wss-bookings-block-dates-form">';
         wp_nonce_field('wss_wc_bookings_action');
         echo '<input type="hidden" name="wss_booking_action" value="create_block_dates">';
         $this->render_product_scope_select('block_product_id', $products);
         echo '<input type="hidden" id="wss-bookings-block-selected-dates" name="block_selected_dates" value="">';
-        echo '<p class="description">Можно выбрать один или несколько отдельных дней. Область применения: все экскурсии или одна выбранная экскурсия.</p>';
+        echo __( '<p class="description">Можно выбрать один или несколько отдельных дней. Область применения: все экскурсии или одна выбранная экскурсия.</p>', 'wss-wc-bookings' );
         echo '<div class="wss-bookings-date-picker" data-input="#wss-bookings-block-selected-dates" data-start-month="' . esc_attr(current_time('Y-m-01')) . '">';
         echo '<div class="wss-bookings-calendar-head"><button type="button" class="button" data-wss-calendar-prev>‹</button><strong data-wss-calendar-title></strong><button type="button" class="button" data-wss-calendar-next>›</button></div>';
-        echo '<div class="wss-bookings-calendar-weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>';
+        echo __( '<div class="wss-bookings-calendar-weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>', 'wss-wc-bookings' );
         echo '<div class="wss-bookings-calendar-grid" data-wss-calendar-grid></div>';
-        echo '<div class="wss-bookings-calendar-actions"><button type="button" class="button" data-wss-calendar-select-month>Выбрать месяц</button><button type="button" class="button" data-wss-calendar-clear>Очистить</button></div>';
-        echo '<p class="wss-bookings-selected-dates"><strong>Выбрано дат:</strong> <span data-wss-selected-count>0</span><br><span data-wss-selected-dates-text>Пока ничего не выбрано</span></p>';
-        echo '<p class="wss-bookings-calendar-error" data-wss-calendar-error hidden>Выберите хотя бы одну дату.</p>';
+        echo __( '<div class="wss-bookings-calendar-actions"><button type="button" class="button" data-wss-calendar-select-month>Выбрать месяц</button><button type="button" class="button" data-wss-calendar-clear>Очистить</button></div>', 'wss-wc-bookings' );
+        echo __( '<p class="wss-bookings-selected-dates"><strong>Выбрано дат:</strong> <span data-wss-selected-count>0</span><br><span data-wss-selected-dates-text>Пока ничего не выбрано</span></p>', 'wss-wc-bookings' );
+        echo __( '<p class="wss-bookings-calendar-error" data-wss-calendar-error hidden>Выберите хотя бы одну дату.</p>', 'wss-wc-bookings' );
         echo '</div>';
-        echo '<p><label>Причина / заметка<br><textarea name="block_note" rows="3" placeholder="Например: санитарный день, закрытое мероприятие"></textarea></label></p>';
-        submit_button('Создать блокировку дат', 'primary', '', false);
+        echo __( '<p><label>Причина / заметка<br><textarea name="block_note" rows="3" placeholder="Например: санитарный день, закрытое мероприятие"></textarea></label></p>', 'wss-wc-bookings' );
+        submit_button(__( 'Создать блокировку дат', 'wss-wc-bookings' ), 'primary', '', false);
         echo '</form>';
         echo '</div>';
 
         echo '<div class="wss-bookings-card">';
-        echo '<h2>Заблокировать дни недели</h2>';
+        echo __( '<h2>Заблокировать дни недели</h2>', 'wss-wc-bookings' );
         echo '<form method="post">';
         wp_nonce_field('wss_wc_bookings_action');
         echo '<input type="hidden" name="wss_booking_action" value="create_block_weekdays">';
         $this->render_product_scope_select('block_product_id', $products);
-        echo '<p><strong>Дни недели</strong><br>';
+        echo __( '<p><strong>Дни недели</strong><br>', 'wss-wc-bookings' );
         for ($weekday = 1; $weekday <= 7; $weekday++) {
             echo '<label class="wss-bookings-weekday"><input type="checkbox" name="block_weekdays[]" value="' . esc_attr((string) $weekday) . '"> ' . esc_html($this->weekday_label($weekday)) . '</label>';
         }
         echo '</p>';
         echo '<div class="wss-bookings-two-cols">';
-        echo '<p><label>С даты<br><input type="date" name="block_date_from" required></label></p>';
-        echo '<p><label>По дату<br><input type="date" name="block_date_to" required></label></p>';
+        echo __( '<p><label>С даты<br><input type="date" name="block_date_from" required></label></p>', 'wss-wc-bookings' );
+        echo __( '<p><label>По дату<br><input type="date" name="block_date_to" required></label></p>', 'wss-wc-bookings' );
         echo '</div>';
-        echo '<p><label>Причина / заметка<br><textarea name="block_note" rows="3" placeholder="Например: выходные по понедельникам"></textarea></label></p>';
-        submit_button('Создать блокировку дней недели', 'primary', '', false);
+        echo __( '<p><label>Причина / заметка<br><textarea name="block_note" rows="3" placeholder="Например: выходные по понедельникам"></textarea></label></p>', 'wss-wc-bookings' );
+        submit_button(__( 'Создать блокировку дней недели', 'wss-wc-bookings' ), 'primary', '', false);
         echo '</form>';
         echo '</div>';
         echo '</div>';
 
-        echo '<h2>Активные блокировки</h2>';
+        echo __( '<h2>Активные блокировки</h2>', 'wss-wc-bookings' );
         $this->render_blocks_table($blocks);
         echo '</div>';
     }
 
     private function render_product_scope_select(string $name, array $products): void {
-        echo '<p><label>Область применения<br><select name="' . esc_attr($name) . '">';
-        echo '<option value="0">Все экскурсии</option>';
+        echo __( '<p><label>Область применения<br><select name="', 'wss-wc-bookings' ) . esc_attr($name) . '">';
+        echo __( '<option value="0">Все экскурсии</option>', 'wss-wc-bookings' );
         foreach ($products as $product) {
             printf('<option value="%d">%s</option>', (int) $product->get_id(), esc_html($product->get_name()));
         }
@@ -2674,16 +2679,16 @@ final class WSS_WooCommerce_Bookings {
 
     private function render_blocks_table(array $blocks): void {
         if (!$blocks) {
-            echo '<p>Блокировок пока нет.</p>';
+            echo __( '<p>Блокировок пока нет.</p>', 'wss-wc-bookings' );
             return;
         }
 
         echo '<table class="widefat striped wss-bookings-summary-table">';
-        echo '<thead><tr><th>Область</th><th>Тип</th><th>Период / дата</th><th>Заметка</th><th>Действия</th></tr></thead><tbody>';
+        echo __( '<thead><tr><th>Область</th><th>Тип</th><th>Период / дата</th><th>Заметка</th><th>Действия</th></tr></thead><tbody>', 'wss-wc-bookings' );
         foreach ($blocks as $block) {
             $product_id = (int) $block->product_id;
-            $scope = $product_id > 0 ? get_the_title($product_id) . ' (ID ' . $product_id . ')' : 'Все экскурсии';
-            $type = !empty($block->block_date) ? 'Дата' : 'День недели';
+            $scope = $product_id > 0 ? get_the_title($product_id) . ' (ID ' . $product_id . ')' : __( 'Все экскурсии', 'wss-wc-bookings' );
+            $type = !empty($block->block_date) ? __( 'Дата', 'wss-wc-bookings' ) : __( 'День недели', 'wss-wc-bookings' );
             $period = !empty($block->block_date)
                 ? $this->format_date((string) $block->block_date)
                 : $this->weekday_label((int) $block->weekday) . ', ' . $this->format_date((string) $block->date_from) . ' — ' . $this->format_date((string) $block->date_to);
@@ -2698,7 +2703,7 @@ final class WSS_WooCommerce_Bookings {
             echo '<td>' . esc_html($type) . '</td>';
             echo '<td>' . esc_html($period) . '</td>';
             echo '<td>' . esc_html((string) $block->note) . '</td>';
-            echo '<td><a class="wss-bookings-delete" href="' . esc_url($delete_url) . '" onclick="return confirm(\'Удалить блокировку?\')">Удалить</a></td>';
+            echo '<td><a class="wss-bookings-delete" href="' . esc_url($delete_url) . __( '" onclick="return confirm(\'Удалить блокировку?\')">Удалить</a></td>', 'wss-wc-bookings' );
             echo '</tr>';
         }
         echo '</tbody></table>';
@@ -2724,23 +2729,23 @@ final class WSS_WooCommerce_Bookings {
         echo '<div class="wrap wss-bookings-admin">';
         echo '<h1>WSS WooCommerce Bookings</h1>';
         $this->render_admin_tabs(self::ADMIN_PAGE_CALENDAR);
-        echo '<p class="description">Календарь показывает занятые даты и время по слотам WSS Bookings. Это быстрый обзор уже забронированных экскурсий.</p>';
+        echo __( '<p class="description">Календарь показывает занятые даты и время по слотам WSS Bookings. Это быстрый обзор уже забронированных экскурсий.</p>', 'wss-wc-bookings' );
 
         echo '<form method="get" class="wss-bookings-product-select">';
         echo '<input type="hidden" name="page" value="' . esc_attr(self::ADMIN_PAGE_CALENDAR) . '">';
-        echo '<label><strong>Экскурсия</strong></label> <select name="product_id"><option value="0">Все экскурсии</option>';
+        echo __( '<label><strong>Экскурсия</strong></label> <select name="product_id"><option value="0">Все экскурсии</option>', 'wss-wc-bookings' );
         foreach ($products as $product) {
             printf('<option value="%d" %s>%s</option>', (int) $product->get_id(), selected($selected_product_id, (int) $product->get_id(), false), esc_html($product->get_name()));
         }
         echo '</select> ';
-        echo '<label><strong>Месяц</strong></label> <input type="month" name="wss_month" value="' . esc_attr($start->format('Y-m')) . '"> ';
-        submit_button('Показать', 'secondary', '', false);
+        echo __( '<label><strong>Месяц</strong></label> <input type="month" name="wss_month" value="', 'wss-wc-bookings' ) . esc_attr($start->format('Y-m')) . '"> ';
+        submit_button(__( 'Показать', 'wss-wc-bookings' ), 'secondary', '', false);
         echo '</form>';
 
         echo '<div class="wss-bookings-calendar-nav-row">';
-        echo '<a class="button" href="' . esc_url(add_query_arg(['page' => self::ADMIN_PAGE_CALENDAR, 'product_id' => $selected_product_id, 'wss_month' => $prev], admin_url('admin.php'))) . '">← Предыдущий месяц</a>';
+        echo '<a class="button" href="' . esc_url(add_query_arg(['page' => self::ADMIN_PAGE_CALENDAR, 'product_id' => $selected_product_id, 'wss_month' => $prev], admin_url('admin.php'))) . __( '">← Предыдущий месяц</a>', 'wss-wc-bookings' );
         echo '<h2>' . esc_html(date_i18n('F Y', $start->getTimestamp())) . '</h2>';
-        echo '<a class="button" href="' . esc_url(add_query_arg(['page' => self::ADMIN_PAGE_CALENDAR, 'product_id' => $selected_product_id, 'wss_month' => $next], admin_url('admin.php'))) . '">Следующий месяц →</a>';
+        echo '<a class="button" href="' . esc_url(add_query_arg(['page' => self::ADMIN_PAGE_CALENDAR, 'product_id' => $selected_product_id, 'wss_month' => $next], admin_url('admin.php'))) . __( '">Следующий месяц →</a>', 'wss-wc-bookings' );
         echo '</div>';
         $this->render_bookings_calendar_grid($start, $booked_slots);
         echo '</div>';
@@ -2775,7 +2780,7 @@ final class WSS_WooCommerce_Bookings {
         $offset = ((int) $first->format('N')) - 1;
 
         echo '<div class="wss-bookings-admin-month">';
-        foreach (['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] as $label) {
+        foreach ([__( 'Пн', 'wss-wc-bookings' ), __( 'Вт', 'wss-wc-bookings' ), __( 'Ср', 'wss-wc-bookings' ), __( 'Чт', 'wss-wc-bookings' ), __( 'Пт', 'wss-wc-bookings' ), __( 'Сб', 'wss-wc-bookings' ), __( 'Вс', 'wss-wc-bookings' )] as $label) {
             echo '<div class="wss-bookings-admin-month-weekday">' . esc_html($label) . '</div>';
         }
         for ($i = 0; $i < $offset; $i++) {
@@ -2788,9 +2793,9 @@ final class WSS_WooCommerce_Bookings {
             echo '<div class="wss-bookings-admin-day-number">' . esc_html((string) $day) . '</div>';
             foreach ($items as $slot) {
                 echo '<div class="wss-bookings-admin-booking-item">';
-                echo '<strong>' . esc_html($this->is_all_day_slot($slot) ? 'Весь день' : $this->format_time((string) $slot->start_time)) . '</strong> ';
+                echo '<strong>' . esc_html($this->is_all_day_slot($slot) ? __( 'Весь день', 'wss-wc-bookings' ) : $this->format_time((string) $slot->start_time)) . '</strong> ';
                 echo esc_html(get_the_title((int) $slot->product_id));
-                echo '<br><span>' . esc_html((string) $slot->booked) . ' / ' . esc_html((string) $slot->capacity) . ' мест</span>';
+                echo '<br><span>' . esc_html((string) $slot->booked) . ' / ' . esc_html((string) $slot->capacity) . __( ' мест</span>', 'wss-wc-bookings' );
                 echo '</div>';
             }
             echo '</div>';
@@ -2801,20 +2806,20 @@ final class WSS_WooCommerce_Bookings {
     private function admin_message_text(string $message): string {
         if (strpos($message, 'generated_') === 0) {
             $count = (int) str_replace('generated_', '', $message);
-            return sprintf('Создано слотов: %d.', $count);
+            return sprintf(__( 'Создано слотов: %d.', 'wss-wc-bookings' ), $count);
         }
 
         if (strpos($message, 'blocks_created_') === 0) {
             $count = (int) str_replace('blocks_created_', '', $message);
-            return sprintf('Создано блокировок: %d.', $count);
+            return sprintf(__( 'Создано блокировок: %d.', 'wss-wc-bookings' ), $count);
         }
 
         if ($message === 'pro_required') {
-            return 'Это действие доступно в WSS WooCommerce Bookings Pro.';
+            return __( 'Это действие доступно в WSS WooCommerce Bookings Pro.', 'wss-wc-bookings' );
         }
 
         if ($message === 'settings_saved') {
-            return 'Настройки WSS Bookings сохранены.';
+            return __( 'Настройки WSS Bookings сохранены.', 'wss-wc-bookings' );
         }
 
         if ($message === 'wc_bookings_imported') {
@@ -2825,54 +2830,54 @@ final class WSS_WooCommerce_Bookings {
             $ignored_generic = isset($_GET['wss_import_ignored_generic']) ? absint($_GET['wss_import_ignored_generic']) : 0;
             $inactive_cleaned = isset($_GET['wss_inactive_cleaned']) ? absint($_GET['wss_inactive_cleaned']) : 0;
             $expired_products = isset($_GET['wss_import_expired']) ? absint($_GET['wss_import_expired']) : 0;
-            return sprintf('Импорт из WooCommerce Bookings завершен. Обработаны только опубликованные товары. Товаров обработано: %d. Создано слотов: %d. Перенесено занятых мест из существующих бронирований: %d. Пропущено правил без понятной даты/времени: %d. Проигнорировано общих правил времени у товаров с конкретными датами: %d. Товаров с просроченным расписанием без актуальных дат: %d. Удалено слотов у черновиков/неактивных товаров: %d.', $products, $slots, $booked, $skipped, $ignored_generic, $expired_products, $inactive_cleaned);
+            return sprintf(__( 'Импорт из WooCommerce Bookings завершен. Обработаны только опубликованные товары. Товаров обработано: %d. Создано слотов: %d. Перенесено занятых мест из существующих бронирований: %d. Пропущено правил без понятной даты/времени: %d. Проигнорировано общих правил времени у товаров с конкретными датами: %d. Товаров с просроченным расписанием без актуальных дат: %d. Удалено слотов у черновиков/неактивных товаров: %d.', 'wss-wc-bookings' ), $products, $slots, $booked, $skipped, $ignored_generic, $expired_products, $inactive_cleaned);
         }
 
         if ($message === 'all_slots_deleted') {
             $deleted = isset($_GET['wss_deleted_slots']) ? absint($_GET['wss_deleted_slots']) : 0;
-            return sprintf('Удалено слотов расписания: %d.', $deleted);
+            return sprintf(__( 'Удалено слотов расписания: %d.', 'wss-wc-bookings' ), $deleted);
         }
 
         if ($message === 'wss_flags_repaired') {
             $count = isset($_GET['wss_flags_fixed']) ? absint($_GET['wss_flags_fixed']) : 0;
             $deleted = isset($_GET['wss_deleted_slots']) ? absint($_GET['wss_deleted_slots']) : 0;
-            return sprintf('Метки WSS Bookings проставлены/обновлены у активных товаров: %d. У архивных/неактивных товаров удалено слотов: %d.', $count, $deleted);
+            return sprintf(__( 'Метки WSS Bookings проставлены/обновлены у активных товаров: %d. У архивных/неактивных товаров удалено слотов: %d.', 'wss-wc-bookings' ), $count, $deleted);
         }
 
         if ($message === 'inactive_wss_cleaned') {
             $deleted = isset($_GET['wss_deleted_slots']) ? absint($_GET['wss_deleted_slots']) : 0;
-            return sprintf('Удалено слотов у черновиков/архивных/неактивных товаров и отключены их метки WSS: %d.', $deleted);
+            return sprintf(__( 'Удалено слотов у черновиков/архивных/неактивных товаров и отключены их метки WSS: %d.', 'wss-wc-bookings' ), $deleted);
         }
 
         if ($message === 'all_day_slots_created') {
             $created = isset($_GET['wss_all_day_created']) ? absint($_GET['wss_all_day_created']) : 0;
-            return sprintf('Создано дневных слотов без времени для активных товаров без расписания: %d.', $created);
+            return sprintf(__( 'Создано дневных слотов без времени для активных товаров без расписания: %d.', 'wss-wc-bookings' ), $created);
         }
 
         $map = [
-            'slot_created' => 'Слот создан.',
-            'slot_error' => 'Слот не создан. Проверьте поля или убедитесь, что такого слота еще нет.',
-            'slot_deleted' => 'Слот удален.',
-            'slot_updated' => 'Статус слота обновлен.',
-            'delete_all_confirm_error' => 'Расписание не удалено: нужно поставить галку подтверждения и ввести УДАЛИТЬ.',
-            'wss_product_enabled' => 'Метка WSS Bookings для товара включена.',
-            'block_deleted' => 'Блокировка удалена.',
+            'slot_created' => __( 'Слот создан.', 'wss-wc-bookings' ),
+            'slot_error' => __( 'Слот не создан. Проверьте поля или убедитесь, что такого слота еще нет.', 'wss-wc-bookings' ),
+            'slot_deleted' => __( 'Слот удален.', 'wss-wc-bookings' ),
+            'slot_updated' => __( 'Статус слота обновлен.', 'wss-wc-bookings' ),
+            'delete_all_confirm_error' => __( 'Расписание не удалено: нужно поставить галку подтверждения и ввести УДАЛИТЬ.', 'wss-wc-bookings' ),
+            'wss_product_enabled' => __( 'Метка WSS Bookings для товара включена.', 'wss-wc-bookings' ),
+            'block_deleted' => __( 'Блокировка удалена.', 'wss-wc-bookings' ),
         ];
 
-        return $map[$message] ?? 'Готово.';
+        return $map[$message] ?? __( 'Готово.', 'wss-wc-bookings' );
     }
 
     private function product_booking_mode_label(int $product_id): string {
         $future = $this->count_slots_for_product($product_id, true);
         if ($future === 0) {
-            return $this->auto_all_day_is_disabled($product_id) ? 'Нет актуальных дат' : 'Нет будущих слотов';
+            return $this->auto_all_day_is_disabled($product_id) ? __( 'Нет актуальных дат', 'wss-wc-bookings' ) : __( 'Нет будущих слотов', 'wss-wc-bookings' );
         }
 
         if ($this->count_future_all_day_slots_for_product($product_id) > 0 && $this->count_manual_slots_for_product($product_id) === 0) {
-            return 'Весь день, без времени';
+            return __( 'Весь день, без времени', 'wss-wc-bookings' );
         }
 
-        return 'По времени';
+        return __( 'По времени', 'wss-wc-bookings' );
     }
 
     private function render_import_report(): void {
@@ -2882,10 +2887,10 @@ final class WSS_WooCommerce_Bookings {
         }
 
         echo '<div class="wss-bookings-import-report">';
-        echo '<h2>Последний отчет импорта</h2>';
-        echo '<p class="description">По этой таблице видно, в какие именно товары попали импортированные слоты. Импорт по умолчанию берет только опубликованные товары. Нажмите «Открыть», чтобы посмотреть расписание конкретной экскурсии.</p>';
+        echo __( '<h2>Последний отчет импорта</h2>', 'wss-wc-bookings' );
+        echo __( '<p class="description">По этой таблице видно, в какие именно товары попали импортированные слоты. Импорт по умолчанию берет только опубликованные товары. Нажмите «Открыть», чтобы посмотреть расписание конкретной экскурсии.</p>', 'wss-wc-bookings' );
         echo '<table class="widefat striped wss-bookings-summary-table">';
-        echo '<thead><tr><th>Товар / экскурсия</th><th>ID</th><th>Статус товара</th><th>Правил</th><th>Создано слотов</th><th>Будущих слотов сейчас</th><th>Режим</th><th>Мест</th><th>Длительность</th><th>Пропущено правил</th><th>Игнор. общих правил</th><th>Просроченных дат</th><th>Актуальность</th><th>Метка WSS</th><th></th></tr></thead><tbody>';
+        echo __( '<thead><tr><th>Товар / экскурсия</th><th>ID</th><th>Статус товара</th><th>Правил</th><th>Создано слотов</th><th>Будущих слотов сейчас</th><th>Режим</th><th>Мест</th><th>Длительность</th><th>Пропущено правил</th><th>Игнор. общих правил</th><th>Просроченных дат</th><th>Актуальность</th><th>Метка WSS</th><th></th></tr></thead><tbody>', 'wss-wc-bookings' );
 
         foreach ($report as $row) {
             $product_id = isset($row['product_id']) ? absint($row['product_id']) : 0;
@@ -2902,14 +2907,14 @@ final class WSS_WooCommerce_Bookings {
             echo '<td>' . esc_html((string) absint($row['future_slots'] ?? 0)) . '</td>';
             echo '<td>' . esc_html($this->product_booking_mode_label($product_id)) . '</td>';
             echo '<td>' . esc_html((string) absint($row['capacity'] ?? 0)) . '</td>';
-            echo '<td>' . esc_html((string) absint($row['duration'] ?? 0)) . ' мин</td>';
+            echo '<td>' . esc_html((string) absint($row['duration'] ?? 0)) . __( ' мин</td>', 'wss-wc-bookings' );
             echo '<td>' . esc_html((string) absint($row['skipped'] ?? 0)) . '</td>';
             echo '<td>' . esc_html((string) absint($row['ignored_generic'] ?? 0)) . '</td>';
             echo '<td>' . esc_html((string) absint($row['expired_slots'] ?? 0)) . '</td>';
-            echo '<td>' . esc_html(!empty($row['schedule_expired']) ? 'Нет актуальных дат' : 'Есть актуальное расписание / услуга без времени') . '</td>';
-            $enabled_label = !empty($row['enabled']) ? 'Включена' : 'Не включена (' . (string) ($row['meta_value'] ?? '') . ')';
+            echo '<td>' . esc_html(!empty($row['schedule_expired']) ? __( 'Нет актуальных дат', 'wss-wc-bookings' ) : __( 'Есть актуальное расписание / услуга без времени', 'wss-wc-bookings' )) . '</td>';
+            $enabled_label = !empty($row['enabled']) ? __( 'Включена', 'wss-wc-bookings' ) : __( 'Не включена (', 'wss-wc-bookings' ) . (string) ($row['meta_value'] ?? '') . ')';
             echo '<td>' . esc_html($enabled_label) . '</td>';
-            echo '<td><a class="button button-small" href="' . esc_url($url) . '">Открыть</a></td>';
+            echo '<td><a class="button button-small" href="' . esc_url($url) . __( '">Открыть</a></td>', 'wss-wc-bookings' );
             echo '</tr>';
         }
 
@@ -2924,10 +2929,10 @@ final class WSS_WooCommerce_Bookings {
         }
 
         echo '<div class="wss-bookings-products-summary">';
-        echo '<h2>Товары с WSS Bookings</h2>';
-        echo '<p class="description">Сводка помогает проверить, куда попало расписание после импорта. Здесь показываются только опубликованные товары; черновики и неактивные экскурсии не выводятся на фронте и не участвуют в новом импорте.</p>';
+        echo __( '<h2>Товары с WSS Bookings</h2>', 'wss-wc-bookings' );
+        echo __( '<p class="description">Сводка помогает проверить, куда попало расписание после импорта. Здесь показываются только опубликованные товары; черновики и неактивные экскурсии не выводятся на фронте и не участвуют в новом импорте.</p>', 'wss-wc-bookings' );
         echo '<table class="widefat striped wss-bookings-summary-table">';
-        echo '<thead><tr><th>Товар / экскурсия</th><th>ID</th><th>Статус товара</th><th>Всего слотов</th><th>Будущих слотов</th><th>Режим</th><th>Статус WSS</th><th></th></tr></thead><tbody>';
+        echo __( '<thead><tr><th>Товар / экскурсия</th><th>ID</th><th>Статус товара</th><th>Всего слотов</th><th>Будущих слотов</th><th>Режим</th><th>Статус WSS</th><th></th></tr></thead><tbody>', 'wss-wc-bookings' );
 
         foreach ($ids as $product_id) {
             $total = $this->count_slots_for_product($product_id, false);
@@ -2946,15 +2951,15 @@ final class WSS_WooCommerce_Bookings {
             echo '<td>' . esc_html((string) $total) . '</td>';
             echo '<td>' . esc_html((string) $future) . '</td>';
             echo '<td>' . esc_html($this->product_booking_mode_label($product_id)) . '</td>';
-            echo '<td>' . esc_html($enabled ? 'Включен' : 'Есть слоты, но метка не включена') . '</td>';
-            $actions = '<a class="button button-small" href="' . esc_url($url) . '">Открыть</a>';
+            echo '<td>' . esc_html($enabled ? __( 'Включен', 'wss-wc-bookings' ) : __( 'Есть слоты, но метка не включена', 'wss-wc-bookings' )) . '</td>';
+            $actions = '<a class="button button-small" href="' . esc_url($url) . __( '">Открыть</a>', 'wss-wc-bookings' );
             if (!$enabled) {
                 $enable_url = wp_nonce_url(add_query_arg([
                     'page' => 'wss-wc-bookings',
                     'product_id' => $product_id,
                     'wss_booking_action' => 'enable_product_wss',
                 ], admin_url('admin.php')), 'wss_wc_bookings_action');
-                $actions .= ' <a class="button button-small" href="' . esc_url($enable_url) . '">Включить метку</a>';
+                $actions .= ' <a class="button button-small" href="' . esc_url($enable_url) . __( '">Включить метку</a>', 'wss-wc-bookings' );
             }
             echo '<td>' . $actions . '</td>';
             echo '</tr>';
@@ -2966,61 +2971,61 @@ final class WSS_WooCommerce_Bookings {
 
     private function render_create_slot_card(int $product_id): void {
         echo '<div class="wss-bookings-card">';
-        echo '<h2>Добавить слот</h2>';
+        echo __( '<h2>Добавить слот</h2>', 'wss-wc-bookings' );
         echo '<form method="post">';
         wp_nonce_field('wss_wc_bookings_action');
         echo '<input type="hidden" name="wss_booking_action" value="create_slot">';
         echo '<input type="hidden" name="product_id" value="' . esc_attr($product_id) . '">';
-        echo '<p><label>Дата<br><input type="date" name="slot_date" required></label></p>';
-        echo '<p><label>Начало<br><input type="time" name="start_time" required></label></p>';
-        echo '<p><label>Конец<br><input type="time" name="end_time" required></label></p>';
-        echo '<p><label>Мест<br><input type="number" name="capacity" min="1" step="1" value="20" required></label></p>';
-        echo '<p><label>Статус<br><select name="status"><option value="open">Открыт</option><option value="closed">Закрыт</option></select></label></p>';
-        echo '<p><label>Заметка<br><textarea name="note" rows="3"></textarea></label></p>';
-        submit_button('Добавить слот', 'primary', '', false);
+        echo __( '<p><label>Дата<br><input type="date" name="slot_date" required></label></p>', 'wss-wc-bookings' );
+        echo __( '<p><label>Начало<br><input type="time" name="start_time" required></label></p>', 'wss-wc-bookings' );
+        echo __( '<p><label>Конец<br><input type="time" name="end_time" required></label></p>', 'wss-wc-bookings' );
+        echo __( '<p><label>Мест<br><input type="number" name="capacity" min="1" step="1" value="20" required></label></p>', 'wss-wc-bookings' );
+        echo __( '<p><label>Статус<br><select name="status"><option value="open">Открыт</option><option value="closed">Закрыт</option></select></label></p>', 'wss-wc-bookings' );
+        echo __( '<p><label>Заметка<br><textarea name="note" rows="3"></textarea></label></p>', 'wss-wc-bookings' );
+        submit_button(__( 'Добавить слот', 'wss-wc-bookings' ), 'primary', '', false);
         echo '</form>';
         echo '</div>';
     }
 
     private function render_generate_slots_card(int $product_id): void {
         echo '<div class="wss-bookings-card">';
-        echo '<h2>Генератор расписания</h2>';
+        echo __( '<h2>Генератор расписания</h2>', 'wss-wc-bookings' );
         echo '<form method="post" class="wss-bookings-generator-form">';
         wp_nonce_field('wss_wc_bookings_action');
         echo '<input type="hidden" name="wss_booking_action" value="generate_slots">';
         echo '<input type="hidden" name="product_id" value="' . esc_attr($product_id) . '">';
         echo '<input type="hidden" id="wss-bookings-selected-dates" name="selected_dates" value="">';
-        echo '<p class="description">Выберите одну или несколько дат в календаре.' . ($this->is_pro_active() ? ' Ниже можно дополнительно создать такие же слоты по определенным дням недели в заданном периоде.' : ' Генератор по дням недели доступен в Pro.') . '</p>';
+        echo __( '<p class="description">Выберите одну или несколько дат в календаре.', 'wss-wc-bookings' ) . ($this->is_pro_active() ? __( ' Ниже можно дополнительно создать такие же слоты по определенным дням недели в заданном периоде.', 'wss-wc-bookings' ) : __( ' Генератор по дням недели доступен в Pro.', 'wss-wc-bookings' )) . '</p>';
         echo '<div class="wss-bookings-date-picker" data-input="#wss-bookings-selected-dates" data-start-month="' . esc_attr(current_time('Y-m-01')) . '">';
         echo '<div class="wss-bookings-calendar-head"><button type="button" class="button" data-wss-calendar-prev>‹</button><strong data-wss-calendar-title></strong><button type="button" class="button" data-wss-calendar-next>›</button></div>';
-        echo '<div class="wss-bookings-calendar-weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>';
+        echo __( '<div class="wss-bookings-calendar-weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>', 'wss-wc-bookings' );
         echo '<div class="wss-bookings-calendar-grid" data-wss-calendar-grid></div>';
-        echo '<div class="wss-bookings-calendar-actions"><button type="button" class="button" data-wss-calendar-select-month>Выбрать месяц</button><button type="button" class="button" data-wss-calendar-clear>Очистить</button></div>';
-        echo '<p class="wss-bookings-selected-dates"><strong>Выбрано дат:</strong> <span data-wss-selected-count>0</span><br><span data-wss-selected-dates-text>Пока ничего не выбрано</span></p>';
-        echo '<p class="wss-bookings-calendar-error" data-wss-calendar-error hidden>Выберите хотя бы одну дату.</p>';
+        echo __( '<div class="wss-bookings-calendar-actions"><button type="button" class="button" data-wss-calendar-select-month>Выбрать месяц</button><button type="button" class="button" data-wss-calendar-clear>Очистить</button></div>', 'wss-wc-bookings' );
+        echo __( '<p class="wss-bookings-selected-dates"><strong>Выбрано дат:</strong> <span data-wss-selected-count>0</span><br><span data-wss-selected-dates-text>Пока ничего не выбрано</span></p>', 'wss-wc-bookings' );
+        echo __( '<p class="wss-bookings-calendar-error" data-wss-calendar-error hidden>Выберите хотя бы одну дату.</p>', 'wss-wc-bookings' );
         echo '</div>';
         if ($this->is_pro_active()) {
             echo '<div class="wss-bookings-weekday-generator">';
-            echo '<h3>Или добавить по дням недели</h3>';
-            echo '<p class="description">Выберите дни недели и период. Эти даты будут добавлены к датам, выбранным в календаре выше.</p>';
-            echo '<p><strong>Дни недели</strong><br>';
+            echo __( '<h3>Или добавить по дням недели</h3>', 'wss-wc-bookings' );
+            echo __( '<p class="description">Выберите дни недели и период. Эти даты будут добавлены к датам, выбранным в календаре выше.</p>', 'wss-wc-bookings' );
+            echo __( '<p><strong>Дни недели</strong><br>', 'wss-wc-bookings' );
             for ($weekday = 1; $weekday <= 7; $weekday++) {
                 echo '<label class="wss-bookings-weekday"><input type="checkbox" name="generate_weekdays[]" value="' . esc_attr((string) $weekday) . '"> ' . esc_html($this->weekday_label($weekday)) . '</label>';
             }
             echo '</p>';
             echo '<div class="wss-bookings-two-cols">';
-            echo '<p><label>С даты<br><input type="date" name="generate_date_from"></label></p>';
-            echo '<p><label>По дату<br><input type="date" name="generate_date_to"></label></p>';
+            echo __( '<p><label>С даты<br><input type="date" name="generate_date_from"></label></p>', 'wss-wc-bookings' );
+            echo __( '<p><label>По дату<br><input type="date" name="generate_date_to"></label></p>', 'wss-wc-bookings' );
             echo '</div>';
             echo '</div>';
         }
-        echo '<p><label>Время начала через запятую<br><input type="text" name="times" value="12:00, 14:00, 16:00, 18:00" required></label></p>';
+        echo __( '<p><label>Время начала через запятую<br><input type="text" name="times" value="12:00, 14:00, 16:00, 18:00" required></label></p>', 'wss-wc-bookings' );
         echo '<div class="wss-bookings-two-cols">';
-        echo '<p><label>Длительность, минут<br><input type="number" name="duration" min="1" step="1" value="60" required></label></p>';
-        echo '<p><label>Мест в каждом слоте<br><input type="number" name="capacity" min="1" step="1" value="20" required></label></p>';
+        echo __( '<p><label>Длительность, минут<br><input type="number" name="duration" min="1" step="1" value="60" required></label></p>', 'wss-wc-bookings' );
+        echo __( '<p><label>Мест в каждом слоте<br><input type="number" name="capacity" min="1" step="1" value="20" required></label></p>', 'wss-wc-bookings' );
         echo '</div>';
-        echo '<p><label>Статус<br><select name="status"><option value="open">Открыт</option><option value="closed">Закрыт</option></select></label></p>';
-        submit_button('Создать расписание', 'primary', '', false);
+        echo __( '<p><label>Статус<br><select name="status"><option value="open">Открыт</option><option value="closed">Закрыт</option></select></label></p>', 'wss-wc-bookings' );
+        submit_button(__( 'Создать расписание', 'wss-wc-bookings' ), 'primary', '', false);
         echo '</form>';
         echo '</div>';
     }
@@ -3032,65 +3037,65 @@ final class WSS_WooCommerce_Bookings {
 
         echo '<div class="wss-bookings-tools">';
         echo '<div class="wss-bookings-card wss-bookings-card-tool">';
-        echo '<h2>Импорт из стандартного WooCommerce Bookings</h2>';
-        echo '<p class="description">Инструмент найдет только <strong>опубликованные и не архивные</strong> товары старого типа <code>booking</code> и опубликованные товары с метаданными WooCommerce Bookings, включит у них чекбокс WSS Bookings и перенесет доступные правила расписания в слоты WSS.</p>';
-        echo '<p><strong>Найдено активных кандидатов для импорта:</strong> ' . esc_html((string) $import_product_count) . '</p>';
+        echo __( '<h2>Импорт из стандартного WooCommerce Bookings</h2>', 'wss-wc-bookings' );
+        echo __( '<p class="description">Инструмент найдет только <strong>опубликованные и не архивные</strong> товары старого типа <code>booking</code> и опубликованные товары с метаданными WooCommerce Bookings, включит у них чекбокс WSS Bookings и перенесет доступные правила расписания в слоты WSS.</p>', 'wss-wc-bookings' );
+        echo __( '<p><strong>Найдено активных кандидатов для импорта:</strong> ', 'wss-wc-bookings' ) . esc_html((string) $import_product_count) . '</p>';
         echo '<form method="post" class="wss-bookings-import-form">';
         wp_nonce_field('wss_wc_bookings_action');
         echo '<input type="hidden" name="wss_booking_action" value="import_wc_bookings">';
-        echo '<p><label>Горизонт для повторяющихся правил, месяцев<br><input type="number" name="import_months" min="1" max="60" step="1" value="24"></label></p>';
-        echo '<p class="description">Для правил с конкретными датами будут импортированы сами даты. Для повторяющихся недельных правил будет создано расписание от текущей даты на указанный срок. Если у опубликованной услуги не найдено расписание по времени, будут созданы дневные слоты без указания времени.</p>';
-        echo '<p class="wss-bookings-warning">Перед импортом текущие WSS-слоты у импортируемых активных товаров будут удалены и заменены расписанием из WooCommerce Bookings. Слоты и метки у черновиков, приватных, скрытых и архивных товаров будут очищены.</p>';
-        submit_button('Импортировать расписание из WooCommerce Bookings', 'primary', '', false);
+        echo __( '<p><label>Горизонт для повторяющихся правил, месяцев<br><input type="number" name="import_months" min="1" max="60" step="1" value="24"></label></p>', 'wss-wc-bookings' );
+        echo __( '<p class="description">Для правил с конкретными датами будут импортированы сами даты. Для повторяющихся недельных правил будет создано расписание от текущей даты на указанный срок. Если у опубликованной услуги не найдено расписание по времени, будут созданы дневные слоты без указания времени.</p>', 'wss-wc-bookings' );
+        echo __( '<p class="wss-bookings-warning">Перед импортом текущие WSS-слоты у импортируемых активных товаров будут удалены и заменены расписанием из WooCommerce Bookings. Слоты и метки у черновиков, приватных, скрытых и архивных товаров будут очищены.</p>', 'wss-wc-bookings' );
+        submit_button(__( 'Импортировать расписание из WooCommerce Bookings', 'wss-wc-bookings' ), 'primary', '', false);
         echo '</form>';
         echo '</div>';
 
         echo '<div class="wss-bookings-card wss-bookings-card-tool">';
-        echo '<h2>Очистить неактивные и архивные экскурсии</h2>';
-        echo '<p class="description">Удаляет WSS-слоты у черновиков, приватных, товаров в корзине, а также опубликованных скрытых/архивных товаров, и отключает у них метку WSS Bookings. Заказы WooCommerce и сами товары не удаляются.</p>';
-        echo '<p><strong>Неактивных/архивных товаров с WSS-слотами/меткой:</strong> ' . esc_html((string) $inactive_wss_count) . '</p>';
+        echo __( '<h2>Очистить неактивные и архивные экскурсии</h2>', 'wss-wc-bookings' );
+        echo __( '<p class="description">Удаляет WSS-слоты у черновиков, приватных, товаров в корзине, а также опубликованных скрытых/архивных товаров, и отключает у них метку WSS Bookings. Заказы WooCommerce и сами товары не удаляются.</p>', 'wss-wc-bookings' );
+        echo __( '<p><strong>Неактивных/архивных товаров с WSS-слотами/меткой:</strong> ', 'wss-wc-bookings' ) . esc_html((string) $inactive_wss_count) . '</p>';
         echo '<form method="post" class="wss-bookings-cleanup-form">';
         wp_nonce_field('wss_wc_bookings_action');
         echo '<input type="hidden" name="wss_booking_action" value="cleanup_inactive_wss">';
-        submit_button('Очистить расписание архивных/неактивных', 'secondary', '', false);
+        submit_button(__( 'Очистить расписание архивных/неактивных', 'wss-wc-bookings' ), 'secondary', '', false);
         echo '</form>';
         echo '</div>';
 
         $repair_product_count = count($this->get_products_for_flag_repair());
         echo '<div class="wss-bookings-card wss-bookings-card-tool">';
-        echo '<h2>Проставить метки WSS Bookings</h2>';
-        echo '<p class="description">Служебная кнопка на случай, если расписание импортировалось, но товары не появились на фронте как товары WSS Bookings. Метка будет включена только у активных опубликованных товаров старого WooCommerce Bookings и у активных опубликованных товаров, для которых уже есть слоты WSS. Архивные и скрытые товары будут пропущены.</p>';
-        echo '<p><strong>Товаров для проверки:</strong> ' . esc_html((string) $repair_product_count) . '</p>';
+        echo __( '<h2>Проставить метки WSS Bookings</h2>', 'wss-wc-bookings' );
+        echo __( '<p class="description">Служебная кнопка на случай, если расписание импортировалось, но товары не появились на фронте как товары WSS Bookings. Метка будет включена только у активных опубликованных товаров старого WooCommerce Bookings и у активных опубликованных товаров, для которых уже есть слоты WSS. Архивные и скрытые товары будут пропущены.</p>', 'wss-wc-bookings' );
+        echo __( '<p><strong>Товаров для проверки:</strong> ', 'wss-wc-bookings' ) . esc_html((string) $repair_product_count) . '</p>';
         echo '<form method="post">';
         wp_nonce_field('wss_wc_bookings_action');
         echo '<input type="hidden" name="wss_booking_action" value="repair_wss_flags">';
-        submit_button('Проставить метки WSS Bookings', 'secondary', '', false);
+        submit_button(__( 'Проставить метки WSS Bookings', 'wss-wc-bookings' ), 'secondary', '', false);
         echo '</form>';
         echo '</div>';
 
         $missing_all_day_count = count($this->get_products_missing_slots_for_all_day());
         echo '<div class="wss-bookings-card wss-bookings-card-tool">';
-        echo '<h2>Создать дневные слоты без времени</h2>';
-        echo '<p class="description">Для активных неархивных товаров WSS Bookings, у которых нет будущих слотов, создаёт бронирование на весь день без указания времени. Это нужно для фотосессий и услуг с открытой датой.</p>';
-        echo '<p><strong>Активных товаров без будущего расписания:</strong> ' . esc_html((string) $missing_all_day_count) . '</p>';
+        echo __( '<h2>Создать дневные слоты без времени</h2>', 'wss-wc-bookings' );
+        echo __( '<p class="description">Для активных неархивных товаров WSS Bookings, у которых нет будущих слотов, создаёт бронирование на весь день без указания времени. Это нужно для фотосессий и услуг с открытой датой.</p>', 'wss-wc-bookings' );
+        echo __( '<p><strong>Активных товаров без будущего расписания:</strong> ', 'wss-wc-bookings' ) . esc_html((string) $missing_all_day_count) . '</p>';
         echo '<form method="post">';
         wp_nonce_field('wss_wc_bookings_action');
         echo '<input type="hidden" name="wss_booking_action" value="create_missing_all_day_slots">';
-        echo '<p><label>Горизонт, месяцев<br><input type="number" name="all_day_months" min="1" max="60" step="1" value="24"></label></p>';
-        submit_button('Создать дневные слоты', 'secondary', '', false);
+        echo __( '<p><label>Горизонт, месяцев<br><input type="number" name="all_day_months" min="1" max="60" step="1" value="24"></label></p>', 'wss-wc-bookings' );
+        submit_button(__( 'Создать дневные слоты', 'wss-wc-bookings' ), 'secondary', '', false);
         echo '</form>';
         echo '</div>';
 
         echo '<div class="wss-bookings-card wss-bookings-card-danger">';
-        echo '<h2>Удалить всё расписание WSS</h2>';
-        echo '<p><strong>Сейчас слотов в WSS Bookings:</strong> ' . esc_html((string) $total_slots) . '</p>';
-        echo '<p class="wss-bookings-danger-text">Это действие удалит все слоты расписания из нового плагина WSS WooCommerce Bookings для всех товаров. Заказы WooCommerce и сами товары удалены не будут.</p>';
+        echo __( '<h2>Удалить всё расписание WSS</h2>', 'wss-wc-bookings' );
+        echo __( '<p><strong>Сейчас слотов в WSS Bookings:</strong> ', 'wss-wc-bookings' ) . esc_html((string) $total_slots) . '</p>';
+        echo __( '<p class="wss-bookings-danger-text">Это действие удалит все слоты расписания из нового плагина WSS WooCommerce Bookings для всех товаров. Заказы WooCommerce и сами товары удалены не будут.</p>', 'wss-wc-bookings' );
         echo '<form method="post" class="wss-bookings-danger-form">';
         wp_nonce_field('wss_wc_bookings_action');
         echo '<input type="hidden" name="wss_booking_action" value="delete_all_slots">';
-        echo '<p><label><input type="checkbox" name="confirm_delete_all" value="1"> Я понимаю, что будут удалены все расписания WSS для всех товаров.</label></p>';
-        echo '<p><label>Введите <strong>УДАЛИТЬ</strong> для подтверждения<br><input type="text" name="confirm_delete_text" autocomplete="off"></label></p>';
-        submit_button('Удалить всё расписание', 'delete', '', false);
+        echo __( '<p><label><input type="checkbox" name="confirm_delete_all" value="1"> Я понимаю, что будут удалены все расписания WSS для всех товаров.</label></p>', 'wss-wc-bookings' );
+        echo __( '<p><label>Введите <strong>УДАЛИТЬ</strong> для подтверждения<br><input type="text" name="confirm_delete_text" autocomplete="off"></label></p>', 'wss-wc-bookings' );
+        submit_button(__( 'Удалить всё расписание', 'wss-wc-bookings' ), 'delete', '', false);
         echo '</form>';
         echo '</div>';
         echo '</div>';
@@ -3098,13 +3103,13 @@ final class WSS_WooCommerce_Bookings {
 
     private function render_slots_table(int $product_id, array $slots): void {
         if (!$slots) {
-            echo '<p>Слотов пока нет.</p>';
+            echo __( '<p>Слотов пока нет.</p>', 'wss-wc-bookings' );
             return;
         }
 
         echo '<table class="widefat striped wss-bookings-slots-table">';
         echo '<thead><tr>';
-        echo '<th>Экскурсия</th><th>Дата</th><th>Время</th><th>Мест</th><th>Занято</th><th>Свободно</th><th>Статус</th><th>Заметка</th><th>Действия</th>';
+        echo __( '<th>Экскурсия</th><th>Дата</th><th>Время</th><th>Мест</th><th>Занято</th><th>Свободно</th><th>Статус</th><th>Заметка</th><th>Действия</th>', 'wss-wc-bookings' );
         echo '</tr></thead><tbody>';
         foreach ($slots as $slot) {
             $available = max(0, (int) $slot->capacity - (int) $slot->booked);
@@ -3124,18 +3129,22 @@ final class WSS_WooCommerce_Bookings {
             echo '<tr>';
             echo '<td><strong>' . esc_html(get_the_title((int) $slot->product_id)) . '</strong><br><span class="description">ID ' . esc_html((string) (int) $slot->product_id) . '</span></td>';
             echo '<td>' . esc_html($this->format_date($slot->slot_date)) . '</td>';
-            echo '<td>' . esc_html($this->is_all_day_slot($slot) ? 'Весь день' : $this->format_time($slot->start_time) . '–' . $this->format_time($slot->end_time)) . '</td>';
+            echo '<td>' . esc_html($this->is_all_day_slot($slot) ? __( 'Весь день', 'wss-wc-bookings' ) : $this->format_time($slot->start_time) . '–' . $this->format_time($slot->end_time)) . '</td>';
             echo '<td>' . esc_html((string) $slot->capacity) . '</td>';
             echo '<td>' . esc_html((string) $slot->booked) . '</td>';
             echo '<td>' . esc_html((string) $available) . '</td>';
             $blocked = $this->is_date_blocked((int) $slot->product_id, (string) $slot->slot_date);
             if ($blocked) {
-                echo '<td><span class="wss-bookings-status wss-bookings-status-blocked">Заблокирован</span></td>';
+                echo __( '<td><span class="wss-bookings-status wss-bookings-status-blocked">Заблокирован</span></td>', 'wss-wc-bookings' );
             } else {
-                echo '<td><span class="wss-bookings-status wss-bookings-status-' . esc_attr($slot->status) . '">' . esc_html($slot->status === 'open' ? 'Открыт' : 'Закрыт') . '</span></td>';
+                echo '<td><span class="wss-bookings-status wss-bookings-status-' . esc_attr($slot->status) . '">' . esc_html($slot->status === 'open' ? __( 'Открыт', 'wss-wc-bookings' ) : __( 'Закрыт', 'wss-wc-bookings' )) . '</span></td>';
             }
-            echo '<td>' . esc_html((string) $slot->note) . '</td>';
-            echo '<td><a href="' . esc_url($toggle_url) . '">' . esc_html($slot->status === 'open' ? 'Закрыть' : 'Открыть') . '</a> | <a class="wss-bookings-delete" href="' . esc_url($delete_url) . '" onclick="return confirm(\'Удалить слот?\')">Удалить</a></td>';
+            $note_labels = [
+                self::ALL_DAY_NOTE => __('Автоматический слот на весь день', 'wss-wc-bookings'),
+                'Импортировано из WooCommerce Bookings' => __('Импортировано из WooCommerce Bookings', 'wss-wc-bookings'),
+            ];
+            echo '<td>' . esc_html($note_labels[(string) $slot->note] ?? (string) $slot->note) . '</td>';
+            echo '<td><a href="' . esc_url($toggle_url) . '">' . esc_html($slot->status === 'open' ? __( 'Закрыть', 'wss-wc-bookings' ) : __( 'Открыть', 'wss-wc-bookings' )) . '</a> | <a class="wss-bookings-delete" href="' . esc_url($delete_url) . __( '" onclick="return confirm(\'Удалить слот?\')">Удалить</a></td>', 'wss-wc-bookings' );
             echo '</tr>';
         }
         echo '</tbody></table>';
@@ -3239,8 +3248,8 @@ final class WSS_WooCommerce_Bookings {
                 'dateLabel' => $this->format_date_with_weekday($slot->slot_date),
                 'start' => $this->format_time($slot->start_time),
                 'end' => $this->format_time($slot->end_time),
-                'timeLabel' => $is_all_day ? 'Весь день' : $this->format_time($slot->start_time),
-                'rangeLabel' => $is_all_day ? 'весь день' : $this->format_time($slot->start_time) . '–' . $this->format_time($slot->end_time),
+                'timeLabel' => $is_all_day ? __( 'Весь день', 'wss-wc-bookings' ) : $this->format_time($slot->start_time),
+                'rangeLabel' => $is_all_day ? __( 'весь день', 'wss-wc-bookings' ) : $this->format_time($slot->start_time) . '–' . $this->format_time($slot->end_time),
                 'allDay' => $is_all_day ? 1 : 0,
                 'available' => $available,
                 'availableLabel' => $available . ' ' . $this->plural_tickets($available),
@@ -3251,8 +3260,8 @@ final class WSS_WooCommerce_Bookings {
         echo '<input type="hidden" name="wss_booking_slot_id" class="wss-booking-slot-input" value="">';
         echo '<script type="application/json" class="wss-booking-slots-data">' . wp_json_encode($slots_data, JSON_UNESCAPED_UNICODE) . '</script>';
         echo '<div class="wss-booking-calendar" data-wss-booking-calendar data-wss-all-day="' . esc_attr($has_time_slots ? '0' : '1') . '">';
-        echo '<div class="wss-booking-calendar-head"><button type="button" class="wss-booking-calendar-nav" data-wss-booking-prev aria-label="Предыдущий месяц">‹</button><strong data-wss-booking-title></strong><button type="button" class="wss-booking-calendar-nav" data-wss-booking-next aria-label="Следующий месяц">›</button></div>';
-        echo '<div class="wss-booking-calendar-weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>';
+        echo __( '<div class="wss-booking-calendar-head"><button type="button" class="wss-booking-calendar-nav" data-wss-booking-prev aria-label="Предыдущий месяц">‹</button><strong data-wss-booking-title></strong><button type="button" class="wss-booking-calendar-nav" data-wss-booking-next aria-label="Следующий месяц">›</button></div>', 'wss-wc-bookings' );
+        echo __( '<div class="wss-booking-calendar-weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>', 'wss-wc-bookings' );
         echo '<div class="wss-booking-calendar-grid" data-wss-booking-grid></div>';
         echo '</div>';
         echo '<div class="wss-booking-times" hidden>';
@@ -3328,30 +3337,30 @@ final class WSS_WooCommerce_Bookings {
         }
 
         if (!$this->is_active_product((int) $product_id)) {
-            wc_add_notice('Эта экскурсия сейчас недоступна для бронирования.', 'error');
+            wc_add_notice(__( 'Эта экскурсия сейчас недоступна для бронирования.', 'wss-wc-bookings' ), 'error');
             return false;
         }
 
         if (!empty($_POST['wss_booking_no_slots'])) {
-            wc_add_notice('Для этого товара сейчас нет доступных дат бронирования.', 'error');
+            wc_add_notice(__( 'Для этого товара сейчас нет доступных дат бронирования.', 'wss-wc-bookings' ), 'error');
             return false;
         }
 
         $slot_id = isset($_POST['wss_booking_slot_id']) ? absint($_POST['wss_booking_slot_id']) : 0;
         if (!$slot_id) {
-            wc_add_notice('Выберите дату бронирования.', 'error');
+            wc_add_notice(__( 'Выберите дату бронирования.', 'wss-wc-bookings' ), 'error');
             return false;
         }
 
         $slot = $this->get_slot($slot_id);
         $tickets = $this->get_posted_ticket_selection((int) $product_id);
         if (!empty($tickets['enabled']) && (int) $tickets['qty'] <= 0) {
-            wc_add_notice('Выберите количество билетов.', 'error');
+            wc_add_notice(__( 'Выберите количество билетов.', 'wss-wc-bookings' ), 'error');
             return false;
         }
         $requested_qty = !empty($tickets['enabled']) ? max(1, (int) $tickets['qty']) : max(1, (int) $quantity);
         if (!$this->slot_can_accept($slot, (int) $product_id, $requested_qty)) {
-            wc_add_notice('На выбранную дату уже недостаточно свободных мест. Выберите другую дату или уменьшите количество билетов.', 'error');
+            wc_add_notice(__( 'На выбранную дату уже недостаточно свободных мест. Выберите другую дату или уменьшите количество билетов.', 'wss-wc-bookings' ), 'error');
             return false;
         }
 
@@ -3410,6 +3419,19 @@ final class WSS_WooCommerce_Bookings {
         return $cart_item_data;
     }
 
+    /** Localize display labels while retaining the metadata keys used by existing orders. */
+    public function translate_order_meta_label($key, $meta, $item) {
+        if (!is_object($item) || !method_exists($item, 'get_meta') || !$item->get_meta('_wss_booking_slot_id', true)) {
+            return $key;
+        }
+        $labels = [
+            'Дата экскурсии' => __('Дата экскурсии', 'wss-wc-bookings'),
+            'Время экскурсии' => __('Время экскурсии', 'wss-wc-bookings'),
+            'Билеты' => __('Билеты', 'wss-wc-bookings'),
+        ];
+        return $labels[$key] ?? $key;
+    }
+
     public function display_cart_item_data(array $item_data, array $cart_item): array {
         if (empty($cart_item['wss_booking'])) {
             return $item_data;
@@ -3417,20 +3439,20 @@ final class WSS_WooCommerce_Bookings {
 
         $booking = $cart_item['wss_booking'];
         $item_data[] = [
-            'key' => 'Дата экскурсии',
+            'key' => __( 'Дата экскурсии', 'wss-wc-bookings' ),
             'value' => $this->format_date($booking['slot_date']),
             'display' => $this->format_date($booking['slot_date']),
         ];
         if (empty($booking['all_day'])) {
             $item_data[] = [
-                'key' => 'Время экскурсии',
+                'key' => __( 'Время экскурсии', 'wss-wc-bookings' ),
                 'value' => $this->format_time($booking['start_time']) . '–' . $this->format_time($booking['end_time']),
                 'display' => $this->format_time($booking['start_time']) . '–' . $this->format_time($booking['end_time']),
             ];
         }
         if (!empty($cart_item['wss_booking_tickets_label'])) {
             $item_data[] = [
-                'key' => 'Билеты',
+                'key' => __( 'Билеты', 'wss-wc-bookings' ),
                 'value' => (string) $cart_item['wss_booking_tickets_label'],
                 'display' => (string) $cart_item['wss_booking_tickets_label'],
             ];
@@ -3454,7 +3476,7 @@ final class WSS_WooCommerce_Bookings {
             $slot = $this->get_slot((int) $cart_item['wss_booking']['slot_id']);
 
             if (!$this->slot_can_accept($slot, $product_id, $qty)) {
-                wc_add_notice('На выбранную дату бронирования уже недостаточно мест. Обновите корзину и выберите другую дату.', 'error');
+                wc_add_notice(__( 'На выбранную дату бронирования уже недостаточно мест. Обновите корзину и выберите другую дату.', 'wss-wc-bookings' ), 'error');
             }
         }
     }
@@ -3556,13 +3578,13 @@ final class WSS_WooCommerce_Bookings {
         }
 
         $weekdays = [
-            1 => 'пн',
-            2 => 'вт',
-            3 => 'ср',
-            4 => 'чт',
-            5 => 'пт',
-            6 => 'сб',
-            7 => 'вс',
+            1 => __( 'пн', 'wss-wc-bookings' ),
+            2 => __( 'вт', 'wss-wc-bookings' ),
+            3 => __( 'ср', 'wss-wc-bookings' ),
+            4 => __( 'чт', 'wss-wc-bookings' ),
+            5 => __( 'пт', 'wss-wc-bookings' ),
+            6 => __( 'сб', 'wss-wc-bookings' ),
+            7 => __( 'вс', 'wss-wc-bookings' ),
         ];
         $weekday = $weekdays[(int) date_i18n('N', $timestamp)] ?? '';
 
@@ -3579,12 +3601,12 @@ final class WSS_WooCommerce_Bookings {
         $n2 = $number % 100;
 
         if ($n1 === 1 && $n2 !== 11) {
-            return 'билет';
+            return __( 'билет', 'wss-wc-bookings' );
         }
         if ($n1 >= 2 && $n1 <= 4 && ($n2 < 12 || $n2 > 14)) {
-            return 'билета';
+            return __( 'билета', 'wss-wc-bookings' );
         }
-        return 'билетов';
+        return __( 'билетов', 'wss-wc-bookings' );
     }
 }
 

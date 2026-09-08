@@ -2,7 +2,9 @@
 /**
  * Plugin Name: Delivery Zones on Map for WooCommerce
  * Description: Доставка WooCommerce по нарисованным зонам на карте: полигоны, правила стоимости от суммы корзины, геокодирование адреса и запрет доставки вне зон. Бесплатная версия использует Яндекс; Google, импорт и диагностика подключаются отдельным Pro-дополнением.
- * Version: 1.4.23
+ * Version: 1.4.24
+ * Text Domain: ydzs
+ * Domain Path: /languages
  * Author: WSS
  * Author URI: https://website-support.ru/
  * Requires PHP: 7.4
@@ -14,13 +16,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'YDZS_VERSION', '1.4.23' );
+require_once __DIR__ . '/includes/wss-i18n.php';
+WSS_Plugin_I18n_202609::register(__FILE__, 'ydzs');
+
+define( 'YDZS_VERSION', '1.4.24' );
 define( 'YDZS_FILE', __FILE__ );
 define( 'YDZS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'YDZS_URL', plugin_dir_url( __FILE__ ) );
 require_once YDZS_DIR . 'includes/class-ydzs-updater.php';
 define( 'YDZS_OPTION_SETTINGS', 'ydzs_settings' );
 define( 'YDZS_OPTION_ZONES', 'ydzs_zones' );
+
+// Preserve shipping metadata keys; only their displayed labels follow the locale.
+add_filter('woocommerce_order_item_display_meta_key', function ($key, $meta, $item) {
+    if ($key === 'Зона доставки' && is_object($item) && method_exists($item, 'get_method_id') && $item->get_method_id() === 'ydzs_shipping') {
+        return __('Зона доставки', 'ydzs');
+    }
+    return $key;
+}, 10, 3);
 
 register_activation_hook( __FILE__, function () {
 	$settings = get_option( YDZS_OPTION_SETTINGS, array() );
@@ -36,15 +49,15 @@ register_activation_hook( __FILE__, function () {
 		'map_center'    => '55.751244,37.618423',
 		'map_zoom'      => 10,
 		'debug_log'     => 'no',
-		'default_title'       => 'Доставка',
+		'default_title'       => __( 'Доставка', 'ydzs' ),
 		'address_field_names' => 'of_address,of_delivery_address,delivery_address,address,order_address,shipping_address_1,billing_address_1',
 		'address_selectors'   => '',
 		'address_suggest'     => 'yes',
 		'address_restrict_to_zones' => 'yes',
 		'address_context'     => '',
-		'address_placeholder' => 'Например: Санкт-Петербург, Невский проспект, 10',
-		'address_hint'        => 'Начните вводить адрес и выберите подходящий вариант из списка. Обязательно укажите населённый пункт, улицу и номер дома.',
-		'address_house_hint'  => 'Добавьте номер дома — без него карта может определить только улицу, и доставка может не рассчитаться.',
+		'address_placeholder' => __( 'Например: Санкт-Петербург, Невский проспект, 10', 'ydzs' ),
+		'address_hint'        => __( 'Начните вводить адрес и выберите подходящий вариант из списка. Обязательно укажите населённый пункт, улицу и номер дома.', 'ydzs' ),
+		'address_house_hint'  => __( 'Добавьте номер дома — без него карта может определить только улицу, и доставка может не рассчитаться.', 'ydzs' ),
 	) );
 
 	update_option( YDZS_OPTION_SETTINGS, $settings, false );
@@ -92,11 +105,11 @@ function ydzs_feature_enabled( string $feature ): bool {
 
 function ydzs_get_available_providers(): array {
 	$providers = array(
-		'yandex' => 'Яндекс',
+		'yandex' => __( 'Яндекс', 'ydzs' ),
 	);
 
 	$providers = apply_filters( 'ydzs_available_providers', $providers );
-	return is_array( $providers ) && $providers ? $providers : array( 'yandex' => 'Яндекс' );
+	return is_array( $providers ) && $providers ? $providers : array( 'yandex' => __( 'Яндекс', 'ydzs' ) );
 }
 
 function ydzs_provider_is_available( string $provider ): bool {
@@ -124,15 +137,15 @@ function ydzs_get_settings(): array {
 		'map_center'    => '55.751244,37.618423',
 		'map_zoom'      => 10,
 		'debug_log'     => 'no',
-		'default_title'       => 'Доставка',
+		'default_title'       => __( 'Доставка', 'ydzs' ),
 		'address_field_names' => 'of_address,of_delivery_address,delivery_address,address,order_address,shipping_address_1,billing_address_1',
 		'address_selectors'   => '',
 		'address_suggest'     => 'yes',
 		'address_restrict_to_zones' => 'yes',
 		'address_context'     => '',
-		'address_placeholder' => 'Например: Санкт-Петербург, Невский проспект, 10',
-		'address_hint'        => 'Начните вводить адрес и выберите подходящий вариант из списка. Обязательно укажите населённый пункт, улицу и номер дома.',
-		'address_house_hint'  => 'Добавьте номер дома — без него карта может определить только улицу, и доставка может не рассчитаться.',
+		'address_placeholder' => __( 'Например: Санкт-Петербург, Невский проспект, 10', 'ydzs' ),
+		'address_hint'        => __( 'Начните вводить адрес и выберите подходящий вариант из списка. Обязательно укажите населённый пункт, улицу и номер дома.', 'ydzs' ),
+		'address_house_hint'  => __( 'Добавьте номер дома — без него карта может определить только улицу, и доставка может не рассчитаться.', 'ydzs' ),
 	) );
 
 	$valid = array_keys( ydzs_get_available_providers() );
@@ -166,28 +179,28 @@ function ydzs_get_settings(): array {
 		$settings['geocode_provider'] = $geocode_provider;
 	}
 
-	return $settings;
+	return WSS_Plugin_I18n_202609::defaults($settings, 'ydzs');
 }
 
 function ydzs_get_address_hint_text( ?array $settings = null ): string {
 	$settings = $settings ?? ydzs_get_settings();
 	$hint     = trim( (string) ( $settings['address_hint'] ?? '' ) );
 
-	return '' !== $hint ? $hint : 'Начните вводить адрес и выберите подходящий вариант из списка. Обязательно укажите населённый пункт, улицу и номер дома.';
+	return '' !== $hint ? $hint : __( 'Начните вводить адрес и выберите подходящий вариант из списка. Обязательно укажите населённый пункт, улицу и номер дома.', 'ydzs' );
 }
 
 function ydzs_get_address_placeholder_text( ?array $settings = null ): string {
 	$settings    = $settings ?? ydzs_get_settings();
 	$placeholder = trim( (string) ( $settings['address_placeholder'] ?? '' ) );
 
-	return '' !== $placeholder ? $placeholder : 'Например: Санкт-Петербург, Невский проспект, 10';
+	return '' !== $placeholder ? $placeholder : __( 'Например: Санкт-Петербург, Невский проспект, 10', 'ydzs' );
 }
 
 function ydzs_get_address_house_hint_text( ?array $settings = null ): string {
 	$settings = $settings ?? ydzs_get_settings();
 	$hint     = trim( (string) ( $settings['address_house_hint'] ?? '' ) );
 
-	return '' !== $hint ? $hint : 'Добавьте номер дома — без него карта может определить только улицу, и доставка может не рассчитаться.';
+	return '' !== $hint ? $hint : __( 'Добавьте номер дома — без него карта может определить только улицу, и доставка может не рассчитаться.', 'ydzs' );
 }
 
 function ydzs_address_suggest_enabled( ?array $settings = null ): bool {
@@ -613,7 +626,7 @@ function ydzs_has_candidates_outside_delivery_zones( array $candidates ): bool {
 }
 
 function ydzs_address_outside_zones_message(): string {
-	return 'Адрес отсутствует в зонах доставки. Для этого адреса доступен только самовывоз.';
+	return __( 'Адрес отсутствует в зонах доставки. Для этого адреса доступен только самовывоз.', 'ydzs' );
 }
 
 function ydzs_normalize_address_for_token( string $address ): string {
@@ -1527,15 +1540,15 @@ function ydzs_format_money_plain( float $amount ): string {
 function ydzs_build_min_order_message( float $min_total, float $cart_total, string $zone_name = '' ): string {
 	$left = max( 0, $min_total - $cart_total );
 
-	$message = 'Адрес входит в зону доставки';
+	$message = __( 'Адрес входит в зону доставки', 'ydzs' );
 	if ( '' !== trim( $zone_name ) ) {
 		$message .= ': ' . trim( $zone_name );
 	}
 
-	$message .= '. Доставка по этому адресу доступна при сумме заказа от ' . ydzs_format_money_plain( $min_total ) . '.';
+	$message .= __( '. Доставка по этому адресу доступна при сумме заказа от ', 'ydzs' ) . ydzs_format_money_plain( $min_total ) . '.';
 
 	if ( $left > 0 ) {
-		$message .= ' Сейчас в корзине ' . ydzs_format_money_plain( $cart_total ) . ', осталось добавить товаров на ' . ydzs_format_money_plain( $left ) . '. Можно выбрать самовывоз.';
+		$message .= __( ' Сейчас в корзине ', 'ydzs' ) . ydzs_format_money_plain( $cart_total ) . __( ', осталось добавить товаров на ', 'ydzs' ) . ydzs_format_money_plain( $left ) . __( '. Можно выбрать самовывоз.', 'ydzs' );
 	}
 
 	return $message;
@@ -1627,7 +1640,7 @@ add_action( 'woocommerce_after_checkout_validation', function ( $data, $errors )
 	}
 
 	if ( '' === trim( (string) $address ) ) {
-		$errors->add( 'ydzs_empty_address', ydzs_get_address_hint_text() . ' Или выберите самовывоз.' );
+		$errors->add( 'ydzs_empty_address', ydzs_get_address_hint_text() . __( ' Или выберите самовывоз.', 'ydzs' ) );
 		return;
 	}
 
@@ -1635,7 +1648,7 @@ add_action( 'woocommerce_after_checkout_validation', function ( $data, $errors )
 	$zone  = $point ? ydzs_find_zone_for_point( (float) $point['lat'], (float) $point['lon'] ) : null;
 
 	if ( ! $point || ! $zone ) {
-		$errors->add( 'ydzs_outside_zone', 'По указанному адресу доставка не осуществляется. Выберите точный адрес из выпадающего списка, проверьте населённый пункт, улицу и номер дома, либо выберите самовывоз.' );
+		$errors->add( 'ydzs_outside_zone', __( 'По указанному адресу доставка не осуществляется. Выберите точный адрес из выпадающего списка, проверьте населённый пункт, улицу и номер дома, либо выберите самовывоз.', 'ydzs' ) );
 		return;
 	}
 
@@ -1660,8 +1673,8 @@ add_action( 'plugins_loaded', function () {
 			public function __construct( $instance_id = 0 ) {
 				$this->id                 = 'ydzs_shipping';
 				$this->instance_id        = absint( $instance_id );
-				$this->method_title       = 'Доставка по зонам на карте';
-				$this->method_description = 'Стоимость доставки рассчитывается по нарисованным полигонам на карте и сумме корзины.';
+				$this->method_title       = __( 'Доставка по зонам на карте', 'ydzs' );
+				$this->method_description = __( 'Стоимость доставки рассчитывается по нарисованным полигонам на карте и сумме корзины.', 'ydzs' );
 				$this->supports           = array(
 					'shipping-zones',
 					'instance-settings',
@@ -1696,16 +1709,16 @@ add_action( 'plugins_loaded', function () {
 			private function get_ydzs_fields(): array {
 				return array(
 					'enabled' => array(
-						'title'   => 'Включить',
+						'title'   => __( 'Включить', 'ydzs' ),
 						'type'    => 'checkbox',
-						'label'   => 'Включить доставку по зонам на карте',
+						'label'   => __( 'Включить доставку по зонам на карте', 'ydzs' ),
 						'default' => 'yes',
 					),
 					'title' => array(
-						'title'       => 'Название метода',
+						'title'       => __( 'Название метода', 'ydzs' ),
 						'type'        => 'text',
-						'description' => 'Показывается пользователю в корзине и на оформлении заказа.',
-						'default'     => 'Доставка',
+						'description' => __( 'Показывается пользователю в корзине и на оформлении заказа.', 'ydzs' ),
+						'default'     => __( 'Доставка', 'ydzs' ),
 					),
 				);
 			}
@@ -1897,7 +1910,7 @@ function ydzs_ajax_address_suggest(): void {
 	}
 
 	if ( '' === $message && '' !== $requested_house && ! $items ) {
-		$message = 'Не нашли точный вариант адреса в зонах доставки. Уточните населённый пункт, улицу и дом или выберите адрес из списка подсказок.';
+		$message = __( 'Не нашли точный вариант адреса в зонах доставки. Уточните населённый пункт, улицу и дом или выберите адрес из списка подсказок.', 'ydzs' );
 		$status  = 'not_found';
 	}
 
@@ -1938,7 +1951,7 @@ function ydzs_ajax_validate_address(): void {
 	if ( '' === $api_key ) {
 		wp_send_json_success( array(
 			'status'  => 'no_api_key',
-			'message' => 'Адрес будет проверен при пересчёте доставки. Для живой проверки нужен API-ключ карт.',
+			'message' => __( 'Адрес будет проверен при пересчёте доставки. Для живой проверки нужен API-ключ карт.', 'ydzs' ),
 		) );
 	}
 
@@ -1949,7 +1962,7 @@ function ydzs_ajax_validate_address(): void {
 		if ( ! $point ) {
 			wp_send_json_success( array(
 				'status'  => 'not_found',
-				'message' => 'Не удалось определить адрес. Проверьте населённый пункт, улицу и номер дома.',
+				'message' => __( 'Не удалось определить адрес. Проверьте населённый пункт, улицу и номер дома.', 'ydzs' ),
 			) );
 		}
 
@@ -1963,7 +1976,7 @@ function ydzs_ajax_validate_address(): void {
 		$formatted   = $address;
 		$cart_total  = ydzs_get_current_cart_total_for_rules();
 		$rule_status = ydzs_get_delivery_rule_status_for_zone( $zone, $cart_total );
-		$message     = ! empty( $rule_status['message'] ) ? (string) $rule_status['message'] : 'Адрес входит в зону доставки' . ( ! empty( $zone['name'] ) ? ': ' . $zone['name'] : '' ) . '.';
+		$message     = ! empty( $rule_status['message'] ) ? (string) $rule_status['message'] : __( 'Адрес входит в зону доставки', 'ydzs' ) . ( ! empty( $zone['name'] ) ? ': ' . $zone['name'] : '' ) . '.';
 
 		wp_send_json_success( array(
 			'status'            => 'inside',
@@ -1998,7 +2011,7 @@ function ydzs_ajax_validate_address(): void {
 
 		wp_send_json_success( array(
 			'status'  => 'not_found',
-			'message' => 'Не удалось найти точный адрес в зонах доставки. Уточните населённый пункт, улицу и дом или выберите адрес из списка подсказок.',
+			'message' => __( 'Не удалось найти точный адрес в зонах доставки. Уточните населённый пункт, улицу и дом или выберите адрес из списка подсказок.', 'ydzs' ),
 		) );
 	}
 
@@ -2026,7 +2039,7 @@ function ydzs_ajax_validate_address(): void {
 	if ( ! $selected && ! $selected_candidate ) {
 		wp_send_json_success( array(
 			'status'     => 'choose_suggestion',
-			'message'    => 'Найден похожий адрес в зоне доставки. Выберите точный вариант из списка подсказок, чтобы мы не рассчитали доставку по другому адресу.',
+			'message'    => __( 'Найден похожий адрес в зоне доставки. Выберите точный вариант из списка подсказок, чтобы мы не рассчитали доставку по другому адресу.', 'ydzs' ),
 			'candidates' => $suggest_items,
 		) );
 	}
@@ -2049,7 +2062,7 @@ function ydzs_ajax_validate_address(): void {
 		'amount_left' => 0,
 		'message'     => ydzs_address_outside_zones_message(),
 	);
-	$message     = ! empty( $rule_status['message'] ) ? (string) $rule_status['message'] : 'Адрес входит в зону доставки' . ( ! empty( $selected_candidate['zone_name'] ) ? ': ' . $selected_candidate['zone_name'] : '' ) . '.';
+	$message     = ! empty( $rule_status['message'] ) ? (string) $rule_status['message'] : __( 'Адрес входит в зону доставки', 'ydzs' ) . ( ! empty( $selected_candidate['zone_name'] ) ? ': ' . $selected_candidate['zone_name'] : '' ) . '.';
 
 	wp_send_json_success( array(
 		'status'            => 'inside',
@@ -2078,7 +2091,7 @@ function ydzs_no_shipping_message( string $message ): string {
 		}
 	}
 
-	return 'Адрес отсутствует в зонах доставки. Для этого адреса доступен только самовывоз.';
+	return __( 'Адрес отсутствует в зонах доставки. Для этого адреса доступен только самовывоз.', 'ydzs' );
 }
 
 
@@ -2126,8 +2139,8 @@ add_action( 'wp_enqueue_scripts', function () {
 add_action( 'admin_menu', function () {
 	add_submenu_page(
 		'woocommerce',
-		'Зоны доставки на карте',
-		'Зоны доставки на карте',
+		__( 'Зоны доставки на карте', 'ydzs' ),
+		__( 'Зоны доставки на карте', 'ydzs' ),
 		'manage_woocommerce',
 		'ydzs-zones',
 		'ydzs_render_admin_page'
@@ -2148,7 +2161,7 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 	if ( $api_key && 'yandex' === $map_provider ) {
 		wp_enqueue_script(
 			'ymaps',
-			'https://api-maps.yandex.ru/2.1/?apikey=' . rawurlencode( $api_key ) . '&lang=ru_RU',
+			'https://api-maps.yandex.ru/2.1/?apikey=' . rawurlencode( $api_key ) . '&lang=' . (strpos(determine_locale(), 'en') === 0 ? 'en_US' : 'ru_RU'),
 			array(),
 			null,
 			true
@@ -2172,7 +2185,7 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 
 function ydzs_render_admin_page(): void {
 	if ( ! current_user_can( 'manage_woocommerce' ) ) {
-		wp_die( 'Недостаточно прав.' );
+		wp_die( __( 'Недостаточно прав.', 'ydzs' ) );
 	}
 
 	$settings = ydzs_get_settings();
@@ -2202,12 +2215,12 @@ function ydzs_render_admin_page(): void {
 	?>
 	<div class="wrap ydzs-wrap">
 		<h1>
-			Зоны доставки на карте
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=ydzs-zones' ) ); ?>" class="page-title-action">Добавить новую</a>
+			<?php echo esc_html__( 'Зоны доставки на карте', 'ydzs' ); ?>
+			<a href="<?php echo esc_url( admin_url( 'admin.php?page=ydzs-zones' ) ); ?>" class="page-title-action"><?php echo esc_html__( 'Добавить новую', 'ydzs' ); ?></a>
 		</h1>
 
 		<?php if ( ! ydzs_is_wc_active() ) : ?>
-			<div class="notice notice-error"><p>WooCommerce не активен. Расчет доставки работать не будет.</p></div>
+			<div class="notice notice-error"><p><?php echo esc_html__( 'WooCommerce не активен. Расчет доставки работать не будет.', 'ydzs' ); ?></p></div>
 		<?php endif; ?>
 
 		<?php
@@ -2215,11 +2228,11 @@ function ydzs_render_admin_page(): void {
 		$geo_key_ok = 'google' === ydzs_get_geocode_provider( $settings ) ? ! empty( $settings['google_api_key'] ) : ! empty( $settings['api_key'] );
 		?>
 		<?php if ( ! $map_key_ok || ! $geo_key_ok ) : ?>
-			<div class="notice notice-warning"><p>Укажите API-ключ выбранного провайдера карт/геокодирования. Без него карта и расчет по адресу не заработают.</p></div>
+			<div class="notice notice-warning"><p><?php echo esc_html__( 'Укажите API-ключ выбранного провайдера карт/геокодирования. Без него карта и расчет по адресу не заработают.', 'ydzs' ); ?></p></div>
 		<?php endif; ?>
 
 		<?php if ( isset( $_GET['ydzs_imported'] ) ) : ?>
-			<div class="notice notice-success is-dismissible"><p>Зоны импортированы: <?php echo esc_html( absint( $_GET['ydzs_imported'] ) ); ?>.</p></div>
+			<div class="notice notice-success is-dismissible"><p><?php echo esc_html__( 'Зоны импортированы:', 'ydzs' ); ?> <?php echo esc_html( absint( $_GET['ydzs_imported'] ) ); ?>.</p></div>
 		<?php endif; ?>
 
 		<?php if ( isset( $_GET['ydzs_import_error'] ) ) : ?>
@@ -2232,7 +2245,7 @@ function ydzs_render_admin_page(): void {
 
 		<div class="ydzs-grid">
 			<div class="ydzs-card">
-				<h2>Настройки</h2>
+				<h2><?php echo esc_html__( 'Настройки', 'ydzs' ); ?></h2>
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<?php wp_nonce_field( 'ydzs_save_settings' ); ?>
 					<input type="hidden" name="action" value="ydzs_save_settings">
@@ -2240,7 +2253,7 @@ function ydzs_render_admin_page(): void {
 					<table class="form-table">
 						<?php $available_providers = ydzs_get_available_providers(); ?>
 						<tr>
-							<th><label for="ydzs_provider">Провайдер карт и геокодирования</label></th>
+							<th><label for="ydzs_provider"><?php echo esc_html__( 'Провайдер карт и геокодирования', 'ydzs' ); ?></label></th>
 							<td>
 								<select id="ydzs_provider" name="provider">
 									<?php foreach ( $available_providers as $provider_key => $provider_label ) : ?>
@@ -2250,20 +2263,20 @@ function ydzs_render_admin_page(): void {
 										<option value="google" disabled>Google <?php echo wp_kses_post( ydzs_pro_badge() ); ?></option>
 									<?php endif; ?>
 								</select>
-								<p class="description">В обычном режиме выбранный провайдер используется и для карты, и для геокодирования, и для проверки адреса. Для РФ/СНГ обычно удобнее Яндекс, для зарубежных проектов — Google в Pro.</p>
+								<p class="description"><?php echo esc_html__( 'В обычном режиме выбранный провайдер используется и для карты, и для геокодирования, и для проверки адреса. Для РФ/СНГ обычно удобнее Яндекс, для зарубежных проектов — Google в Pro.', 'ydzs' ); ?></p>
 								<?php if ( ydzs_feature_enabled( 'advanced_providers' ) ) : ?>
 									<label style="display:block;margin-top:8px;">
 										<input type="checkbox" name="advanced_providers" value="yes" <?php checked( $settings['advanced_providers'] ?? 'no', 'yes' ); ?>>
-										Расширенные настройки провайдеров
+										<?php echo esc_html__( 'Расширенные настройки провайдеров', 'ydzs' ); ?>
 									</label>
 								<?php else : ?>
-									<p class="description">Расширенные настройки провайдеров доступны в Pro.</p>
+									<p class="description"><?php echo esc_html__( 'Расширенные настройки провайдеров доступны в Pro.', 'ydzs' ); ?></p>
 								<?php endif; ?>
 							</td>
 						</tr>
 						<?php if ( ydzs_feature_enabled( 'advanced_providers' ) ) : ?>
 						<tr class="ydzs-advanced-provider-row">
-							<th><label for="ydzs_map_provider">Провайдер карты</label></th>
+							<th><label for="ydzs_map_provider"><?php echo esc_html__( 'Провайдер карты', 'ydzs' ); ?></label></th>
 							<td>
 								<select id="ydzs_map_provider" name="map_provider">
 									<?php foreach ( $available_providers as $provider_key => $provider_label ) : ?>
@@ -2273,7 +2286,7 @@ function ydzs_render_admin_page(): void {
 							</td>
 						</tr>
 						<tr class="ydzs-advanced-provider-row">
-							<th><label for="ydzs_geocode_provider">Провайдер геокодирования</label></th>
+							<th><label for="ydzs_geocode_provider"><?php echo esc_html__( 'Провайдер геокодирования', 'ydzs' ); ?></label></th>
 							<td>
 								<select id="ydzs_geocode_provider" name="geocode_provider">
 									<?php foreach ( $available_providers as $provider_key => $provider_label ) : ?>
@@ -2284,127 +2297,127 @@ function ydzs_render_admin_page(): void {
 						</tr>
 						<?php endif; ?>
 						<tr>
-							<th><label for="ydzs_api_key">API-ключ Яндекс</label></th>
+							<th><label for="ydzs_api_key"><?php echo esc_html__( 'API-ключ Яндекс', 'ydzs' ); ?></label></th>
 							<td>
 								<input type="text" class="regular-text" id="ydzs_api_key" name="api_key" value="<?php echo esc_attr( $settings['api_key'] ); ?>">
-								<p class="description">Нужен для Яндекс.Карт и Яндекс Геокодера.</p>
+								<p class="description"><?php echo esc_html__( 'Нужен для Яндекс.Карт и Яндекс Геокодера.', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 						<?php if ( ydzs_feature_enabled( 'google' ) ) : ?>
 						<tr>
-							<th><label for="ydzs_google_api_key">API-ключ Google</label></th>
+							<th><label for="ydzs_google_api_key"><?php echo esc_html__( 'API-ключ Google', 'ydzs' ); ?></label></th>
 							<td>
 								<input type="text" class="regular-text" id="ydzs_google_api_key" name="google_api_key" value="<?php echo esc_attr( $settings['google_api_key'] ?? '' ); ?>">
-								<p class="description">Нужен для Google Maps JavaScript API и Google Geocoding API. В Google Cloud должен быть включен billing.</p>
+								<p class="description"><?php echo esc_html__( 'Нужен для Google Maps JavaScript API и Google Geocoding API. В Google Cloud должен быть включен billing.', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th><label for="ydzs_google_region">Регион Google</label></th>
+							<th><label for="ydzs_google_region"><?php echo esc_html__( 'Регион Google', 'ydzs' ); ?></label></th>
 							<td>
 								<input type="text" class="small-text" id="ydzs_google_region" name="google_region" value="<?php echo esc_attr( $settings['google_region'] ?? 'ru' ); ?>">
-								<p class="description">Например: ru, nl, ee. Используется как подсказка региона для Google Geocoding API.</p>
+								<p class="description"><?php echo esc_html__( 'Например: ru, nl, ee. Используется как подсказка региона для Google Geocoding API.', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 						<?php else : ?>
 						<tr>
 							<th>Google Maps</th>
-							<td><p class="description">Google Maps и Google Geocoding доступны в Pro-дополнении.</p></td>
+							<td><p class="description"><?php echo esc_html__( 'Google Maps и Google Geocoding доступны в Pro-дополнении.', 'ydzs' ); ?></p></td>
 						</tr>
 						<?php endif; ?>
 						<tr>
-							<th><label for="ydzs_map_center">Центр карты</label></th>
+							<th><label for="ydzs_map_center"><?php echo esc_html__( 'Центр карты', 'ydzs' ); ?></label></th>
 							<td>
 								<input type="text" class="regular-text" id="ydzs_map_center" name="map_center" value="<?php echo esc_attr( $settings['map_center'] ); ?>">
-								<p class="description">Формат: широта,долгота. Например: 55.751244,37.618423. Можно также переместить карту и нажать «Сохранить текущий вид карты».</p>
+								<p class="description"><?php echo esc_html__( 'Формат: широта,долгота. Например: 55.751244,37.618423. Можно также переместить карту и нажать «Сохранить текущий вид карты».', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th><label for="ydzs_map_zoom">Масштаб карты</label></th>
+							<th><label for="ydzs_map_zoom"><?php echo esc_html__( 'Масштаб карты', 'ydzs' ); ?></label></th>
 							<td><input type="number" min="1" max="19" id="ydzs_map_zoom" name="map_zoom" value="<?php echo esc_attr( $settings['map_zoom'] ); ?>"></td>
 						</tr>
 						<tr>
-							<th><label for="ydzs_default_title">Название доставки</label></th>
+							<th><label for="ydzs_default_title"><?php echo esc_html__( 'Название доставки', 'ydzs' ); ?></label></th>
 							<td><input type="text" class="regular-text" id="ydzs_default_title" name="default_title" value="<?php echo esc_attr( $settings['default_title'] ); ?>"></td>
 						</tr>
 						<tr>
-							<th><label for="ydzs_address_field_names">Имена полей адреса</label></th>
+							<th><label for="ydzs_address_field_names"><?php echo esc_html__( 'Имена полей адреса', 'ydzs' ); ?></label></th>
 							<td>
 								<textarea class="large-text" rows="3" id="ydzs_address_field_names" name="address_field_names"><?php echo esc_textarea( $settings['address_field_names'] ?? '' ); ?></textarea>
-								<p class="description">Через запятую или с новой строки. Нужно для кастомных checkout-страниц, где адрес хранится не в стандартном shipping_address_1.</p>
+								<p class="description"><?php echo esc_html__( 'Через запятую или с новой строки. Нужно для кастомных checkout-страниц, где адрес хранится не в стандартном shipping_address_1.', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th><label for="ydzs_address_selectors">CSS-селекторы поля адреса</label></th>
+							<th><label for="ydzs_address_selectors"><?php echo esc_html__( 'CSS-селекторы поля адреса', 'ydzs' ); ?></label></th>
 							<td>
 								<textarea class="large-text" rows="3" id="ydzs_address_selectors" name="address_selectors"><?php echo esc_textarea( $settings['address_selectors'] ?? '' ); ?></textarea>
-								<p class="description">Необязательно. Например: #delivery-address, input[name="your_delivery_address"]. При изменении этих полей плагин будет запускать пересчет checkout.</p>
+								<p class="description"><?php echo esc_html__( 'Необязательно. Например: #delivery-address, input[name="your_delivery_address"]. При изменении этих полей плагин будет запускать пересчет checkout.', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th>Автоподсказки адреса</th>
+							<th><?php echo esc_html__( 'Автоподсказки адреса', 'ydzs' ); ?></th>
 							<td>
 								<label>
 									<input type="checkbox" name="address_suggest" value="yes" <?php checked( ydzs_address_suggest_enabled( $settings ) ); ?>>
-									Показывать покупателю выпадающий список адресов Яндекс.Карт при вводе
+									<?php echo esc_html__( 'Показывать покупателю выпадающий список адресов Яндекс.Карт при вводе', 'ydzs' ); ?>
 								</label>
-								<p class="description">Для работы нужен API-ключ Яндекс.Карт. Покупателю проще выбрать полный адрес из списка, а плагин сразу проверит, входит ли выбранный адрес в зону доставки.</p>
+								<p class="description"><?php echo esc_html__( 'Для работы нужен API-ключ Яндекс.Карт. Покупателю проще выбрать полный адрес из списка, а плагин сразу проверит, входит ли выбранный адрес в зону доставки.', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th>Границы поиска адреса</th>
+							<th><?php echo esc_html__( 'Границы поиска адреса', 'ydzs' ); ?></th>
 							<td>
 								<label>
 									<input type="checkbox" name="address_restrict_to_zones" value="yes" <?php checked( ydzs_address_restrict_to_zones_enabled( $settings ) ); ?>>
-									Искать и подсказывать адреса в пределах нарисованных зон доставки
+									<?php echo esc_html__( 'Искать и подсказывать адреса в пределах нарисованных зон доставки', 'ydzs' ); ?>
 								</label>
-								<p class="description">Плагин строит техническую рамку по полигонам зон и передаёт её в Яндекс.Карты/геокодер. Это лучше, чем общий регион вроде «Ленинградская область», потому что одинаковые улицы из других районов не должны попадать в приоритет.</p>
+								<p class="description"><?php echo esc_html__( 'Плагин строит техническую рамку по полигонам зон и передаёт её в Яндекс.Карты/геокодер. Это лучше, чем общий регион вроде «Ленинградская область», потому что одинаковые улицы из других районов не должны попадать в приоритет.', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th><label for="ydzs_address_context">Текстовый контекст для коротких адресов</label></th>
+							<th><label for="ydzs_address_context"><?php echo esc_html__( 'Текстовый контекст для коротких адресов', 'ydzs' ); ?></label></th>
 							<td>
 								<input type="text" class="regular-text" id="ydzs_address_context" name="address_context" value="<?php echo esc_attr( ydzs_get_address_context_text( $settings ) ); ?>">
-								<p class="description">Необязательно. Это только дополнительный текстовый хвост для совсем коротких адресов. Основное уточнение теперь делается по границам нарисованных зон доставки.</p>
+								<p class="description"><?php echo esc_html__( 'Необязательно. Это только дополнительный текстовый хвост для совсем коротких адресов. Основное уточнение теперь делается по границам нарисованных зон доставки.', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th><label for="ydzs_address_placeholder">Пример адреса</label></th>
+							<th><label for="ydzs_address_placeholder"><?php echo esc_html__( 'Пример адреса', 'ydzs' ); ?></label></th>
 							<td>
 								<input type="text" class="regular-text" id="ydzs_address_placeholder" name="address_placeholder" value="<?php echo esc_attr( ydzs_get_address_placeholder_text( $settings ) ); ?>">
-								<p class="description">Этот текст подставляется в placeholder поля адреса, если у поля ещё нет своего placeholder.</p>
+								<p class="description"><?php echo esc_html__( 'Этот текст подставляется в placeholder поля адреса, если у поля ещё нет своего placeholder.', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th><label for="ydzs_address_hint">Подсказка под полем адреса</label></th>
+							<th><label for="ydzs_address_hint"><?php echo esc_html__( 'Подсказка под полем адреса', 'ydzs' ); ?></label></th>
 							<td>
 								<textarea class="large-text" rows="2" id="ydzs_address_hint" name="address_hint"><?php echo esc_textarea( ydzs_get_address_hint_text( $settings ) ); ?></textarea>
-								<p class="description">Показывается покупателю в checkout рядом с найденным полем адреса.</p>
+								<p class="description"><?php echo esc_html__( 'Показывается покупателю в checkout рядом с найденным полем адреса.', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th><label for="ydzs_address_house_hint">Подсказка без номера дома</label></th>
+							<th><label for="ydzs_address_house_hint"><?php echo esc_html__( 'Подсказка без номера дома', 'ydzs' ); ?></label></th>
 							<td>
 								<textarea class="large-text" rows="2" id="ydzs_address_house_hint" name="address_house_hint"><?php echo esc_textarea( ydzs_get_address_house_hint_text( $settings ) ); ?></textarea>
-								<p class="description">Показывается, когда покупатель ввёл адрес без цифр. Это мягкая подсказка, а не блокировка оформления.</p>
+								<p class="description"><?php echo esc_html__( 'Показывается, когда покупатель ввёл адрес без цифр. Это мягкая подсказка, а не блокировка оформления.', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th>Логирование</th>
+							<th><?php echo esc_html__( 'Логирование', 'ydzs' ); ?></th>
 							<td>
 								<label>
 									<input type="checkbox" name="debug_log" value="yes" <?php checked( $settings['debug_log'], 'yes' ); ?>>
-									Писать лог WooCommerce → Статус → Журналы → yd-zones-shipping
+									<?php echo esc_html__( 'Писать лог WooCommerce → Статус → Журналы → yd-zones-shipping', 'ydzs' ); ?>
 								</label>
 							</td>
 						</tr>
 					</table>
 
-					<?php submit_button( 'Сохранить настройки' ); ?>
+					<?php submit_button( __( 'Сохранить настройки', 'ydzs' ) ); ?>
 				</form>
 			</div>
 
 			<div class="ydzs-card">
-				<h2><?php echo $edit['id'] ? 'Редактировать зону' : 'Добавить зону'; ?></h2>
+				<h2><?php echo $edit['id'] ? __( 'Редактировать зону', 'ydzs' ) : __( 'Добавить зону', 'ydzs' ); ?></h2>
 
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" id="ydzs-zone-form">
 					<?php wp_nonce_field( 'ydzs_save_zone' ); ?>
@@ -2414,41 +2427,41 @@ function ydzs_render_admin_page(): void {
 
 					<table class="form-table">
 						<tr>
-							<th><label for="ydzs_zone_name">Название зоны</label></th>
+							<th><label for="ydzs_zone_name"><?php echo esc_html__( 'Название зоны', 'ydzs' ); ?></label></th>
 							<td><input type="text" class="regular-text" id="ydzs_zone_name" name="name" required value="<?php echo esc_attr( $edit['name'] ); ?>"></td>
 						</tr>
 						<tr>
-							<th>Активность</th>
+							<th><?php echo esc_html__( 'Активность', 'ydzs' ); ?></th>
 							<td>
 								<label>
 									<input type="checkbox" name="enabled" value="yes" <?php checked( $edit['enabled'], 'yes' ); ?>>
-									Зона включена
+									<?php echo esc_html__( 'Зона включена', 'ydzs' ); ?>
 								</label>
 							</td>
 						</tr>
 						<tr>
-							<th>Полигон</th>
+							<th><?php echo esc_html__( 'Полигон', 'ydzs' ); ?></th>
 							<td>
 								<div class="ydzs-map-actions">
-									<button type="button" class="button" id="ydzs-draw-zone">Нарисовать / перерисовать</button>
-									<button type="button" class="button" id="ydzs-clear-zone">Очистить</button>
-									<button type="button" class="button button-secondary" id="ydzs-save-map-view">Сохранить текущий вид карты</button>
+									<button type="button" class="button" id="ydzs-draw-zone"><?php echo esc_html__( 'Нарисовать / перерисовать', 'ydzs' ); ?></button>
+									<button type="button" class="button" id="ydzs-clear-zone"><?php echo esc_html__( 'Очистить', 'ydzs' ); ?></button>
+									<button type="button" class="button button-secondary" id="ydzs-save-map-view"><?php echo esc_html__( 'Сохранить текущий вид карты', 'ydzs' ); ?></button>
 									<span class="ydzs-map-save-status" id="ydzs-map-save-status" aria-live="polite"></span>
 								</div>
 								<div id="ydzs-map"></div>
-								<p class="description">Нажмите «Нарисовать», кликами поставьте точки полигона. Двойной клик завершает рисование. Потом вершины можно двигать.</p>
+								<p class="description"><?php echo esc_html__( 'Нажмите «Нарисовать», кликами поставьте точки полигона. Двойной клик завершает рисование. Потом вершины можно двигать.', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 					</table>
 
-					<h3>Правила стоимости</h3>
-					<p class="description">Правило выбирается по максимальной подходящей сумме «от». Например: от 0 — 300 ₽, от 3000 — 0 ₽.</p>
+					<h3><?php echo esc_html__( 'Правила стоимости', 'ydzs' ); ?></h3>
+					<p class="description"><?php echo esc_html__( 'Правило выбирается по максимальной подходящей сумме «от». Например: от 0 — 300 ₽, от 3000 — 0 ₽.', 'ydzs' ); ?></p>
 
 					<table class="widefat striped ydzs-rules-table">
 						<thead>
 							<tr>
-								<th>Сумма корзины от</th>
-								<th>Стоимость доставки</th>
+								<th><?php echo esc_html__( 'Сумма корзины от', 'ydzs' ); ?></th>
+								<th><?php echo esc_html__( 'Стоимость доставки', 'ydzs' ); ?></th>
 								<th></th>
 							</tr>
 						</thead>
@@ -2457,55 +2470,55 @@ function ydzs_render_admin_page(): void {
 								<tr>
 									<td><input type="text" name="rules_min[]" value="<?php echo esc_attr( $rule['min'] ?? 0 ); ?>"></td>
 									<td><input type="text" name="rules_cost[]" value="<?php echo esc_attr( $rule['cost'] ?? 0 ); ?>"></td>
-									<td><button type="button" class="button ydzs-remove-rule">Удалить</button></td>
+									<td><button type="button" class="button ydzs-remove-rule"><?php echo esc_html__( 'Удалить', 'ydzs' ); ?></button></td>
 								</tr>
 							<?php endforeach; ?>
 						</tbody>
 					</table>
 
 					<p>
-						<button type="button" class="button" id="ydzs-add-rule">Добавить правило</button>
+						<button type="button" class="button" id="ydzs-add-rule"><?php echo esc_html__( 'Добавить правило', 'ydzs' ); ?></button>
 					</p>
 
-					<?php submit_button( $edit['id'] ? 'Сохранить зону' : 'Добавить зону' ); ?>
+					<?php submit_button( $edit['id'] ? __( 'Сохранить зону', 'ydzs' ) : __( 'Добавить зону', 'ydzs' ) ); ?>
 				</form>
 			</div>
 		</div>
 
 		<div class="ydzs-card">
-			<h2>Созданные зоны</h2>
+			<h2><?php echo esc_html__( 'Созданные зоны', 'ydzs' ); ?></h2>
 
 			<table class="widefat striped">
 				<thead>
 					<tr>
-						<th>Название</th>
-						<th>Статус</th>
-						<th>Точек полигона</th>
-						<th>Правила</th>
-						<th>Действия</th>
+						<th><?php echo esc_html__( 'Название', 'ydzs' ); ?></th>
+						<th><?php echo esc_html__( 'Статус', 'ydzs' ); ?></th>
+						<th><?php echo esc_html__( 'Точек полигона', 'ydzs' ); ?></th>
+						<th><?php echo esc_html__( 'Правила', 'ydzs' ); ?></th>
+						<th><?php echo esc_html__( 'Действия', 'ydzs' ); ?></th>
 					</tr>
 				</thead>
 				<tbody>
 				<?php if ( empty( $zones ) ) : ?>
-					<tr><td colspan="5">Зоны пока не созданы.</td></tr>
+					<tr><td colspan="5"><?php echo esc_html__( 'Зоны пока не созданы.', 'ydzs' ); ?></td></tr>
 				<?php else : ?>
 					<?php foreach ( $zones as $zone ) : ?>
 						<tr>
 							<td><strong><?php echo esc_html( $zone['name'] ?? '' ); ?></strong></td>
-							<td><?php echo ( ! empty( $zone['enabled'] ) && 'yes' === $zone['enabled'] ) ? 'Включена' : 'Отключена'; ?></td>
+							<td><?php echo ( ! empty( $zone['enabled'] ) && 'yes' === $zone['enabled'] ) ? __( 'Включена', 'ydzs' ) : __( 'Отключена', 'ydzs' ); ?></td>
 							<td><?php echo esc_html( count( ydzs_normalize_polygon( $zone['coords'] ?? array() ) ) ); ?></td>
 							<td>
 								<?php
 								$rules = array();
 								foreach ( (array) ( $zone['rules'] ?? array() ) as $rule ) {
-									$rules[] = 'от ' . esc_html( $rule['min'] ?? 0 ) . ' → ' . esc_html( $rule['cost'] ?? 0 );
+									$rules[] = __( 'от ', 'ydzs' ) . esc_html( $rule['min'] ?? 0 ) . ' → ' . esc_html( $rule['cost'] ?? 0 );
 								}
 								echo implode( '<br>', $rules ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 								?>
 							</td>
 							<td>
-								<a class="button" href="<?php echo esc_url( add_query_arg( array( 'page' => 'ydzs-zones', 'zone_id' => $zone['id'] ?? '' ), admin_url( 'admin.php' ) ) ); ?>">Редактировать</a>
-								<a class="button button-link-delete" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'action' => 'ydzs_delete_zone', 'zone_id' => $zone['id'] ?? '' ), admin_url( 'admin-post.php' ) ), 'ydzs_delete_zone' ) ); ?>" onclick="return confirm('Удалить зону?')">Удалить</a>
+								<a class="button" href="<?php echo esc_url( add_query_arg( array( 'page' => 'ydzs-zones', 'zone_id' => $zone['id'] ?? '' ), admin_url( 'admin.php' ) ) ); ?>"><?php echo esc_html__( 'Редактировать', 'ydzs' ); ?></a>
+								<a class="button button-link-delete" href="<?php echo esc_url( wp_nonce_url( add_query_arg( array( 'action' => 'ydzs_delete_zone', 'zone_id' => $zone['id'] ?? '' ), admin_url( 'admin-post.php' ) ), 'ydzs_delete_zone' ) ); ?>" onclick="return confirm('Удалить зону?')"><?php echo esc_html__( 'Удалить', 'ydzs' ); ?></a>
 							</td>
 						</tr>
 					<?php endforeach; ?>
@@ -2515,26 +2528,26 @@ function ydzs_render_admin_page(): void {
 		</div>
 
 		<div class="ydzs-card">
-			<h2>Проверка адреса <?php if ( ! ydzs_feature_enabled( 'diagnostic' ) ) { echo wp_kses_post( ydzs_pro_badge() ); } ?></h2>
+			<h2><?php echo esc_html__( 'Проверка адреса', 'ydzs' ); ?> <?php if ( ! ydzs_feature_enabled( 'diagnostic' ) ) { echo wp_kses_post( ydzs_pro_badge() ); } ?></h2>
 			<?php if ( ydzs_feature_enabled( 'diagnostic' ) ) : ?>
-				<p>Диагностика показывает, как текущий геокодер понимает адрес, в какую зону он попадает и какая стоимость будет применена.</p>
+				<p><?php echo esc_html__( 'Диагностика показывает, как текущий геокодер понимает адрес, в какую зону он попадает и какая стоимость будет применена.', 'ydzs' ); ?></p>
 				<div class="ydzs-diagnostic">
-					<input type="text" class="regular-text" id="ydzs-check-address" placeholder="Введите адрес для проверки">
-					<input type="number" class="small-text" id="ydzs-check-total" min="0" step="0.01" value="0" title="Сумма корзины">
-					<button type="button" class="button button-primary" id="ydzs-check-address-btn">Проверить</button>
+					<input type="text" class="regular-text" id="ydzs-check-address" placeholder="<?php echo esc_attr__( 'Введите адрес для проверки', 'ydzs' ); ?>">
+					<input type="number" class="small-text" id="ydzs-check-total" min="0" step="0.01" value="0" title="<?php echo esc_attr__( 'Сумма корзины', 'ydzs' ); ?>">
+					<button type="button" class="button button-primary" id="ydzs-check-address-btn"><?php echo esc_html__( 'Проверить', 'ydzs' ); ?></button>
 				</div>
 				<div id="ydzs-check-result" class="ydzs-check-result" aria-live="polite"></div>
 			<?php else : ?>
-				<p>Диагностика адреса доступна в Pro: видно координаты, выбранную зону, правило стоимости и причину отказа доставки.</p>
+				<p><?php echo esc_html__( 'Диагностика адреса доступна в Pro: видно координаты, выбранную зону, правило стоимости и причину отказа доставки.', 'ydzs' ); ?></p>
 			<?php endif; ?>
 		</div>
 
 		<div class="ydzs-card">
-			<h2>Экспорт / импорт зон</h2>
-			<p>Экспортируются только нарисованные зоны с полигонами и правилами стоимости. API-ключи карт и остальные настройки сайта в файл не попадают.</p>
+			<h2><?php echo esc_html__( 'Экспорт / импорт зон', 'ydzs' ); ?></h2>
+			<p><?php echo esc_html__( 'Экспортируются только нарисованные зоны с полигонами и правилами стоимости. API-ключи карт и остальные настройки сайта в файл не попадают.', 'ydzs' ); ?></p>
 
 			<p>
-				<a class="button button-primary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=ydzs_export_zones' ), 'ydzs_export_zones' ) ); ?>">Скачать зоны JSON</a>
+				<a class="button button-primary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=ydzs_export_zones' ), 'ydzs_export_zones' ) ); ?>"><?php echo esc_html__( 'Скачать зоны JSON', 'ydzs' ); ?></a>
 			</p>
 
 			<?php if ( ydzs_feature_enabled( 'import' ) ) : ?>
@@ -2544,33 +2557,33 @@ function ydzs_render_admin_page(): void {
 
 					<table class="form-table">
 						<tr>
-							<th><label for="ydzs_import_file">JSON-файл</label></th>
+							<th><label for="ydzs_import_file"><?php echo esc_html__( 'JSON-файл', 'ydzs' ); ?></label></th>
 							<td><input type="file" id="ydzs_import_file" name="import_file" accept="application/json,.json" required></td>
 						</tr>
 						<tr>
-							<th>Режим импорта</th>
+							<th><?php echo esc_html__( 'Режим импорта', 'ydzs' ); ?></th>
 							<td>
-								<label><input type="radio" name="import_mode" value="merge" checked> Добавить к текущим зонам</label><br>
-								<label><input type="radio" name="import_mode" value="replace"> Заменить все текущие зоны</label>
-								<p class="description">При добавлении к текущим зонам дублирующиеся ID будут заменены, чтобы не перезаписать существующие зоны.</p>
+								<label><input type="radio" name="import_mode" value="merge" checked> <?php echo esc_html__( 'Добавить к текущим зонам', 'ydzs' ); ?></label><br>
+								<label><input type="radio" name="import_mode" value="replace"> <?php echo esc_html__( 'Заменить все текущие зоны', 'ydzs' ); ?></label>
+								<p class="description"><?php echo esc_html__( 'При добавлении к текущим зонам дублирующиеся ID будут заменены, чтобы не перезаписать существующие зоны.', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 					</table>
 
-					<?php submit_button( 'Импортировать зоны' ); ?>
+					<?php submit_button( __( 'Импортировать зоны', 'ydzs' ) ); ?>
 				</form>
 			<?php else : ?>
-				<p>Импорт зон доступен в Pro. В бесплатной версии можно экспортировать настройки зон в JSON.</p>
+				<p><?php echo esc_html__( 'Импорт зон доступен в Pro. В бесплатной версии можно экспортировать настройки зон в JSON.', 'ydzs' ); ?></p>
 			<?php endif; ?>
 		</div>
 
 		<div class="ydzs-card">
-			<h2>Подключение в WooCommerce</h2>
+			<h2><?php echo esc_html__( 'Подключение в WooCommerce', 'ydzs' ); ?></h2>
 			<ol>
-				<li>Откройте WooCommerce → Настройки → Доставка → Зоны доставки.</li>
-				<li>Добавьте или откройте нужную стандартную зону WooCommerce, например «Россия» или «Санкт-Петербург».</li>
-				<li>Добавьте метод доставки «Доставка по зонам на карте».</li>
-				<li>На чекауте WooCommerce передаст адрес в этот метод, плагин геокодирует адрес и проверит попадание в нарисованный полигон.</li>
+				<li><?php echo esc_html__( 'Откройте WooCommerce → Настройки → Доставка → Зоны доставки.', 'ydzs' ); ?></li>
+				<li><?php echo esc_html__( 'Добавьте или откройте нужную стандартную зону WooCommerce, например «Россия» или «Санкт-Петербург».', 'ydzs' ); ?></li>
+				<li><?php echo esc_html__( 'Добавьте метод доставки «Доставка по зонам на карте».', 'ydzs' ); ?></li>
+				<li><?php echo esc_html__( 'На чекауте WooCommerce передаст адрес в этот метод, плагин геокодирует адрес и проверит попадание в нарисованный полигон.', 'ydzs' ); ?></li>
 			</ol>
 		</div>
 	</div>
@@ -2580,7 +2593,7 @@ function ydzs_render_admin_page(): void {
 
 add_action( 'wp_ajax_ydzs_save_map_view', function () {
 	if ( ! current_user_can( 'manage_woocommerce' ) ) {
-		wp_send_json_error( array( 'message' => 'Недостаточно прав.' ), 403 );
+		wp_send_json_error( array( 'message' => __( 'Недостаточно прав.', 'ydzs' ) ), 403 );
 	}
 
 	check_ajax_referer( 'ydzs_admin', 'nonce' );
@@ -2589,7 +2602,7 @@ add_action( 'wp_ajax_ydzs_save_map_view', function () {
 	$zoom   = isset( $_POST['map_zoom'] ) ? max( 1, min( 19, absint( $_POST['map_zoom'] ) ) ) : 10;
 
 	if ( '' === $center ) {
-		wp_send_json_error( array( 'message' => 'Не удалось определить центр карты.' ), 400 );
+		wp_send_json_error( array( 'message' => __( 'Не удалось определить центр карты.', 'ydzs' ) ), 400 );
 	}
 
 	$settings = ydzs_get_settings();
@@ -2599,7 +2612,7 @@ add_action( 'wp_ajax_ydzs_save_map_view', function () {
 	update_option( YDZS_OPTION_SETTINGS, $settings, false );
 
 	wp_send_json_success( array(
-		'message'    => 'Центр карты сохранён.',
+		'message'    => __( 'Центр карты сохранён.', 'ydzs' ),
 		'map_center' => $center,
 		'map_zoom'   => $zoom,
 	) );
@@ -2607,7 +2620,7 @@ add_action( 'wp_ajax_ydzs_save_map_view', function () {
 
 add_action( 'admin_post_ydzs_save_settings', function () {
 	if ( ! current_user_can( 'manage_woocommerce' ) ) {
-		wp_die( 'Недостаточно прав.' );
+		wp_die( __( 'Недостаточно прав.', 'ydzs' ) );
 	}
 
 	check_admin_referer( 'ydzs_save_settings' );
@@ -2638,15 +2651,15 @@ add_action( 'admin_post_ydzs_save_settings', function () {
 		'map_center'    => isset( $_POST['map_center'] ) ? ydzs_sanitize_map_center( wp_unslash( $_POST['map_center'] ) ) : '55.751244,37.618423',
 		'map_zoom'      => isset( $_POST['map_zoom'] ) ? max( 1, min( 19, absint( $_POST['map_zoom'] ) ) ) : 10,
 		'debug_log'     => isset( $_POST['debug_log'] ) ? 'yes' : 'no',
-		'default_title'       => isset( $_POST['default_title'] ) ? sanitize_text_field( wp_unslash( $_POST['default_title'] ) ) : 'Доставка',
+		'default_title'       => isset( $_POST['default_title'] ) ? sanitize_text_field( wp_unslash( $_POST['default_title'] ) ) : __( 'Доставка', 'ydzs' ),
 		'address_field_names' => isset( $_POST['address_field_names'] ) ? sanitize_textarea_field( wp_unslash( $_POST['address_field_names'] ) ) : 'of_address,of_delivery_address,delivery_address,address,order_address,shipping_address_1,billing_address_1',
 		'address_selectors'   => isset( $_POST['address_selectors'] ) ? sanitize_textarea_field( wp_unslash( $_POST['address_selectors'] ) ) : '',
 		'address_suggest'     => isset( $_POST['address_suggest'] ) ? 'yes' : 'no',
 		'address_restrict_to_zones' => isset( $_POST['address_restrict_to_zones'] ) ? 'yes' : 'no',
 		'address_context'     => isset( $_POST['address_context'] ) ? sanitize_text_field( wp_unslash( $_POST['address_context'] ) ) : '',
-		'address_placeholder' => isset( $_POST['address_placeholder'] ) ? sanitize_text_field( wp_unslash( $_POST['address_placeholder'] ) ) : 'Например: Санкт-Петербург, Невский проспект, 10',
-		'address_hint'        => isset( $_POST['address_hint'] ) ? sanitize_textarea_field( wp_unslash( $_POST['address_hint'] ) ) : 'Начните вводить адрес и выберите подходящий вариант из списка. Обязательно укажите населённый пункт, улицу и номер дома.',
-		'address_house_hint'  => isset( $_POST['address_house_hint'] ) ? sanitize_textarea_field( wp_unslash( $_POST['address_house_hint'] ) ) : 'Добавьте номер дома — без него карта может определить только улицу, и доставка может не рассчитаться.',
+		'address_placeholder' => isset( $_POST['address_placeholder'] ) ? sanitize_text_field( wp_unslash( $_POST['address_placeholder'] ) ) : __( 'Например: Санкт-Петербург, Невский проспект, 10', 'ydzs' ),
+		'address_hint'        => isset( $_POST['address_hint'] ) ? sanitize_textarea_field( wp_unslash( $_POST['address_hint'] ) ) : __( 'Начните вводить адрес и выберите подходящий вариант из списка. Обязательно укажите населённый пункт, улицу и номер дома.', 'ydzs' ),
+		'address_house_hint'  => isset( $_POST['address_house_hint'] ) ? sanitize_textarea_field( wp_unslash( $_POST['address_house_hint'] ) ) : __( 'Добавьте номер дома — без него карта может определить только улицу, и доставка может не рассчитаться.', 'ydzs' ),
 	);
 
 	update_option( YDZS_OPTION_SETTINGS, $settings, false );
@@ -2657,7 +2670,7 @@ add_action( 'admin_post_ydzs_save_settings', function () {
 
 add_action( 'admin_post_ydzs_save_zone', function () {
 	if ( ! current_user_can( 'manage_woocommerce' ) ) {
-		wp_die( 'Недостаточно прав.' );
+		wp_die( __( 'Недостаточно прав.', 'ydzs' ) );
 	}
 
 	check_admin_referer( 'ydzs_save_zone' );
@@ -2680,7 +2693,7 @@ add_action( 'admin_post_ydzs_save_zone', function () {
 	if ( $is_new_zone && ! ydzs_feature_enabled( 'unlimited_zones' ) && count( $zones ) >= 3 ) {
 		wp_safe_redirect( add_query_arg( array(
 			'page'            => 'ydzs-zones',
-			'ydzs_zone_error' => rawurlencode( 'В бесплатной версии можно создать до 3 зон. Для большего количества зон нужен Pro.' ),
+			'ydzs_zone_error' => rawurlencode( __( 'В бесплатной версии можно создать до 3 зон. Для большего количества зон нужен Pro.', 'ydzs' ) ),
 		), admin_url( 'admin.php' ) ) );
 		exit;
 	}
@@ -2734,7 +2747,7 @@ add_action( 'admin_post_ydzs_save_zone', function () {
 
 add_action( 'admin_post_ydzs_export_zones', function () {
 	if ( ! current_user_can( 'manage_woocommerce' ) ) {
-		wp_die( 'Недостаточно прав.' );
+		wp_die( __( 'Недостаточно прав.', 'ydzs' ) );
 	}
 
 	check_admin_referer( 'ydzs_export_zones' );
@@ -2759,7 +2772,7 @@ add_action( 'admin_post_ydzs_export_zones', function () {
 
 add_action( 'admin_post_ydzs_delete_zone', function () {
 	if ( ! current_user_can( 'manage_woocommerce' ) ) {
-		wp_die( 'Недостаточно прав.' );
+		wp_die( __( 'Недостаточно прав.', 'ydzs' ) );
 	}
 
 	check_admin_referer( 'ydzs_delete_zone' );

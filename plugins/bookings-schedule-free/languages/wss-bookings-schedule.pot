@@ -1,0 +1,322 @@
+msgid ""
+msgstr "Project-Id-Version: WSS plugins\nLanguage: \nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: includes/class-wss-bs-settings.php
+msgid "Недостаточно прав."
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Шорткод для вывода расписания:"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Установлена Lite-версия."
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "На этой же странице отображаются возможности текущей версии. После перехода на Pro здесь появятся дополнительные вкладки и блок лицензии."
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Посмотреть Pro-версию"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Основные"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Тексты"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Вывод"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Количество дней для показа"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "В Lite доступно до 7 дней."
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Начало периода по умолчанию"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "С начала недели"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "С сегодняшнего дня"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Скрывать прошедшие слоты текущего дня"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Показывать дни без доступных экскурсий"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Показывать заголовок расписания"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Обычно выключено, если на странице уже есть H1."
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Заголовок расписания, если включен"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Кнопка назад"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Кнопка текущего периода"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Кнопка вперед"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Нет событий"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Нет выбранной экскурсии на дату"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Кнопка бронирования"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Кнопка выбора"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Формат даты дня"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Формат даты в диапазоне"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Формат времени"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Показывать цену"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Показывать длительность"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Сохранить настройки"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Недельное расписание"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Фильтр по экскурсиям на фронте"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Показ остатка мест"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Выбор/исключение товаров и категорий"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Настройка таймзоны и режима времени WooCommerce Bookings"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Цвета, скругления карточек и кнопок"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Период вывода до 31 дня"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Перейти к Pro-версии"
+msgstr ""
+
+#: includes/class-wss-bs-settings.php
+msgid "Включено"
+msgstr ""
+
+#: includes/class-wss-bs-updater.php
+msgid "Витрина расписания для booking-товаров WooCommerce."
+msgstr ""
+
+#: includes/class-wss-bs-updater.php
+msgid "Плагин выводит доступные слоты, навигацию по неделям и адаптивную витрину расписания. Совместим с WSS WooCommerce Bookings и WooCommerce Bookings."
+msgstr ""
+
+#: includes/class-wss-bs-query.php
+msgid "Автоматический слот на весь день"
+msgstr ""
+
+#: includes/class-wss-bs-plugin.php
+msgid "<div class=\"wss-bs-notice\">Для вывода расписания нужен активный WooCommerce.</div>"
+msgstr ""
+
+#: includes/class-wss-bs-plugin.php
+msgid "<div class=\"wss-bs-notice\">Для вывода расписания нужен активный WSS WooCommerce Bookings или WooCommerce Bookings.</div>"
+msgstr ""
+
+#: includes/class-wss-bs-plugin.php
+msgid "Расписание экскурсий"
+msgstr ""
+
+#: includes/class-wss-bs-plugin.php
+msgid "Предыдущая неделя"
+msgstr ""
+
+#: includes/class-wss-bs-plugin.php
+msgid "Эта неделя"
+msgstr ""
+
+#: includes/class-wss-bs-plugin.php
+msgid "Следующая неделя"
+msgstr ""
+
+#: includes/class-wss-bs-plugin.php
+msgid "Все экскурсии"
+msgstr ""
+
+#: includes/class-wss-bs-plugin.php
+msgid "На выбранные даты доступных экскурсий нет."
+msgstr ""
+
+#: assets/js/frontend.js includes/class-wss-bs-plugin.php
+msgid "На эту дату нет выбранной экскурсии."
+msgstr ""
+
+#: includes/class-wss-bs-plugin.php
+msgid "Забронировать"
+msgstr ""
+
+#: includes/class-wss-bs-plugin.php
+msgid "Выбрать"
+msgstr ""
+
+#: includes/class-wss-bs-plugin.php
+msgid "Время"
+msgstr ""
+
+#: includes/class-wss-bs-plugin.php
+msgid "Цена"
+msgstr ""
+
+#: includes/class-wss-bs-plugin.php
+msgid "Осталось мест: %s"
+msgstr ""
+
+#: includes/class-wss-bs-plugin.php
+msgid "Мест нет"
+msgstr ""
+
+#: includes/class-wss-bs-plugin.php
+msgid "Товар использует ресурсы и скрыт в расписании."
+msgstr ""
+
+#: includes/class-wss-bs-plugin.php
+msgid "<div class=\"notice notice-error\"><p><strong>WSS Bookings Schedule Lite:</strong> требуется установленный и активный WooCommerce.</p></div>"
+msgstr ""
+
+#: includes/class-wss-bs-plugin.php
+msgid "<div class=\"notice notice-warning\"><p><strong>WSS Bookings Schedule Lite:</strong> требуется активный WSS WooCommerce Bookings или WooCommerce Bookings. Данные расписания в базе сами по себе не считаются активным движком бронирований.</p></div>"
+msgstr ""
+
+#: includes/class-wss-bs-shortcode.php
+msgid "<div class=\"wss-bs-notice\">Для вывода расписания нужен WooCommerce.</div>"
+msgstr ""
+
+#: includes/class-wss-bs-shortcode.php
+msgid "Навигация расписания"
+msgstr ""
+
+#: includes/class-wss-bs-shortcode.php
+msgid "Дни расписания"
+msgstr ""
+
+#: assets/js/admin-tools.js
+msgid "Удалить выбранные"
+msgstr ""
+
+#: assets/js/admin-tools.js
+msgid "Не удалось удалить все выбранные даты. Обновите страницу и повторите попытку."
+msgstr ""
+
+#: assets/js/admin-tools.js
+msgid "Удаление…"
+msgstr ""
+
+#: assets/js/admin-tools.js
+msgid ") и все слоты в них? Действие необратимо."
+msgstr ""
+
+#: assets/js/admin-tools.js
+msgid "Удалить выбранные даты ("
+msgstr ""
+
+#: assets/js/admin-tools.js
+msgid "Не удалось определить действия удаления для выбранных строк."
+msgstr ""
+
+#: assets/js/admin-tools.js
+msgid "Выбрано дат: "
+msgstr ""
+
+#: assets/js/admin-tools.js
+msgid "Выбрано дат: 0"
+msgstr ""
+
+#: assets/js/admin-tools.js
+msgid "Выбрать дату "
+msgstr ""
+
+#: assets/js/admin-tools.js
+msgid "Выбрать все даты"
+msgstr ""
+
+#: assets/js/admin-tools.js
+msgid "дата"
+msgstr ""
+
+#: assets/js/admin-tools.js
+msgid "действ"
+msgstr ""
+
+#: assets/js/admin-tools.js
+msgid "слоты, созданные wss"
+msgstr ""
+
+#: assets/js/admin-tools.js
+msgid "удалить"
+msgstr ""
+
+#: assets/js/frontend.js
+msgid "На выбранную дату доступных экскурсий нет."
+msgstr ""
+
+#: wss-bookings-schedule.php
+msgid "Витрина расписания для booking-товаров WooCommerce. Совместима с WSS WooCommerce Bookings и WooCommerce Bookings."
+msgstr ""

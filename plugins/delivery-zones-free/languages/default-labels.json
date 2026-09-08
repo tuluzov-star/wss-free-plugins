@@ -1,0 +1,18 @@
+{
+  "default_title": [
+    "Доставка",
+    "Delivery"
+  ],
+  "address_placeholder": [
+    "Например: Санкт-Петербург, Невский проспект, 10",
+    "For example: Saint Petersburg, Nevsky Prospekt, 10"
+  ],
+  "address_hint": [
+    "Начните вводить адрес и выберите подходящий вариант из списка. Обязательно укажите населённый пункт, улицу и номер дома.",
+    "Start typing an address and select a suggestion. Include the town or city, street and house number."
+  ],
+  "address_house_hint": [
+    "Добавьте номер дома — без него карта может определить только улицу, и доставка может не рассчитаться.",
+    "Add a house number. Without it, the map may only identify the street and delivery may not be calculated."
+  ]
+}

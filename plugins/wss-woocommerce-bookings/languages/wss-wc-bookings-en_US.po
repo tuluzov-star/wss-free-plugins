@@ -1,0 +1,1026 @@
+msgid ""
+msgstr "Project-Id-Version: WSS plugins\nLanguage: en_US\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: wss-woocommerce-bookings.php
+msgid "<div class=\"notice notice-warning\"><p><strong>WSS WooCommerce Bookings:</strong> для работы плагина нужен активный WooCommerce.</p></div>"
+msgstr "<div class=\"notice notice-warning\"><p><strong>WSS WooCommerce Bookings:</strong> requires WooCommerce to be active.</p></div>"
+
+#: wss-woocommerce-bookings.php
+msgid "Расписание"
+msgstr "Schedule"
+
+#: wss-woocommerce-bookings.php
+msgid "Массовые действия"
+msgstr "Bulk actions"
+
+#: wss-woocommerce-bookings.php
+msgid "Блокировки"
+msgstr "Date blocking"
+
+#: wss-woocommerce-bookings.php
+msgid "Календарь броней"
+msgstr "Booking calendar"
+
+#: wss-woocommerce-bookings.php
+msgid "Списки гостей"
+msgstr "Guest lists"
+
+#: wss-woocommerce-bookings.php
+msgid "Настройки"
+msgstr "Settings"
+
+#: wss-woocommerce-bookings.php
+msgid "Возможности Pro"
+msgstr "Pro features"
+
+#: wss-woocommerce-bookings.php
+msgid "Включить выбор даты и времени бронирования для этого товара."
+msgstr "Enable booking date and time selection for this product."
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"form-field wss-booking-ticket-types-field\"><label for=\"wss_booking_ticket_types_text\">Типы билетов</label>"
+msgstr "<p class=\"form-field wss-booking-ticket-types-field\"><label for=\"wss_booking_ticket_types_text\">Ticket types</label>"
+
+#: wss-woocommerce-bookings.php
+msgid "<textarea id=\"wss_booking_ticket_types_text\" name=\"wss_booking_ticket_types_text\" rows=\"4\" style=\"width:50%;\" placeholder=\"Взрослый|1000&#10;Детский|700\">"
+msgstr "<textarea id=\"wss_booking_ticket_types_text\" name=\"wss_booking_ticket_types_text\" rows=\"4\" style=\"width:50%;\" placeholder=\"Adult|1000\nChild|700\">"
+
+#: wss-woocommerce-bookings.php
+msgid "<span class=\"description\">Pro: один тип билета на строку в формате <code>Название|Цена</code>. Если поле пустое, используется обычное количество товара WooCommerce.</span></p>"
+msgstr "<span class=\"description\">Pro: one ticket type per line, in the format <code>Name|Price</code>. Leave empty to use the standard WooCommerce product quantity.</span></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"form-field\"><label>Типы билетов</label><span class=\"description\">Типы билетов, разные цены и списки гостей доступны в WSS WooCommerce Bookings Pro.</span></p>"
+msgstr "<p class=\"form-field\"><label>Ticket types</label><span class=\"description\">Ticket types, different prices and guest lists are available in WSS WooCommerce Bookings Pro.</span></p>"
+
+#: assets/admin.js wss-woocommerce-bookings.php
+msgid "УДАЛИТЬ"
+msgstr "DELETE"
+
+#: wss-woocommerce-bookings.php
+msgid "Пн"
+msgstr "Mon"
+
+#: wss-woocommerce-bookings.php
+msgid "Вт"
+msgstr "Tue"
+
+#: wss-woocommerce-bookings.php
+msgid "Ср"
+msgstr "Wed"
+
+#: wss-woocommerce-bookings.php
+msgid "Чт"
+msgstr "Thu"
+
+#: wss-woocommerce-bookings.php
+msgid "Пт"
+msgstr "Fri"
+
+#: wss-woocommerce-bookings.php
+msgid "Сб"
+msgstr "Sat"
+
+#: wss-woocommerce-bookings.php
+msgid "Вс"
+msgstr "Sun"
+
+#: wss-woocommerce-bookings.php
+msgid "архив"
+msgstr "archive"
+
+#: wss-woocommerce-bookings.php
+msgid "Опубликован"
+msgstr "Published"
+
+#: wss-woocommerce-bookings.php
+msgid "Черновик"
+msgstr "Draft"
+
+#: wss-woocommerce-bookings.php
+msgid "На утверждении"
+msgstr "Pending review"
+
+#: wss-woocommerce-bookings.php
+msgid "Приватный"
+msgstr "Private"
+
+#: wss-woocommerce-bookings.php
+msgid "Запланирован"
+msgstr "Scheduled"
+
+#: wss-woocommerce-bookings.php
+msgid "В корзине"
+msgstr "In cart"
+
+#: wss-woocommerce-bookings.php
+msgid "Архив"
+msgstr "Archive"
+
+#: wss-woocommerce-bookings.php
+msgid "Неизвестно"
+msgstr "Unknown"
+
+#: wss-woocommerce-bookings.php
+msgid " / архивный или скрытый"
+msgstr " / archived or hidden"
+
+#: wss-woocommerce-bookings.php
+msgid "Выберите дату и время"
+msgstr "Choose a date and time"
+
+#: wss-woocommerce-bookings.php
+msgid "Выберите дату"
+msgstr "Choose a date"
+
+#: wss-woocommerce-bookings.php
+msgid "Сейчас нет доступных дат для бронирования."
+msgstr "No booking dates are currently available."
+
+#: assets/frontend.js wss-woocommerce-bookings.php
+msgid "Сначала выберите дату в календаре."
+msgstr "Select a date in the calendar first."
+
+#: wss-woocommerce-bookings.php
+msgid "Выберите дату в календаре. Время для этой услуги не указывается."
+msgstr "Choose a date in the calendar. No time selection is required for this service."
+
+#: wss-woocommerce-bookings.php
+msgid "Забронировать"
+msgstr "Book now"
+
+#: wss-woocommerce-bookings.php
+msgid "<h4>Билеты</h4>"
+msgstr "<h4>Tickets</h4>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"wss-booking-ticket-summary\" data-wss-ticket-summary>Выберите количество билетов.</p>"
+msgstr "<p class=\"wss-booking-ticket-summary\" data-wss-ticket-summary>Choose the number of tickets.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "Весь день"
+msgstr "All day"
+
+#: wss-woocommerce-bookings.php
+msgid "Заказ"
+msgstr "Order"
+
+#: wss-woocommerce-bookings.php
+msgid "Статус"
+msgstr "Status"
+
+#: wss-woocommerce-bookings.php
+msgid "Имя"
+msgstr "Name"
+
+#: wss-woocommerce-bookings.php
+msgid "Телефон"
+msgstr "Phone"
+
+#: wss-woocommerce-bookings.php
+msgid "Экскурсия"
+msgstr "Tour"
+
+#: wss-woocommerce-bookings.php
+msgid "Дата"
+msgstr "Date"
+
+#: wss-woocommerce-bookings.php
+msgid "Время"
+msgstr "Time"
+
+#: wss-woocommerce-bookings.php
+msgid "Кол-во"
+msgstr "Qty"
+
+#: wss-woocommerce-bookings.php
+msgid "Билеты"
+msgstr "Tickets"
+
+#: wss-woocommerce-bookings.php
+msgid "<h2>Что открывает Pro</h2>"
+msgstr "<h2>What Pro unlocks</h2>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p>Бесплатная версия содержит базовое расписание, календарь на сайте, кнопки времени, вместимость и запись даты/времени в заказ.</p>"
+msgstr "<p>The free edition includes basic scheduling, a front-end calendar, time selection, capacity checks and order date/time metadata.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<ul class=\"ul-disc\"><li>Импорт из стандартного WooCommerce Bookings</li><li>Массовые действия и безопасная очистка расписаний</li><li>Блокировки дат и дней недели</li><li>Календарь броней в админке</li><li>Режим “весь день, без времени”</li><li>Типы билетов и разные цены</li><li>Настройки текстов и внешнего вида</li><li>Списки гостей и экспорт CSV</li></ul>"
+msgstr "<ul class=\"ul-disc\"><li>Import from WooCommerce Bookings</li><li>Bulk actions and schedule cleanup</li><li>Block dates and weekdays</li><li>Admin booking calendar</li><li>All-day mode without time selection</li><li>Ticket types and different prices</li><li>Text and appearance settings</li><li>Guest lists and CSV export</li></ul>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><strong>Установите и активируйте WSS WooCommerce Bookings Pro</strong>, чтобы разблокировать эти разделы.</p>"
+msgstr "<p><strong>Install and activate WSS WooCommerce Bookings Pro</strong> to unlock these sections.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<h2>Тексты и внешний вид</h2>"
+msgstr "<h2>Text & appearance</h2>"
+
+#: wss-woocommerce-bookings.php
+msgid "Заголовок для расписания со временем"
+msgstr "Heading for timed bookings"
+
+#: wss-woocommerce-bookings.php
+msgid "Заголовок для услуг без времени"
+msgstr "Heading for services without a time"
+
+#: wss-woocommerce-bookings.php
+msgid "Текст, если дат нет"
+msgstr "Text when no dates are available"
+
+#: wss-woocommerce-bookings.php
+msgid "Подсказка до выбора даты"
+msgstr "Hint before date selection"
+
+#: wss-woocommerce-bookings.php
+msgid "Подсказка для услуг без времени"
+msgstr "Hint for services without a time"
+
+#: wss-woocommerce-bookings.php
+msgid "Текст кнопки бронирования"
+msgstr "Booking button text"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>Акцентный цвет<br><input type=\"text\" name=\"accent_color\" value=\""
+msgstr "<p><label>Accent color<br><input type=\"text\" name=\"accent_color\" value=\""
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>Скругление, px<br><input type=\"number\" name=\"radius\" min=\"0\" max=\"32\" value=\""
+msgstr "<p><label>Corner radius, px<br><input type=\"number\" name=\"radius\" min=\"0\" max=\"32\" value=\""
+
+#: wss-woocommerce-bookings.php
+msgid "Сохранить настройки"
+msgstr "Save settings"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"description\">Список гостей строится по заказам WooCommerce, в которых есть WSS-слот бронирования.</p>"
+msgstr "<p class=\"description\">The guest list uses WooCommerce orders containing a WSS booking slot.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<label><strong>Дата</strong> <input type=\"date\" name=\"wss_date\" value=\""
+msgstr "<label><strong>Date</strong> <input type=\"date\" name=\"wss_date\" value=\""
+
+#: wss-woocommerce-bookings.php
+msgid "<label><strong>Экскурсия</strong> <select name=\"product_id\"><option value=\"0\">Все экскурсии</option>"
+msgstr "<label><strong>Tour</strong> <select name=\"product_id\"><option value=\"0\">All tours</option>"
+
+#: wss-woocommerce-bookings.php
+msgid "Показать"
+msgstr "Show"
+
+#: wss-woocommerce-bookings.php
+msgid "\">Экспорт CSV</a>"
+msgstr "\">Export CSV</a>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p>На выбранную дату бронирований не найдено.</p></div>"
+msgstr "<p>No bookings found for the selected date.</p></div>"
+
+#: wss-woocommerce-bookings.php
+msgid "<table class=\"widefat striped wss-bookings-summary-table\"><thead><tr><th>Заказ</th><th>Статус</th><th>Гость</th><th>Контакты</th><th>Экскурсия</th><th>Время</th><th>Кол-во</th><th>Билеты</th></tr></thead><tbody>"
+msgstr "<table class=\"widefat striped wss-bookings-summary-table\"><thead><tr><th>Order</th><th>Status</th><th>Guest</th><th>Contact details</th><th>Tour</th><th>Time</th><th>Qty</th><th>Tickets</th></tr></thead><tbody>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"description\">Расписание слотов, календарь дат в админке и на сайте, кнопки времени, вместимость и запись бронирования в заказ WooCommerce."
+msgstr "<p class=\"description\">Slot scheduling, admin and front-end date calendars, time selection, capacity checks and booking details in WooCommerce orders."
+
+#: wss-woocommerce-bookings.php
+msgid " Pro активен: доступны массовые действия, блокировки, календарь броней, билеты и экспорт гостей."
+msgstr " Pro is active: bulk actions, date blocking, the booking calendar, tickets and guest exports are available."
+
+#: wss-woocommerce-bookings.php
+msgid " Расширенные функции доступны в Pro."
+msgstr " Advanced features are available in Pro."
+
+#: wss-woocommerce-bookings.php
+msgid "<div class=\"notice notice-warning\"><p>WooCommerce не активен. Управление расписанием доступно после включения WooCommerce.</p></div>"
+msgstr "<div class=\"notice notice-warning\"><p>WooCommerce is not active. Schedule management will be available after activating WooCommerce.</p></div>"
+
+#: wss-woocommerce-bookings.php
+msgid "<div class=\"notice notice-info\"><p>Пока нет товаров, у которых включен <strong>WSS Bookings</strong>. Включите чекбокс вручную в нужной экскурсии"
+msgstr "<div class=\"notice notice-info\"><p>No products currently have <strong>WSS Bookings</strong>. Enable the checkbox manually for the required tour"
+
+#: wss-woocommerce-bookings.php
+msgid " или воспользуйтесь импортом из стандартного WooCommerce Bookings в разделе “Массовые действия”"
+msgstr " or use the import from WooCommerce Bookings under “Bulk actions”"
+
+#: wss-woocommerce-bookings.php
+msgid "\">Открыть товары WooCommerce</a></p>"
+msgstr "\">Open WooCommerce products</a></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<label for=\"wss-product-id\"><strong>Товар / экскурсия</strong></label> "
+msgstr "<label for=\"wss-product-id\"><strong>Product / tour</strong></label> "
+
+#: wss-woocommerce-bookings.php
+msgid "<span class=\"description wss-bookings-product-select-note\">Показаны только опубликованные товары с включенным WSS Bookings или будущими слотами.</span>"
+msgstr "<span class=\"description wss-bookings-product-select-note\">Only published products with WSS Bookings enabled or future slots are shown.</span>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p>Сначала включите WSS Bookings хотя бы у одного товара WooCommerce.</p>"
+msgstr "<p>Enable WSS Bookings for at least one WooCommerce product first.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<h2>Ближайшие слоты</h2>"
+msgstr "<h2>Upcoming slots</h2>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"description\">Показаны ближайшие слоты для экскурсии: <strong>"
+msgstr "<p class=\"description\">Upcoming slots for tour: <strong>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"description\">Массовые операции вынесены отдельно от текущего расписания: импорт из WooCommerce Bookings, очистка, проставление меток и удаление слотов.</p>"
+msgstr "<p class=\"description\">Bulk operations are separate from the current schedule: WooCommerce Bookings import, cleanup, booking flags and slot deletion.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<div class=\"notice notice-warning\"><p>WooCommerce не активен. Массовые действия доступны после включения WooCommerce.</p></div>"
+msgstr "<div class=\"notice notice-warning\"><p>WooCommerce is not active. Bulk actions will be available after activating WooCommerce.</p></div>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"description\">Блокировки перекрывают расписание: если день заблокирован, бронирование на фронте будет недоступно, даже если слоты на эту дату уже созданы.</p>"
+msgstr "<p class=\"description\">Date blocks override the schedule: booking will be unavailable on blocked days, even if slots already exist for those dates.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<h2>Заблокировать конкретные даты</h2>"
+msgstr "<h2>Block specific dates</h2>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"description\">Можно выбрать один или несколько отдельных дней. Область применения: все экскурсии или одна выбранная экскурсия.</p>"
+msgstr "<p class=\"description\">Select one or more individual days. Apply them to all tours or one selected tour.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<div class=\"wss-bookings-calendar-weekdays\"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>"
+msgstr "<div class=\"wss-bookings-calendar-weekdays\"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>"
+
+#: wss-woocommerce-bookings.php
+msgid "<div class=\"wss-bookings-calendar-actions\"><button type=\"button\" class=\"button\" data-wss-calendar-select-month>Выбрать месяц</button><button type=\"button\" class=\"button\" data-wss-calendar-clear>Очистить</button></div>"
+msgstr "<div class=\"wss-bookings-calendar-actions\"><button type=\"button\" class=\"button\" data-wss-calendar-select-month>Select month</button><button type=\"button\" class=\"button\" data-wss-calendar-clear>Clear</button></div>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"wss-bookings-selected-dates\"><strong>Выбрано дат:</strong> <span data-wss-selected-count>0</span><br><span data-wss-selected-dates-text>Пока ничего не выбрано</span></p>"
+msgstr "<p class=\"wss-bookings-selected-dates\"><strong>Dates selected:</strong> <span data-wss-selected-count>0</span><br><span data-wss-selected-dates-text>Nothing selected yet</span></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"wss-bookings-calendar-error\" data-wss-calendar-error hidden>Выберите хотя бы одну дату.</p>"
+msgstr "<p class=\"wss-bookings-calendar-error\" data-wss-calendar-error hidden>Choose at least one date.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>Причина / заметка<br><textarea name=\"block_note\" rows=\"3\" placeholder=\"Например: санитарный день, закрытое мероприятие\"></textarea></label></p>"
+msgstr "<p><label>Reason / note<br><textarea name=\"block_note\" rows=\"3\" placeholder=\"For example: maintenance day, private event\"></textarea></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "Создать блокировку дат"
+msgstr "Create date block"
+
+#: wss-woocommerce-bookings.php
+msgid "<h2>Заблокировать дни недели</h2>"
+msgstr "<h2>Block weekdays</h2>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><strong>Дни недели</strong><br>"
+msgstr "<p><strong>Weekdays</strong><br>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>С даты<br><input type=\"date\" name=\"block_date_from\" required></label></p>"
+msgstr "<p><label>From date<br><input type=\"date\" name=\"block_date_from\" required></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>По дату<br><input type=\"date\" name=\"block_date_to\" required></label></p>"
+msgstr "<p><label>To date<br><input type=\"date\" name=\"block_date_to\" required></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>Причина / заметка<br><textarea name=\"block_note\" rows=\"3\" placeholder=\"Например: выходные по понедельникам\"></textarea></label></p>"
+msgstr "<p><label>Reason / note<br><textarea name=\"block_note\" rows=\"3\" placeholder=\"For example: closed on Mondays\"></textarea></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "Создать блокировку дней недели"
+msgstr "Create weekday block"
+
+#: wss-woocommerce-bookings.php
+msgid "<h2>Активные блокировки</h2>"
+msgstr "<h2>Active date blocks</h2>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>Область применения<br><select name=\""
+msgstr "<p><label>Applies to<br><select name=\""
+
+#: wss-woocommerce-bookings.php
+msgid "<option value=\"0\">Все экскурсии</option>"
+msgstr "<option value=\"0\">All tours</option>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p>Блокировок пока нет.</p>"
+msgstr "<p>No date blocks yet.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<thead><tr><th>Область</th><th>Тип</th><th>Период / дата</th><th>Заметка</th><th>Действия</th></tr></thead><tbody>"
+msgstr "<thead><tr><th>Area</th><th>Type</th><th>Period / date</th><th>Note</th><th>Actions</th></tr></thead><tbody>"
+
+#: wss-woocommerce-bookings.php
+msgid "Все экскурсии"
+msgstr "All tours"
+
+#: wss-woocommerce-bookings.php
+msgid "День недели"
+msgstr "Weekday"
+
+#: wss-woocommerce-bookings.php
+msgid "\" onclick=\"return confirm('Удалить блокировку?')\">Удалить</a></td>"
+msgstr "\" onclick=\"return confirm('Delete this date block?')\">Delete</a></td>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"description\">Календарь показывает занятые даты и время по слотам WSS Bookings. Это быстрый обзор уже забронированных экскурсий.</p>"
+msgstr "<p class=\"description\">The calendar shows booked dates and times from WSS Bookings slots for a quick overview of reserved tours.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<label><strong>Экскурсия</strong></label> <select name=\"product_id\"><option value=\"0\">Все экскурсии</option>"
+msgstr "<label><strong>Tour</strong></label> <select name=\"product_id\"><option value=\"0\">All tours</option>"
+
+#: wss-woocommerce-bookings.php
+msgid "<label><strong>Месяц</strong></label> <input type=\"month\" name=\"wss_month\" value=\""
+msgstr "<label><strong>Month</strong></label> <input type=\"month\" name=\"wss_month\" value=\""
+
+#: wss-woocommerce-bookings.php
+msgid "\">← Предыдущий месяц</a>"
+msgstr "\">← Previous month</a>"
+
+#: wss-woocommerce-bookings.php
+msgid "\">Следующий месяц →</a>"
+msgstr "\">Next month →</a>"
+
+#: wss-woocommerce-bookings.php
+msgid " мест</span>"
+msgstr " places</span>"
+
+#: wss-woocommerce-bookings.php
+msgid "Создано слотов: %d."
+msgstr "Slots created: %d."
+
+#: wss-woocommerce-bookings.php
+msgid "Создано блокировок: %d."
+msgstr "Date blocks created: %d."
+
+#: wss-woocommerce-bookings.php
+msgid "Это действие доступно в WSS WooCommerce Bookings Pro."
+msgstr "This action is available in WSS WooCommerce Bookings Pro."
+
+#: wss-woocommerce-bookings.php
+msgid "Настройки WSS Bookings сохранены."
+msgstr "WSS Bookings settings saved."
+
+#: wss-woocommerce-bookings.php
+msgid "Импорт из WooCommerce Bookings завершен. Обработаны только опубликованные товары. Товаров обработано: %d. Создано слотов: %d. Перенесено занятых мест из существующих бронирований: %d. Пропущено правил без понятной даты/времени: %d. Проигнорировано общих правил времени у товаров с конкретными датами: %d. Товаров с просроченным расписанием без актуальных дат: %d. Удалено слотов у черновиков/неактивных товаров: %d."
+msgstr "WooCommerce Bookings import complete. Only published products were processed. Products processed: %d. Slots created: %d. Occupied places transferred from existing bookings: %d. Rules skipped due to unclear dates/times: %d. General time rules ignored for products with specific dates: %d. Products with expired schedules and no current dates: %d. Slots deleted from draft/inactive products: %d."
+
+#: wss-woocommerce-bookings.php
+msgid "Удалено слотов расписания: %d."
+msgstr "Schedule slots deleted: %d."
+
+#: wss-woocommerce-bookings.php
+msgid "Метки WSS Bookings проставлены/обновлены у активных товаров: %d. У архивных/неактивных товаров удалено слотов: %d."
+msgstr "WSS Bookings flags set/updated for active products: %d. Slots deleted from archived/inactive products: %d."
+
+#: wss-woocommerce-bookings.php
+msgid "Удалено слотов у черновиков/архивных/неактивных товаров и отключены их метки WSS: %d."
+msgstr "Slots deleted from draft/archived/inactive products and their WSS flags disabled: %d."
+
+#: wss-woocommerce-bookings.php
+msgid "Создано дневных слотов без времени для активных товаров без расписания: %d."
+msgstr "All-day slots created for active products without a schedule: %d."
+
+#: wss-woocommerce-bookings.php
+msgid "Слот создан."
+msgstr "Slot created."
+
+#: wss-woocommerce-bookings.php
+msgid "Слот не создан. Проверьте поля или убедитесь, что такого слота еще нет."
+msgstr "Slot not created. Check the fields or whether this slot already exists."
+
+#: wss-woocommerce-bookings.php
+msgid "Слот удален."
+msgstr "Slot deleted."
+
+#: wss-woocommerce-bookings.php
+msgid "Статус слота обновлен."
+msgstr "Slot status updated."
+
+#: wss-woocommerce-bookings.php
+msgid "Расписание не удалено: нужно поставить галку подтверждения и ввести УДАЛИТЬ."
+msgstr "Schedule not deleted: select the confirmation checkbox and enter DELETE."
+
+#: wss-woocommerce-bookings.php
+msgid "Метка WSS Bookings для товара включена."
+msgstr "WSS Bookings flag enabled for the product."
+
+#: wss-woocommerce-bookings.php
+msgid "Блокировка удалена."
+msgstr "Date block deleted."
+
+#: wss-woocommerce-bookings.php
+msgid "Готово."
+msgstr "Done."
+
+#: wss-woocommerce-bookings.php
+msgid "Нет актуальных дат"
+msgstr "No current dates"
+
+#: wss-woocommerce-bookings.php
+msgid "Нет будущих слотов"
+msgstr "No future slots"
+
+#: wss-woocommerce-bookings.php
+msgid "Весь день, без времени"
+msgstr "All day, no time selection"
+
+#: wss-woocommerce-bookings.php
+msgid "По времени"
+msgstr "Timed"
+
+#: wss-woocommerce-bookings.php
+msgid "<h2>Последний отчет импорта</h2>"
+msgstr "<h2>Latest import report</h2>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"description\">По этой таблице видно, в какие именно товары попали импортированные слоты. Импорт по умолчанию берет только опубликованные товары. Нажмите «Открыть», чтобы посмотреть расписание конкретной экскурсии.</p>"
+msgstr "<p class=\"description\">This table shows which products received imported slots. Only published products are imported by default. Click Open to view a tour's schedule.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<thead><tr><th>Товар / экскурсия</th><th>ID</th><th>Статус товара</th><th>Правил</th><th>Создано слотов</th><th>Будущих слотов сейчас</th><th>Режим</th><th>Мест</th><th>Длительность</th><th>Пропущено правил</th><th>Игнор. общих правил</th><th>Просроченных дат</th><th>Актуальность</th><th>Метка WSS</th><th></th></tr></thead><tbody>"
+msgstr "<thead><tr><th>Product / tour</th><th>ID</th><th>Product status</th><th>Rules</th><th>Slots created</th><th>Current future slots</th><th>Mode</th><th>Capacity</th><th>Duration</th><th>Rules skipped</th><th>General rules ignored</th><th>Expired dates</th><th>Availability</th><th>WSS flag</th><th></th></tr></thead><tbody>"
+
+#: wss-woocommerce-bookings.php
+msgid " мин</td>"
+msgstr " min</td>"
+
+#: wss-woocommerce-bookings.php
+msgid "Есть актуальное расписание / услуга без времени"
+msgstr "Current schedule available / service without a time"
+
+#: wss-woocommerce-bookings.php
+msgid "Включена"
+msgstr "Enabled"
+
+#: wss-woocommerce-bookings.php
+msgid "Не включена ("
+msgstr "Disabled ("
+
+#: wss-woocommerce-bookings.php
+msgid "\">Открыть</a></td>"
+msgstr "\">Open</a></td>"
+
+#: wss-woocommerce-bookings.php
+msgid "<h2>Товары с WSS Bookings</h2>"
+msgstr "<h2>Products with WSS Bookings</h2>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"description\">Сводка помогает проверить, куда попало расписание после импорта. Здесь показываются только опубликованные товары; черновики и неактивные экскурсии не выводятся на фронте и не участвуют в новом импорте.</p>"
+msgstr "<p class=\"description\">This summary helps verify which products received schedules after import. Only published products are shown; draft and inactive tours are excluded from the front end and new imports.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<thead><tr><th>Товар / экскурсия</th><th>ID</th><th>Статус товара</th><th>Всего слотов</th><th>Будущих слотов</th><th>Режим</th><th>Статус WSS</th><th></th></tr></thead><tbody>"
+msgstr "<thead><tr><th>Product / tour</th><th>ID</th><th>Product status</th><th>Total slots</th><th>Future slots</th><th>Mode</th><th>WSS status</th><th></th></tr></thead><tbody>"
+
+#: wss-woocommerce-bookings.php
+msgid "Включен"
+msgstr "Enabled"
+
+#: wss-woocommerce-bookings.php
+msgid "Есть слоты, но метка не включена"
+msgstr "Slots exist, but the booking flag is disabled"
+
+#: wss-woocommerce-bookings.php
+msgid "\">Открыть</a>"
+msgstr "\">Open</a>"
+
+#: wss-woocommerce-bookings.php
+msgid "\">Включить метку</a>"
+msgstr "\">Enable booking flag</a>"
+
+#: wss-woocommerce-bookings.php
+msgid "<h2>Добавить слот</h2>"
+msgstr "<h2>Add slot</h2>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>Дата<br><input type=\"date\" name=\"slot_date\" required></label></p>"
+msgstr "<p><label>Date<br><input type=\"date\" name=\"slot_date\" required></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>Начало<br><input type=\"time\" name=\"start_time\" required></label></p>"
+msgstr "<p><label>Start<br><input type=\"time\" name=\"start_time\" required></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>Конец<br><input type=\"time\" name=\"end_time\" required></label></p>"
+msgstr "<p><label>End<br><input type=\"time\" name=\"end_time\" required></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>Мест<br><input type=\"number\" name=\"capacity\" min=\"1\" step=\"1\" value=\"20\" required></label></p>"
+msgstr "<p><label>Capacity<br><input type=\"number\" name=\"capacity\" min=\"1\" step=\"1\" value=\"20\" required></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>Статус<br><select name=\"status\"><option value=\"open\">Открыт</option><option value=\"closed\">Закрыт</option></select></label></p>"
+msgstr "<p><label>Status<br><select name=\"status\"><option value=\"open\">Open</option><option value=\"closed\">Closed</option></select></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>Заметка<br><textarea name=\"note\" rows=\"3\"></textarea></label></p>"
+msgstr "<p><label>Note<br><textarea name=\"note\" rows=\"3\"></textarea></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "Добавить слот"
+msgstr "Add slot"
+
+#: wss-woocommerce-bookings.php
+msgid "<h2>Генератор расписания</h2>"
+msgstr "<h2>Schedule generator</h2>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"description\">Выберите одну или несколько дат в календаре."
+msgstr "<p class=\"description\">Choose one or more dates in the calendar."
+
+#: wss-woocommerce-bookings.php
+msgid " Ниже можно дополнительно создать такие же слоты по определенным дням недели в заданном периоде."
+msgstr " You can also create the same slots on specific weekdays within a date range below."
+
+#: wss-woocommerce-bookings.php
+msgid " Генератор по дням недели доступен в Pro."
+msgstr " The weekday generator is available in Pro."
+
+#: wss-woocommerce-bookings.php
+msgid "<h3>Или добавить по дням недели</h3>"
+msgstr "<h3>Or add by weekday</h3>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"description\">Выберите дни недели и период. Эти даты будут добавлены к датам, выбранным в календаре выше.</p>"
+msgstr "<p class=\"description\">Choose weekdays and a date range. These dates will be added to those selected in the calendar above.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>С даты<br><input type=\"date\" name=\"generate_date_from\"></label></p>"
+msgstr "<p><label>From date<br><input type=\"date\" name=\"generate_date_from\"></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>По дату<br><input type=\"date\" name=\"generate_date_to\"></label></p>"
+msgstr "<p><label>To date<br><input type=\"date\" name=\"generate_date_to\"></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>Время начала через запятую<br><input type=\"text\" name=\"times\" value=\"12:00, 14:00, 16:00, 18:00\" required></label></p>"
+msgstr "<p><label>Comma-separated start times<br><input type=\"text\" name=\"times\" value=\"12:00, 14:00, 16:00, 18:00\" required></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>Длительность, минут<br><input type=\"number\" name=\"duration\" min=\"1\" step=\"1\" value=\"60\" required></label></p>"
+msgstr "<p><label>Duration, minutes<br><input type=\"number\" name=\"duration\" min=\"1\" step=\"1\" value=\"60\" required></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>Мест в каждом слоте<br><input type=\"number\" name=\"capacity\" min=\"1\" step=\"1\" value=\"20\" required></label></p>"
+msgstr "<p><label>Capacity per slot<br><input type=\"number\" name=\"capacity\" min=\"1\" step=\"1\" value=\"20\" required></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "Создать расписание"
+msgstr "Generate schedule"
+
+#: wss-woocommerce-bookings.php
+msgid "<h2>Импорт из стандартного WooCommerce Bookings</h2>"
+msgstr "<h2>Import from WooCommerce Bookings</h2>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"description\">Инструмент найдет только <strong>опубликованные и не архивные</strong> товары старого типа <code>booking</code> и опубликованные товары с метаданными WooCommerce Bookings, включит у них чекбокс WSS Bookings и перенесет доступные правила расписания в слоты WSS.</p>"
+msgstr "<p class=\"description\">This tool finds only <strong>published, non-archived</strong> legacy products <code>booking</code> and published products with WooCommerce Bookings metadata, enable their WSS Bookings checkbox and transfer supported scheduling rules into WSS slots.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><strong>Найдено активных кандидатов для импорта:</strong> "
+msgstr "<p><strong>Active import candidates found:</strong> "
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>Горизонт для повторяющихся правил, месяцев<br><input type=\"number\" name=\"import_months\" min=\"1\" max=\"60\" step=\"1\" value=\"24\"></label></p>"
+msgstr "<p><label>Recurring rule horizon, months<br><input type=\"number\" name=\"import_months\" min=\"1\" max=\"60\" step=\"1\" value=\"24\"></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"description\">Для правил с конкретными датами будут импортированы сами даты. Для повторяющихся недельных правил будет создано расписание от текущей даты на указанный срок. Если у опубликованной услуги не найдено расписание по времени, будут созданы дневные слоты без указания времени.</p>"
+msgstr "<p class=\"description\">Rules for specific dates will import those dates. Recurring weekly rules generate a schedule from today for the specified period. Published services without timed availability will receive all-day slots.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"wss-bookings-warning\">Перед импортом текущие WSS-слоты у импортируемых активных товаров будут удалены и заменены расписанием из WooCommerce Bookings. Слоты и метки у черновиков, приватных, скрытых и архивных товаров будут очищены.</p>"
+msgstr "<p class=\"wss-bookings-warning\">Before import, existing WSS slots for active imported products will be replaced with the WooCommerce Bookings schedule. Slots and flags for draft, private, hidden and archived products will be cleared.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "Импортировать расписание из WooCommerce Bookings"
+msgstr "Import schedule from WooCommerce Bookings"
+
+#: wss-woocommerce-bookings.php
+msgid "<h2>Очистить неактивные и архивные экскурсии</h2>"
+msgstr "<h2>Clean up inactive and archived tours</h2>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"description\">Удаляет WSS-слоты у черновиков, приватных, товаров в корзине, а также опубликованных скрытых/архивных товаров, и отключает у них метку WSS Bookings. Заказы WooCommerce и сами товары не удаляются.</p>"
+msgstr "<p class=\"description\">Deletes WSS slots from draft, private and trashed products, as well as published hidden/archived products, and disables their WSS Bookings flags. WooCommerce orders and the products themselves are not deleted.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><strong>Неактивных/архивных товаров с WSS-слотами/меткой:</strong> "
+msgstr "<p><strong>Inactive/archived products with WSS slots or flags:</strong> "
+
+#: wss-woocommerce-bookings.php
+msgid "Очистить расписание архивных/неактивных"
+msgstr "Clean up archived/inactive schedules"
+
+#: wss-woocommerce-bookings.php
+msgid "<h2>Проставить метки WSS Bookings</h2>"
+msgstr "<h2>Set WSS Bookings flags</h2>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"description\">Служебная кнопка на случай, если расписание импортировалось, но товары не появились на фронте как товары WSS Bookings. Метка будет включена только у активных опубликованных товаров старого WooCommerce Bookings и у активных опубликованных товаров, для которых уже есть слоты WSS. Архивные и скрытые товары будут пропущены.</p>"
+msgstr "<p class=\"description\">Use this tool if the schedule was imported but products do not appear on the front end as WSS Bookings products. It enables the flag only for active published legacy WooCommerce Bookings products and active published products that already have WSS slots. Archived and hidden products are skipped.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><strong>Товаров для проверки:</strong> "
+msgstr "<p><strong>Products to check:</strong> "
+
+#: wss-woocommerce-bookings.php
+msgid "Проставить метки WSS Bookings"
+msgstr "Set WSS Bookings flags"
+
+#: wss-woocommerce-bookings.php
+msgid "<h2>Создать дневные слоты без времени</h2>"
+msgstr "<h2>Create all-day slots without time selection</h2>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"description\">Для активных неархивных товаров WSS Bookings, у которых нет будущих слотов, создаёт бронирование на весь день без указания времени. Это нужно для фотосессий и услуг с открытой датой.</p>"
+msgstr "<p class=\"description\">Creates all-day bookings without time selection for active, non-archived WSS Bookings products with no future slots. Suitable for photo sessions and open-date services.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><strong>Активных товаров без будущего расписания:</strong> "
+msgstr "<p><strong>Active products without a future schedule:</strong> "
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>Горизонт, месяцев<br><input type=\"number\" name=\"all_day_months\" min=\"1\" max=\"60\" step=\"1\" value=\"24\"></label></p>"
+msgstr "<p><label>Horizon, months<br><input type=\"number\" name=\"all_day_months\" min=\"1\" max=\"60\" step=\"1\" value=\"24\"></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "Создать дневные слоты"
+msgstr "Create all-day slots"
+
+#: wss-woocommerce-bookings.php
+msgid "<h2>Удалить всё расписание WSS</h2>"
+msgstr "<h2>Delete all WSS schedules</h2>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><strong>Сейчас слотов в WSS Bookings:</strong> "
+msgstr "<p><strong>Current WSS Bookings slots:</strong> "
+
+#: wss-woocommerce-bookings.php
+msgid "<p class=\"wss-bookings-danger-text\">Это действие удалит все слоты расписания из нового плагина WSS WooCommerce Bookings для всех товаров. Заказы WooCommerce и сами товары удалены не будут.</p>"
+msgstr "<p class=\"wss-bookings-danger-text\">This action deletes all schedule slots from WSS WooCommerce Bookings for every product. WooCommerce orders and the products themselves will not be deleted.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label><input type=\"checkbox\" name=\"confirm_delete_all\" value=\"1\"> Я понимаю, что будут удалены все расписания WSS для всех товаров.</label></p>"
+msgstr "<p><label><input type=\"checkbox\" name=\"confirm_delete_all\" value=\"1\"> I understand that all WSS schedules for all products will be deleted.</label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<p><label>Введите <strong>УДАЛИТЬ</strong> для подтверждения<br><input type=\"text\" name=\"confirm_delete_text\" autocomplete=\"off\"></label></p>"
+msgstr "<p><label>Enter <strong>DELETE</strong> to confirm<br><input type=\"text\" name=\"confirm_delete_text\" autocomplete=\"off\"></label></p>"
+
+#: wss-woocommerce-bookings.php
+msgid "Удалить всё расписание"
+msgstr "Delete entire schedule"
+
+#: wss-woocommerce-bookings.php
+msgid "<p>Слотов пока нет.</p>"
+msgstr "<p>No slots yet.</p>"
+
+#: wss-woocommerce-bookings.php
+msgid "<th>Экскурсия</th><th>Дата</th><th>Время</th><th>Мест</th><th>Занято</th><th>Свободно</th><th>Статус</th><th>Заметка</th><th>Действия</th>"
+msgstr "<th>Tour</th><th>Date</th><th>Time</th><th>Capacity</th><th>Booked</th><th>Available</th><th>Status</th><th>Note</th><th>Actions</th>"
+
+#: wss-woocommerce-bookings.php
+msgid "<td><span class=\"wss-bookings-status wss-bookings-status-blocked\">Заблокирован</span></td>"
+msgstr "<td><span class=\"wss-bookings-status wss-bookings-status-blocked\">Blocked</span></td>"
+
+#: wss-woocommerce-bookings.php
+msgid "Открыт"
+msgstr "Open"
+
+#: wss-woocommerce-bookings.php
+msgid "Закрыт"
+msgstr "Closed"
+
+#: wss-woocommerce-bookings.php
+msgid "Закрыть"
+msgstr "Close"
+
+#: wss-woocommerce-bookings.php
+msgid "Открыть"
+msgstr "Open"
+
+#: wss-woocommerce-bookings.php
+msgid "\" onclick=\"return confirm('Удалить слот?')\">Удалить</a></td>"
+msgstr "\" onclick=\"return confirm('Delete this slot?')\">Delete</a></td>"
+
+#: wss-woocommerce-bookings.php
+msgid "весь день"
+msgstr "all day"
+
+#: wss-woocommerce-bookings.php
+msgid "<div class=\"wss-booking-calendar-head\"><button type=\"button\" class=\"wss-booking-calendar-nav\" data-wss-booking-prev aria-label=\"Предыдущий месяц\">‹</button><strong data-wss-booking-title></strong><button type=\"button\" class=\"wss-booking-calendar-nav\" data-wss-booking-next aria-label=\"Следующий месяц\">›</button></div>"
+msgstr "<div class=\"wss-booking-calendar-head\"><button type=\"button\" class=\"wss-booking-calendar-nav\" data-wss-booking-prev aria-label=\"Previous month\">‹</button><strong data-wss-booking-title></strong><button type=\"button\" class=\"wss-booking-calendar-nav\" data-wss-booking-next aria-label=\"Next month\">›</button></div>"
+
+#: wss-woocommerce-bookings.php
+msgid "<div class=\"wss-booking-calendar-weekdays\"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>"
+msgstr "<div class=\"wss-booking-calendar-weekdays\"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>"
+
+#: wss-woocommerce-bookings.php
+msgid "Эта экскурсия сейчас недоступна для бронирования."
+msgstr "This tour is currently unavailable for booking."
+
+#: wss-woocommerce-bookings.php
+msgid "Для этого товара сейчас нет доступных дат бронирования."
+msgstr "No booking dates are currently available for this product."
+
+#: assets/frontend.js wss-woocommerce-bookings.php
+msgid "Выберите дату бронирования."
+msgstr "Choose a booking date."
+
+#: assets/frontend.js wss-woocommerce-bookings.php
+msgid "Выберите количество билетов."
+msgstr "Choose the number of tickets."
+
+#: wss-woocommerce-bookings.php
+msgid "На выбранную дату уже недостаточно свободных мест. Выберите другую дату или уменьшите количество билетов."
+msgstr "There is no longer enough capacity on the selected date. Choose another date or reduce the ticket quantity."
+
+#: wss-woocommerce-bookings.php
+msgid "Дата экскурсии"
+msgstr "Tour date"
+
+#: wss-woocommerce-bookings.php
+msgid "Время экскурсии"
+msgstr "Tour time"
+
+#: wss-woocommerce-bookings.php
+msgid "На выбранную дату бронирования уже недостаточно мест. Обновите корзину и выберите другую дату."
+msgstr "There is no longer enough capacity on the selected date. Refresh the cart and choose another date."
+
+#: wss-woocommerce-bookings.php
+msgid "пн"
+msgstr "mon"
+
+#: wss-woocommerce-bookings.php
+msgid "вт"
+msgstr "tue"
+
+#: wss-woocommerce-bookings.php
+msgid "ср"
+msgstr "wed"
+
+#: wss-woocommerce-bookings.php
+msgid "чт"
+msgstr "thu"
+
+#: wss-woocommerce-bookings.php
+msgid "пт"
+msgstr "fri"
+
+#: wss-woocommerce-bookings.php
+msgid "сб"
+msgstr "sat"
+
+#: wss-woocommerce-bookings.php
+msgid "вс"
+msgstr "sun"
+
+#: wss-woocommerce-bookings.php
+msgid "билет"
+msgstr "ticket"
+
+#: wss-woocommerce-bookings.php
+msgid "билета"
+msgstr "tickets"
+
+#: wss-woocommerce-bookings.php
+msgid "билетов"
+msgstr "tickets"
+
+#: assets/admin.js
+msgid "Импорт заменит текущие WSS-слоты у импортируемых товаров расписанием из WooCommerce Bookings. Продолжить?"
+msgstr "Import will replace the current WSS slots for imported products with the WooCommerce Bookings schedule. Continue?"
+
+#: assets/admin.js
+msgid "Второе подтверждение: действие необратимо. Точно удалить все слоты расписания?"
+msgstr "Second confirmation: this cannot be undone. Delete all schedule slots?"
+
+#: assets/admin.js
+msgid "Первое подтверждение: удалить ВСЕ расписания WSS Bookings для всех товаров?"
+msgstr "First confirmation: delete ALL WSS Bookings schedules for all products?"
+
+#: assets/admin.js
+msgid "Для удаления всех расписаний поставьте галку и введите УДАЛИТЬ."
+msgstr "To delete all schedules, select the confirmation checkbox and enter DELETE."
+
+#: assets/admin.js
+msgid "Пока ничего не выбрано"
+msgstr "Nothing selected yet"
+
+#: assets/admin.js assets/frontend.js
+msgid "Декабрь"
+msgstr "December"
+
+#: assets/admin.js assets/frontend.js
+msgid "Ноябрь"
+msgstr "November"
+
+#: assets/admin.js assets/frontend.js
+msgid "Октябрь"
+msgstr "October"
+
+#: assets/admin.js assets/frontend.js
+msgid "Сентябрь"
+msgstr "September"
+
+#: assets/admin.js assets/frontend.js
+msgid "Август"
+msgstr "August"
+
+#: assets/admin.js assets/frontend.js
+msgid "Июль"
+msgstr "July"
+
+#: assets/admin.js assets/frontend.js
+msgid "Июнь"
+msgstr "June"
+
+#: assets/admin.js assets/frontend.js
+msgid "Май"
+msgstr "May"
+
+#: assets/admin.js assets/frontend.js
+msgid "Апрель"
+msgstr "April"
+
+#: assets/admin.js assets/frontend.js
+msgid "Март"
+msgstr "March"
+
+#: assets/admin.js assets/frontend.js
+msgid "Февраль"
+msgstr "February"
+
+#: assets/admin.js assets/frontend.js
+msgid "Январь"
+msgstr "January"
+
+#: assets/frontend.js
+msgid "Выберите время экскурсии."
+msgstr "Choose a tour time."
+
+#: assets/frontend.js
+msgid "</span><small>Свободно: "
+msgstr "</span><small>Available: "
+
+#: assets/frontend.js
+msgid ": выберите время экскурсии."
+msgstr ": choose a tour time."
+
+#: assets/frontend.js
+msgid ": выберите время"
+msgstr ": choose a time"
+
+#: assets/frontend.js
+msgid ". Время не указывается. Свободно: "
+msgstr ". No time selection required. Available: "
+
+#: assets/frontend.js
+msgid "Выбрана дата: "
+msgstr "Selected date: "
+
+#: assets/frontend.js
+msgid ". Свободно: "
+msgstr ". Available: "
+
+#: assets/frontend.js
+msgid "Выбрано: "
+msgstr "Selected: "
+
+#: assets/frontend.js
+msgid "Нет доступных слотов"
+msgstr "No available slots"
+
+#: assets/frontend.js
+msgid "Выбрать дату "
+msgstr "Select date "
+
+#: assets/frontend.js
+msgid "Выбрано билетов: "
+msgstr "Tickets selected: "
+
+#: assets/frontend.js
+msgid "Увеличить количество билетов"
+msgstr "Increase ticket quantity"
+
+#: assets/frontend.js
+msgid "Уменьшить количество билетов"
+msgstr "Decrease ticket quantity"
+
+#: wss-woocommerce-bookings.php
+msgid "Автоматический слот на весь день"
+msgstr "Automatic all-day slot"
+
+#: wss-woocommerce-bookings.php
+msgid "Импортировано из WooCommerce Bookings"
+msgstr "Imported from WooCommerce Bookings"

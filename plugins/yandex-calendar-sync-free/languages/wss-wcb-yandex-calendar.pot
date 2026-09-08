@@ -1,0 +1,274 @@
+msgid ""
+msgstr "Project-Id-Version: WSS plugins\nLanguage: \nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: includes/class-wss-wcb-yc-caldav-client.php
+msgid "CalDAV вернул код %d. Ответ: %s"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-caldav-client.php
+msgid "Не удалось записать событие в Яндекс.Календарь. Код %d. Ответ: %s"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-updater.php
+msgid "Синхронизация WooCommerce Bookings с Яндекс.Календарём."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-updater.php
+msgid "Плагин отправляет будущие бронирования WooCommerce Bookings в Яндекс.Календарь через CalDAV."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Экскурсия: {product_name} — {persons} {persons_label} — заказ #{order_id}"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Бронирование: #{booking_id}\nЗаказ: #{order_id}\nЭкскурсия: {product_name}\n\nДата и время:\n{start_datetime} — {end_datetime}\n\nКоличество билетов/людей: {persons}\n\nКлиент:\n{customer_name}\n{customer_phone}\n{customer_email}\n\nСтатус заказа: {order_status}\nСтатус бронирования: {booking_status}\n\nАдминка:\nЗаказ: {admin_order_url}\nБронирование: {admin_booking_url}"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Первичная синхронизация будущих бронирований доступна в Pro-версии."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Настройки сохранены. Будущие бронирования поставлены в очередь синхронизации. Найдено: %d."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Недостаточно прав."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Free-версия."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "В бесплатной версии доступны один Яндекс.Календарь, проверка подключения и отправка новых активных бронирований со статусами заказа «Обработка» и «Выполнен». Первичная синхронизация будущих броней, шаблоны, настраиваемые статусы, пометка отменённых событий и очистка связей доступны в Pro."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Pro-версия активна."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Доступны первичная синхронизация, шаблоны, настройка статусов и обработка отмен."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Плагин WooCommerce Bookings не обнаружен. Настройки можно сохранить, но синхронизация начнёт работать только после активации WooCommerce Bookings."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Синхронизация"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Включить отправку будущих бронирований в Яндекс.Календарь"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Email Яндекса"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Пароль приложения"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Пароль приложения уже сохранён. Для замены введите новый."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Пароль приложения ещё не сохранён. Вставьте пароль и нажмите «Сохранить настройки» перед проверкой подключения."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "CalDAV URL календаря"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Вставьте URL конкретного календаря. События будут записываться в этот один календарь."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Часовой пояс"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Статусы заказов"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Если заказ выходит из этих статусов или бронь отменена, ранее созданное событие будет оставлено с пометкой [ОТМЕНЕНО]."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Обработка"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "и"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Выполнен"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Изменение списка статусов и корректная пометка отменённых событий доступны в Pro."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Первичная синхронизация"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "После сохранения настроек поставить в очередь будущие бронирования за сегодня и дальше"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Размер пакета"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "бронирований"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Шаблон заголовка"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Шаблон описания"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Доступные переменные: {booking_id}, {order_id}, {product_name}, {persons}, {persons_label}, {customer_name}, {customer_phone}, {customer_email}, {order_status}, {booking_status}, {start_datetime}, {end_datetime}, {admin_order_url}, {admin_booking_url}."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Pro-функции"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "В Pro доступны первичная синхронизация будущих броней, размер пакета, шаблоны заголовка/описания, выбор статусов заказов, обработка отмен и очистка связей."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Сохранить настройки"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Действия"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Используйте кнопки после сохранения email, пароля приложения и CalDAV URL."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Проверить подключение"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Синхронизировать будущие бронирования"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Очистить связь у броней"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Синхронизировать будущие бронирования — Pro"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Очистить связь у броней — Pro"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Кнопки используют уже сохранённые настройки. Если вы только что вставили email, пароль или CalDAV URL, сначала нажмите «Сохранить настройки»."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Как работает отмена"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "В Free-версии отправляются новые активные бронирования. В Pro-версии событие не удаляется из календаря: заголовок обновляется с префиксом"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "[ОТМЕНЕНО]"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid ". Если позже появится новая активная бронь на то же время, она будет создана отдельным событием, потому что UID привязан к ID бронирования."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Подключение к Яндекс.Календарю успешно проверено."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Будущие бронирования поставлены в очередь синхронизации. Найдено: %d."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Очистка связей доступна в Pro-версии."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Связь с Яндекс UID очищена у %d бронирований. События в календаре не удалялись."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Синхронизация выключена."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Бронирование не найдено."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Прошедшие бронирования не синхронизируются."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "У бронирования нет активного заказа и ещё нет события в календаре."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Пометка отменённых событий доступна в Pro-версии."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Заполните Email Яндекса, пароль приложения и CalDAV URL календаря."
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "билет"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "билета"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "билетов"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "[ОТМЕНЕНО] "
+msgstr ""
+
+#: includes/class-wss-wcb-yc-plugin.php
+msgid "Бронирование"
+msgstr ""
+
+#: includes/class-wss-wcb-yc-ics-builder.php
+msgid "Отменено"
+msgstr ""
+
+#: wss-wc-bookings-yandex-calendar.php
+msgid "Бесплатная версия: односторонняя синхронизация новых будущих бронирований WooCommerce Bookings в Яндекс.Календарь через CalDAV."
+msgstr ""

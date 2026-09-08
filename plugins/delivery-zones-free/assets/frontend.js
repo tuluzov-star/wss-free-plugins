@@ -327,7 +327,7 @@
 		}
 
 		if (hasHouseNumber(address)) {
-			setHelperStatus($field, 'Выберите точный адрес из списка подсказок, чтобы мы не рассчитали доставку по другому адресу.', 'warning');
+			setHelperStatus($field, wp.i18n.__( "Выберите точный адрес из списка подсказок, чтобы мы не рассчитали доставку по другому адресу.", "ydzs" ), 'warning');
 		} else {
 			updateFieldHint($field);
 		}
@@ -481,22 +481,22 @@
 				return;
 			}
 
-			setHelperStatus($field, 'Адрес входит в зону доставки' + (zoneName ? ': ' + zoneName : '') + '.', 'success');
+			setHelperStatus($field, wp.i18n.__( "Адрес входит в зону доставки", "ydzs" ) + (zoneName ? ': ' + zoneName : '') + '.', 'success');
 			return;
 		}
 
 		if (status === 'outside') {
-			setHelperStatus($field, 'Адрес отсутствует в зонах доставки. Для этого адреса доступен только самовывоз.', 'error');
+			setHelperStatus($field, wp.i18n.__( "Адрес отсутствует в зонах доставки. Для этого адреса доступен только самовывоз.", "ydzs" ), 'error');
 			return;
 		}
 
 		if (status === 'not_found') {
-			setHelperStatus($field, 'Не удалось найти подходящий адрес. Уточните населённый пункт, улицу и дом или выберите адрес из списка подсказок.', 'error');
+			setHelperStatus($field, wp.i18n.__( "Не удалось найти подходящий адрес. Уточните населённый пункт, улицу и дом или выберите адрес из списка подсказок.", "ydzs" ), 'error');
 			return;
 		}
 
 		if (status === 'ambiguous' || status === 'choose_suggestion') {
-			setHelperStatus($field, 'Выберите точный адрес из списка подсказок, чтобы мы не рассчитали доставку по другому адресу.', 'warning');
+			setHelperStatus($field, wp.i18n.__( "Выберите точный адрес из списка подсказок, чтобы мы не рассчитали доставку по другому адресу.", "ydzs" ), 'warning');
 			return;
 		}
 
@@ -552,7 +552,7 @@
 			class: 'ydzs-address-suggestions',
 			id: boxId,
 			role: 'listbox',
-			'aria-label': 'Подсказки адреса'
+			'aria-label': wp.i18n.__( "Подсказки адреса", "ydzs" )
 		});
 
 		$field.attr('data-ydzs-suggestions-id', boxId);
@@ -603,7 +603,7 @@
 			if (candidate.zoneName) {
 				$button.append($('<span/>', {
 					class: 'ydzs-address-suggestions__zone',
-					text: 'Зона доставки: ' + candidate.zoneName
+					text: wp.i18n.__( "Зона доставки: ", "ydzs" ) + candidate.zoneName
 				}));
 			}
 
@@ -680,7 +680,7 @@
 				// Это убирает скачок сообщений «не найден» -> «вне зоны».
 				if (candidates.length) {
 					if (hasHouseNumber(currentAddress)) {
-						setHelperStatus($field, 'Выберите точный адрес из списка подсказок, чтобы мы не рассчитали доставку по другому адресу.', 'warning');
+						setHelperStatus($field, wp.i18n.__( "Выберите точный адрес из списка подсказок, чтобы мы не рассчитали доставку по другому адресу.", "ydzs" ), 'warning');
 					}
 					showSuggestions($field, candidates, '');
 				} else {
@@ -688,7 +688,7 @@
 					if (message) {
 						setHelperStatus($field, message, responseStatus === 'outside' ? 'error' : 'warning');
 					} else if (hasHouseNumber(currentAddress)) {
-						setHelperStatus($field, 'Не нашли точный адрес в зонах доставки. Уточните населённый пункт, улицу и дом или выберите адрес из списка подсказок.', 'warning');
+						setHelperStatus($field, wp.i18n.__( "Не нашли точный адрес в зонах доставки. Уточните населённый пункт, улицу и дом или выберите адрес из списка подсказок.", "ydzs" ), 'warning');
 					}
 				}
 			}).fail(function (xhr, status) {
@@ -747,7 +747,7 @@
 				$field.removeData('ydzsSuppressSuggestionsOnce');
 				hideSuggestions($field);
 			} else {
-				showSuggestions($field, data.candidates || [], data.candidates && data.candidates.length ? '' : 'Уточните адрес и выберите вариант из списка.');
+				showSuggestions($field, data.candidates || [], data.candidates && data.candidates.length ? '' : wp.i18n.__( "Уточните адрес и выберите вариант из списка.", "ydzs" ));
 			}
 			setHelperStatus($field, message, 'warning');
 			triggerCheckoutUpdate($field, true);
@@ -820,7 +820,7 @@
 		}
 
 		lastValidateKey = validateKey;
-		setHelperStatus($field, 'Проверяем адрес...', 'loading');
+		setHelperStatus($field, wp.i18n.__( "Проверяем адрес...", "ydzs" ), 'loading');
 
 		$.post(ajaxUrl, {
 			action: 'ydzs_validate_address',
@@ -833,7 +833,7 @@
 		}).fail(function () {
 			if (requestId !== validateSequence) return;
 			clearHiddenAddressData($field, 'error');
-			setHelperStatus($field, 'Не удалось проверить адрес сейчас. Уточните адрес или попробуйте оформить заказ ещё раз.', 'warning');
+			setHelperStatus($field, wp.i18n.__( "Не удалось проверить адрес сейчас. Уточните адрес или попробуйте оформить заказ ещё раз.", "ydzs" ), 'warning');
 			scheduleCheckoutUpdate($field);
 		});
 	}
@@ -898,7 +898,7 @@
 		}
 
 		if (hasHouseNumber(address)) {
-			setHelperStatus($field, 'Выберите точный адрес из списка подсказок, чтобы мы не рассчитали доставку по другому адресу.', 'warning');
+			setHelperStatus($field, wp.i18n.__( "Выберите точный адрес из списка подсказок, чтобы мы не рассчитали доставку по другому адресу.", "ydzs" ), 'warning');
 		} else {
 			updateFieldHint($field);
 		}
@@ -1027,7 +1027,7 @@
 
 		lastValidateKey = null;
 		lastSuggestKey = address;
-		setHelperStatus($field, 'Проверяем выбранный адрес...', 'loading');
+		setHelperStatus($field, wp.i18n.__( "Проверяем выбранный адрес...", "ydzs" ), 'loading');
 		validateAddress($field, true);
 	});
 
@@ -1120,7 +1120,7 @@
 			deliveryAvailable: deliveryAvailable,
 			address: confirmedAddress,
 			zoneName: zoneName,
-			message: isConfirmed && deliveryAvailable === 'no' && minMessage ? minMessage : (status === 'inside' ? ('Адрес входит в зону доставки' + (zoneName ? ': ' + zoneName : '') + '.') : '')
+			message: isConfirmed && deliveryAvailable === 'no' && minMessage ? minMessage : (status === 'inside' ? (wp.i18n.__( "Адрес входит в зону доставки", "ydzs" ) + (zoneName ? ': ' + zoneName : '') + '.') : '')
 		};
 	}
 
@@ -1129,7 +1129,7 @@
 
 		return new Promise(function (resolve) {
 			if (!$field.length) {
-				resolve({ ok: false, status: '', message: 'Поле адреса не найдено.' });
+				resolve({ ok: false, status: '', message: wp.i18n.__( "Поле адреса не найдено.", "ydzs" ) });
 				return;
 			}
 
@@ -1158,12 +1158,12 @@
 
 			if (!validateEnabled || !nonce || !ajaxUrl) {
 				clearHiddenAddressData($field, 'pending');
-				setHelperStatus($field, 'Адрес будет проверен при оформлении заказа.', 'warning');
-				resolve({ ok: true, status: 'pending', message: 'Адрес будет проверен при оформлении заказа.' });
+				setHelperStatus($field, wp.i18n.__( "Адрес будет проверен при оформлении заказа.", "ydzs" ), 'warning');
+				resolve({ ok: true, status: 'pending', message: wp.i18n.__( "Адрес будет проверен при оформлении заказа.", "ydzs" ) });
 				return;
 			}
 
-			setHelperStatus($field, 'Проверяем адрес...', 'loading');
+			setHelperStatus($field, wp.i18n.__( "Проверяем адрес...", "ydzs" ), 'loading');
 
 			$.post(ajaxUrl, {
 				action: 'ydzs_validate_address',
@@ -1183,7 +1183,7 @@
 				});
 			}).fail(function () {
 				clearHiddenAddressData($field, 'error');
-				const message = 'Не удалось проверить адрес сейчас. Попробуйте ещё раз.';
+				const message = wp.i18n.__( "Не удалось проверить адрес сейчас. Попробуйте ещё раз.", "ydzs" );
 				setHelperStatus($field, message, 'warning');
 				resolve({ ok: false, status: 'error', message: message });
 			});
@@ -1230,3 +1230,4 @@
 	window.YDZSFrontend.getAddressStatusForElement = getAddressStatusForElement;
 
 })(jQuery);
+

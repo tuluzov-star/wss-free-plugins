@@ -1,0 +1,150 @@
+msgid ""
+msgstr "Project-Id-Version: WSS plugins\nLanguage: en_US\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: wss-order-status-colors.php
+msgid "Настройки"
+msgstr "Settings"
+
+#: wss-order-status-colors.php
+msgid "Цвета заказов"
+msgstr "Order Colors"
+
+#: wss-order-status-colors.php
+msgid "Недостаточно прав."
+msgstr "You do not have permission to perform this action."
+
+#: wss-order-status-colors.php
+msgid "Цвета статусов"
+msgstr "Status colors"
+
+#: wss-order-status-colors.php
+msgid "Кнопки в заказах"
+msgstr "Order buttons"
+
+#: wss-order-status-colors.php
+msgid "Цвета заказов WooCommerce"
+msgstr "WooCommerce Order Colors"
+
+#: wss-order-status-colors.php
+msgid "Настройки сохранены."
+msgstr "Settings saved."
+
+#: wss-order-status-colors.php
+msgid "WooCommerce не активен. Настройки будут доступны после активации WooCommerce."
+msgstr "WooCommerce is not active. Settings will be available after activating WooCommerce."
+
+#: wss-order-status-colors.php
+msgid "В бесплатной версии можно назначить цвета для уже существующих статусов заказов. Создание и удаление собственных статусов доступно в Pro-версии."
+msgstr "The free edition lets you assign colors to existing order statuses. Creating and deleting custom statuses is available in Pro."
+
+#: wss-order-status-colors.php
+msgid "Включить"
+msgstr "Enable"
+
+#: wss-order-status-colors.php
+msgid "Статус"
+msgstr "Status"
+
+#: wss-order-status-colors.php
+msgid "Цвет фона"
+msgstr "Background color"
+
+#: wss-order-status-colors.php
+msgid "Цвет текста"
+msgstr "Text color"
+
+#: wss-order-status-colors.php
+msgid "Пример"
+msgstr "Example"
+
+#: wss-order-status-colors.php
+msgid "Да"
+msgstr "Yes"
+
+#: wss-order-status-colors.php
+msgid "Сохранить цвета"
+msgstr "Save colors"
+
+#: wss-order-status-colors.php
+msgid "Эти настройки применяются к кнопкам внутри окрашенных строк на странице заказов: например, к кнопкам CRM, просмотра контакта или кастомных действий в колонках заказа."
+msgstr "These settings apply to buttons inside colored order rows, such as CRM buttons, contact details or custom order actions."
+
+#: wss-order-status-colors.php
+msgid "Включить стили кнопок"
+msgstr "Enable button styling"
+
+#: wss-order-status-colors.php
+msgid "Окрашивать кнопки в строках заказов"
+msgstr "Apply colors to buttons in order rows"
+
+#: wss-order-status-colors.php
+msgid "Фон кнопки"
+msgstr "Button background"
+
+#: wss-order-status-colors.php
+msgid "Цвет текста кнопки"
+msgstr "Button text color"
+
+#: wss-order-status-colors.php
+msgid "Цвет рамки"
+msgstr "Border color"
+
+#: wss-order-status-colors.php
+msgid "Фон при наведении"
+msgstr "Hover background"
+
+#: wss-order-status-colors.php
+msgid "Цвет текста при наведении"
+msgstr "Hover text color"
+
+#: wss-order-status-colors.php
+msgid "Скругление, px"
+msgstr "Corner radius, px"
+
+#: wss-order-status-colors.php
+msgid "Пример:"
+msgstr "Example:"
+
+#: wss-order-status-colors.php
+msgid "Сохранить настройки кнопок"
+msgstr "Save button settings"
+
+#: wss-order-status-colors.php
+msgid "Ожидает оплаты"
+msgstr "Pending payment"
+
+#: wss-order-status-colors.php
+msgid "Обработка"
+msgstr "Processing"
+
+#: wss-order-status-colors.php
+msgid "На удержании"
+msgstr "On hold"
+
+#: wss-order-status-colors.php
+msgid "Выполнен"
+msgstr "Completed"
+
+#: wss-order-status-colors.php
+msgid "Отменён"
+msgstr "Cancelled"
+
+#: wss-order-status-colors.php
+msgid "Возвращён"
+msgstr "Refunded"
+
+#: wss-order-status-colors.php
+msgid "Не удался"
+msgstr "Failed"
+
+#: includes/class-wss-osc-updater.php
+msgid "Цветовое выделение заказов WooCommerce в админке по статусу."
+msgstr "Color-coded WooCommerce orders by status in the admin area."
+
+#: includes/class-wss-osc-updater.php
+msgid "Плагин настраивает фон строки заказа, цвет текста и внешний вид кнопок в списке заказов WooCommerce."
+msgstr "Configures order row backgrounds, text colors and button appearance in the WooCommerce order list."
+
+#: wss-order-status-colors.php
+msgid "Цветовое выделение заказов WooCommerce в админке в зависимости от статуса заказа."
+msgstr "Color-coded WooCommerce orders in the admin area based on order status."

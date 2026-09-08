@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WSS Yandex Calendar for WooCommerce Bookings
  * Description: Бесплатная версия: односторонняя синхронизация новых будущих бронирований WooCommerce Bookings в Яндекс.Календарь через CalDAV.
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: WSS
  * Author URI: https://website-support.ru/
  * Requires at least: 6.0
@@ -10,13 +10,17 @@
  * WC requires at least: 7.0
  * WC tested up to: 10.0
  * Text Domain: wss-wcb-yandex-calendar
+ * Domain Path: /languages
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WSS_WCB_YC_VERSION', '1.0.1');
+require_once __DIR__ . '/includes/wss-i18n.php';
+WSS_Plugin_I18n_202609::register(__FILE__, 'wss-wcb-yandex-calendar');
+
+define('WSS_WCB_YC_VERSION', '1.0.2');
 define('WSS_WCB_YC_FILE', __FILE__);
 define('WSS_WCB_YC_PATH', plugin_dir_path(__FILE__));
 define('WSS_WCB_YC_URL', plugin_dir_url(__FILE__));
@@ -47,3 +51,4 @@ add_action('plugins_loaded', static function () {
 register_activation_hook(__FILE__, static function () {
     update_option('wss_wcb_yc_needs_flush', 1, false);
 });
+
