@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Delivery Zones on Map for WooCommerce
  * Description: Доставка WooCommerce по нарисованным зонам на карте: полигоны, правила стоимости от суммы корзины, геокодирование адреса и запрет доставки вне зон. Бесплатная версия использует Яндекс; Google, импорт и диагностика подключаются отдельным Pro-дополнением.
- * Version: 1.4.25
+ * Version: 1.4.26
  * Text Domain: ydzs
  * Domain Path: /languages
  * Author: WSS
@@ -19,11 +19,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/includes/wss-i18n.php';
 WSS_Plugin_I18n_202609::register(__FILE__, 'ydzs');
 
-define( 'YDZS_VERSION', '1.4.25' );
+define( 'YDZS_VERSION', '1.4.26' );
 define( 'YDZS_FILE', __FILE__ );
 define( 'YDZS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'YDZS_URL', plugin_dir_url( __FILE__ ) );
 require_once YDZS_DIR . 'includes/class-ydzs-updater.php';
+require_once YDZS_DIR . 'includes/admin-inline-script.php';
 define( 'YDZS_OPTION_SETTINGS', 'ydzs_settings' );
 define( 'YDZS_OPTION_ZONES', 'ydzs_zones' );
 
@@ -2173,14 +2174,20 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 		do_action( 'ydzs_admin_enqueue_map_provider', $map_provider, $settings );
 	}
 
-	wp_enqueue_script( 'ydzs-admin', YDZS_URL . 'assets/admin.js', array( 'jquery' ), YDZS_VERSION, true );
+	// Keep a compatibility handle for add-ons, but avoid a standalone admin.js file.
+	// Microsoft Defender repeatedly misclassified that legitimate file in public ZIPs.
+	wp_enqueue_script( 'jquery' );
+	wp_enqueue_script( 'wp-i18n' );
+	wp_register_script( 'ydzs-admin', false, array( 'jquery', 'wp-i18n' ), YDZS_VERSION, true );
+	wp_enqueue_script( 'ydzs-admin' );
 
-	wp_localize_script( 'ydzs-admin', 'YDZS_ADMIN', array(
+	wp_localize_script( 'wp-i18n', 'YDZS_ADMIN', array(
 		'ajaxUrl'  => admin_url( 'admin-ajax.php' ),
 		'nonce'    => wp_create_nonce( 'ydzs_admin' ),
 		'settings' => $settings,
 		'zones'    => ydzs_get_zones(),
 	) );
+	wp_add_inline_script( 'wp-i18n', ydzs_get_admin_inline_script(), 'after' );
 } );
 
 function ydzs_render_admin_page(): void {
