@@ -1,0 +1,169 @@
+name: Prepare current Free releases
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/prepare-current-free-releases.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout public Free repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update public sources and manifest
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import json
+
+          replacements = {
+              'plugins/delivery-zones-free/yd-zones-shipping.php': [
+                  ('Version: 1.4.24', 'Version: 1.4.25'),
+                  ("define( 'YDZS_VERSION', '1.4.24' );", "define( 'YDZS_VERSION', '1.4.25' );"),
+              ],
+              'plugins/order-status-colors-free/wss-order-status-colors.php': [
+                  ('Version: 1.1.2', 'Version: 1.1.3'),
+                  ("define( 'WSS_OSC_VERSION', '1.1.2' );", "define( 'WSS_OSC_VERSION', '1.1.3' );"),
+              ],
+              'plugins/bookings-schedule-free/wss-bookings-schedule.php': [
+                  ('Version: 0.3.8', 'Version: 0.3.9'),
+                  ("define( 'WSS_BS_VERSION', '0.3.8' );", "define( 'WSS_BS_VERSION', '0.3.9' );"),
+              ],
+              'plugins/wss-woocommerce-bookings/wss-woocommerce-bookings.php': [
+                  ('Version: 0.5.2', 'Version: 0.5.3'),
+                  ("const VERSION = '0.5.2';", "const VERSION = '0.5.3';"),
+              ],
+          }
+
+          for filename, reps in replacements.items():
+              path = Path(filename)
+              text = path.read_text(encoding='utf-8')
+              for old, new in reps:
+                  if old not in text:
+                      raise SystemExit(f'Missing expected text in {filename}: {old}')
+                  text = text.replace(old, new)
+              path.write_text(text, encoding='utf-8')
+
+          admin = Path('plugins/delivery-zones-free/assets/admin.js')
+          text = admin.read_text(encoding='utf-8')
+          old = 'wp.i18n.__( "<td><button type=\\"button\\" class=\\"button ydzs-remove-rule\\">Удалить</button></td>", "ydzs" ) +'
+          new = "'<td><button type=\"button\" class=\"button ydzs-remove-rule\">' +\n\t\t\t\twp.i18n.__( \"Удалить\", \"ydzs\" ) +\n\t\t\t\t'</button></td>' +"
+          if old not in text:
+              raise SystemExit('Expected translated HTML fragment not found in Delivery Zones admin.js')
+          admin.write_text(text.replace(old, new), encoding='utf-8')
+
+          manifest_path = Path('manifest.json')
+          manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+          manifest['schema_version'] = 1
+          manifest['repository'] = 'tuluzov-star/wss-free-plugins'
+          manifest['branch'] = 'main'
+          manifest['source_repository'] = 'tuluzov-star/wss-plugins'
+          manifest['type'] = 'public_free_plugins'
+
+          updates = {
+              'ydzs_free': {
+                  'version': '1.4.25',
+                  'zip_path': 'releases/delivery-zones/free/yd-zones-shipping-free-1.4.25.zip',
+                  'package_dir': 'yd-zones-shipping',
+              },
+              'order_status_colors_free': {
+                  'version': '1.1.3',
+                  'zip_path': 'releases/order-status-colors/free/wss-order-status-colors-1.1.3.zip',
+                  'package_dir': 'wss-order-status-colors',
+              },
+              'wss_bookings_schedule_free': {
+                  'version': '0.3.9',
+                  'zip_path': 'releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.9.zip',
+                  'package_dir': 'wss-bookings-schedule-lite',
+              },
+              'wss_woocommerce_bookings_free': {
+                  'version': '0.5.3',
+                  'zip_path': 'releases/wss-woocommerce-bookings/free/wss-woocommerce-bookings-0.5.3-free.zip',
+                  'package_dir': 'wss-woocommerce-bookings',
+              },
+          }
+
+          for key, values in updates.items():
+              plugin = manifest['plugins'][key]
+              plugin.update(values)
+              plugin['type'] = 'free'
+              plugin['compression'] = 'store'
+
+          # Keep the already-clean Yandex Calendar release in the same normalized format.
+          yandex = manifest['plugins']['wss_yandex_calendar_sync_free']
+          yandex['type'] = 'free'
+          yandex['package_dir'] = 'wss-wc-bookings-yandex-calendar'
+
+          manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+
+      - name: Build antivirus-friendly deterministic ZIPs
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, ZipInfo, ZIP_STORED
+          import json
+
+          manifest = json.loads(Path('manifest.json').read_text(encoding='utf-8'))
+          targets = {
+              'ydzs_free',
+              'order_status_colors_free',
+              'wss_bookings_schedule_free',
+              'wss_woocommerce_bookings_free',
+          }
+          skip_names = {'.DS_Store', 'Thumbs.db'}
+          skip_ext = {'.bak', '.log', '.map'}
+
+          for key in targets:
+              product = manifest['plugins'][key]
+              source = Path(product['source_path'])
+              output = Path(product['zip_path'])
+              package_dir = product['package_dir']
+              output.parent.mkdir(parents=True, exist_ok=True)
+
+              files = []
+              for path in source.rglob('*'):
+                  if not path.is_file():
+                      continue
+                  if path.name in skip_names or path.suffix.lower() in skip_ext:
+                      continue
+                  files.append(path)
+              files.sort(key=lambda p: p.relative_to(source).as_posix())
+
+              with ZipFile(output, 'w', compression=ZIP_STORED, allowZip64=True) as zf:
+                  for path in files:
+                      rel = path.relative_to(source).as_posix()
+                      arc = f'{package_dir}/{rel}'
+                      info = ZipInfo(arc, date_time=(1980, 1, 1, 0, 0, 0))
+                      info.compress_type = ZIP_STORED
+                      info.create_system = 3
+                      info.external_attr = (0o100644 & 0xFFFF) << 16
+                      zf.writestr(info, path.read_bytes())
+
+              print(f'Built {key}: {output} ({output.stat().st_size} bytes)')
+          PY
+
+      - name: Commit public Free releases
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manifest.json plugins releases
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Publish current antivirus-friendly Free releases"
+          git push
