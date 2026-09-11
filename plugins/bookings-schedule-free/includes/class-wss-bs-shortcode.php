@@ -16,6 +16,23 @@ class WSS_BS_Shortcode {
             array(),
             WSS_BS_VERSION
         );
+
+        wp_register_script(
+            'wss-bookings-schedule',
+            false,
+            array( 'jquery', 'wp-i18n' ),
+            WSS_BS_VERSION,
+            true
+        );
+        wp_add_inline_script(
+            'wss-bookings-schedule',
+            wss_bs_get_frontend_inline_script(),
+            'after'
+        );
+
+        if ( isset( $_GET['wss_booking_date'] ) || isset( $_GET['wss_booking_time'] ) || isset( $_GET['wss_booking_start'] ) ) {
+            wp_enqueue_script( 'wss-bookings-schedule' );
+        }
     }
 
     public static function render( $atts = array() ) {
@@ -54,6 +71,7 @@ class WSS_BS_Shortcode {
         );
 
         wp_enqueue_style( 'wss-bookings-schedule' );
+        wp_enqueue_script( 'wss-bookings-schedule' );
 
         $inline_css = self::build_inline_css( $options );
         wp_add_inline_style( 'wss-bookings-schedule', $inline_css );
@@ -260,8 +278,8 @@ class WSS_BS_Shortcode {
             $css .= $name . ':' . esc_attr( $value ) . ';';
         }
         $css .= '}';
-        $css .= '@media (max-width:767px){.wss-bs__day{display:block;scroll-margin-top:20px}.wss-bs__day.is-filter-empty{display:none}}';
 
         return $css;
     }
 }
+

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WSS Bookings Schedule Lite
  * Description: Витрина расписания для booking-товаров WooCommerce. Совместима с WSS WooCommerce Bookings и WooCommerce Bookings.
- * Version: 0.3.14
+ * Version: 0.3.15
  * Author: WSS
  * Author URI: https://website-support.ru/
  * Text Domain: wss-bookings-schedule
@@ -17,11 +17,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/includes/wss-i18n.php';
 WSS_Plugin_I18n_202609::register(__FILE__, 'wss-bookings-schedule');
 
-define( 'WSS_BS_VERSION', '0.3.14' );
+define( 'WSS_BS_VERSION', '0.3.15' );
 define( 'WSS_BS_FILE', __FILE__ );
 define( 'WSS_BS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WSS_BS_URL', plugin_dir_url( __FILE__ ) );
 require_once WSS_BS_DIR . 'includes/class-wss-bs-updater.php';
+require_once WSS_BS_DIR . 'includes/admin-inline-script.php';
+require_once WSS_BS_DIR . 'includes/frontend-inline-script.php';
 define( 'WSS_BS_IS_PRO', false );
 define( 'WSS_BS_UPGRADE_URL', 'https://website-support.ru/plugins/wss-bookings-schedule/' );
 
@@ -29,6 +31,39 @@ require_once WSS_BS_DIR . 'includes/class-wss-bs-plugin.php';
 require_once WSS_BS_DIR . 'includes/class-wss-bs-settings.php';
 require_once WSS_BS_DIR . 'includes/class-wss-bs-shortcode.php';
 require_once WSS_BS_DIR . 'includes/class-wss-bs-query.php';
+
+add_action(
+    'admin_enqueue_scripts',
+    static function ( $hook_suffix ) {
+        $page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+        $is_booking_page = false !== strpos( $page, 'booking' ) || false !== strpos( $page, 'schedule' );
+        $is_woocommerce_page = false !== strpos( (string) $hook_suffix, 'woocommerce' );
+
+        if ( ! $is_booking_page && ! $is_woocommerce_page ) {
+            return;
+        }
+
+        wp_enqueue_style(
+            'wss-bookings-schedule-admin-tools',
+            WSS_BS_URL . 'assets/css/admin-tools.css',
+            array(),
+            WSS_BS_VERSION
+        );
+        wp_register_script(
+            'wss-bookings-schedule-admin-tools',
+            false,
+            array( 'wp-i18n' ),
+            WSS_BS_VERSION,
+            true
+        );
+        wp_enqueue_script( 'wss-bookings-schedule-admin-tools' );
+        wp_add_inline_script(
+            'wss-bookings-schedule-admin-tools',
+            wss_bs_get_admin_inline_script(),
+            'after'
+        );
+    }
+);
 
 register_activation_hook( __FILE__, array( 'WSS_BS_Plugin', 'activate' ) );
 
@@ -42,21 +77,3 @@ if ( is_admin() && class_exists( 'WSS_BS_Updater' ) ) {
 
 add_action( 'plugins_loaded', array( 'WSS_BS_Plugin', 'init' ) );
 
-/** Use the official WooCommerce Bookings default-date filter. */
-function wss_bs_override_booking_default_date( $default_date, $picker ) {
-    if ( isset( $_GET['wss_booking_start'] ) ) {
-        $timestamp = absint( wp_unslash( $_GET['wss_booking_start'] ) );
-        if ( $timestamp > 0 ) {
-            return $timestamp;
-        }
-    }
-    if ( isset( $_GET['wss_booking_date'] ) ) {
-        $date = sanitize_text_field( wp_unslash( $_GET['wss_booking_date'] ) );
-        $dt = DateTimeImmutable::createFromFormat( '!Y-m-d', $date, wp_timezone() );
-        if ( $dt instanceof DateTimeImmutable && $dt->format( 'Y-m-d' ) === $date ) {
-            return $dt->getTimestamp();
-        }
-    }
-    return $default_date;
-}
-add_filter( 'woocommerce_bookings_override_form_default_date', 'wss_bs_override_booking_default_date', 10, 2 );

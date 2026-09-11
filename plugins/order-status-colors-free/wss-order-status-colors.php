@@ -3,7 +3,7 @@
  * Plugin Name: WSS Order Status Colors for WooCommerce
  * Plugin URI: https://website-support.ru/plugins/order-status-colors-for-woocommerce/
  * Description: Цветовое выделение заказов WooCommerce в админке в зависимости от статуса заказа.
- * Version: 1.1.5
+ * Version: 1.1.6
  * Author: WSS
  * Author URI: https://website-support.ru/
  * Text Domain: wss-order-status-colors
@@ -21,11 +21,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/includes/wss-i18n.php';
 WSS_Plugin_I18n_202609::register(__FILE__, 'wss-order-status-colors');
 
-define( 'WSS_OSC_VERSION', '1.1.5' );
+define( 'WSS_OSC_VERSION', '1.1.6' );
 define( 'WSS_OSC_FILE', __FILE__ );
 define( 'WSS_OSC_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WSS_OSC_URL', plugin_dir_url( __FILE__ ) );
 require_once WSS_OSC_DIR . 'includes/class-wss-osc-updater.php';
+require_once WSS_OSC_DIR . 'includes/admin-inline-script.php';
 
 add_action( 'before_woocommerce_init', static function (): void {
 	if ( class_exists( 'Automattic\\WooCommerce\\Utilities\\FeaturesUtil' ) ) {
@@ -202,63 +203,83 @@ final class WSS_Order_Status_Colors {
 			return;
 		}
 
-		$buttons = $this->get_button_styles();
-		$css     = '';
+		wp_register_script(
+			'wss-osc-admin',
+			false,
+			array(),
+			WSS_OSC_VERSION,
+			true
+		);
+		wp_enqueue_script( 'wss-osc-admin' );
 
-		foreach ( $colors as $status_key => $color ) {
-			$slug = sanitize_html_class( preg_replace( '/^wc-/', '', (string) $status_key ) );
-			if ( ! $slug ) {
-				continue;
+		wp_add_inline_script(
+			'wss-osc-admin',
+			'window.WSS_OSC = ' . wp_json_encode(
+				array(
+					'colors'  => $colors,
+					'buttons' => $this->get_button_styles(),
+				)
+			) . ';',
+			'before'
+		);
+
+		wp_add_inline_script(
+			'wss-osc-admin',
+			wss_osc_get_admin_inline_script(),
+			'after'
+		);
+
+		$css = '
+			.wp-list-table tr.wss-osc-colored-row > th,
+			.wp-list-table tr.wss-osc-colored-row > td {
+				background-color: var(--wss-osc-bg);
+				color: var(--wss-osc-text);
+				transition: background-color .15s ease;
 			}
-
-			$background = sanitize_hex_color( $color['background'] ?? '' ) ?: '#ffffff';
-			$text_color = sanitize_hex_color( $color['text'] ?? '' ) ?: '#1d2327';
-			$row_selectors = array(
-				'.wp-list-table tr.status-' . $slug,
-				'.wp-list-table tr.status-wc-' . $slug,
-				'.wp-list-table tr.order-status-' . $slug,
-				'.wp-list-table tr.order-status-wc-' . $slug,
-				'.wp-list-table tr:has(.order-status.status-' . $slug . ')',
-				'.wp-list-table tr:has(.order-status.status-wc-' . $slug . ')',
-				'.wp-list-table tr:has(mark.status-' . $slug . ')',
-				'.wp-list-table tr:has(mark.status-wc-' . $slug . ')',
-			);
-
-			$cell_selectors = array();
-			$link_selectors = array();
-			$button_selectors = array();
-			$button_hover_selectors = array();
-			foreach ( $row_selectors as $selector ) {
-				$cell_selectors[] = $selector . ' > th';
-				$cell_selectors[] = $selector . ' > td';
-				$link_selectors[] = $selector . ' a:not(.button)';
-				$link_selectors[] = $selector . ' .row-actions a:not(.button)';
-				$button_selectors[] = $selector . ' .button';
-				$button_selectors[] = $selector . ' a[class*="button"]';
-				$button_selectors[] = $selector . ' button:not(.toggle-row):not(.components-button)';
-				$button_hover_selectors[] = $selector . ' .button:hover';
-				$button_hover_selectors[] = $selector . ' .button:focus';
-				$button_hover_selectors[] = $selector . ' a[class*="button"]:hover';
-				$button_hover_selectors[] = $selector . ' button:not(.toggle-row):not(.components-button):hover';
+			.wp-list-table tr.wss-osc-colored-row > th a:not(.button),
+			.wp-list-table tr.wss-osc-colored-row > td a:not(.button),
+			.wp-list-table tr.wss-osc-colored-row .row-actions a:not(.button) {
+				color: var(--wss-osc-text);
 			}
-
-			$css .= implode( ",\n", $cell_selectors ) . "{background-color:{$background};color:{$text_color};transition:background-color .15s ease;}\n";
-			$css .= implode( ",\n", $link_selectors ) . "{color:{$text_color};}\n";
-			$css .= '.wp-list-table .order-status.status-' . $slug . ',.wp-list-table .order-status.status-wc-' . $slug . ',.wp-list-table mark.status-' . $slug . ',.wp-list-table mark.status-wc-' . $slug . "{background-color:{$background};color:{$text_color};border-color:rgba(0,0,0,.12);}\n";
-			$css .= '.wp-list-table .order-status.status-' . $slug . ' span,.wp-list-table .order-status.status-wc-' . $slug . ' span,.wp-list-table mark.status-' . $slug . ' span,.wp-list-table mark.status-wc-' . $slug . " span{color:{$text_color};}\n";
-
-			if ( ! empty( $buttons['enabled'] ) ) {
-				$button_background = sanitize_hex_color( $buttons['background'] ?? '' ) ?: '#3157e7';
-				$button_text = sanitize_hex_color( $buttons['text'] ?? '' ) ?: '#ffffff';
-				$button_border = sanitize_hex_color( $buttons['border'] ?? '' ) ?: $button_background;
-				$button_hover_background = sanitize_hex_color( $buttons['hover_background'] ?? '' ) ?: '#2444bd';
-				$button_hover_text = sanitize_hex_color( $buttons['hover_text'] ?? '' ) ?: '#ffffff';
-				$button_radius = min( 40, max( 0, absint( $buttons['border_radius'] ?? 4 ) ) );
-				$css .= implode( ",\n", $button_selectors ) . "{background:{$button_background};border-color:{$button_border};color:{$button_text};border-radius:{$button_radius}px;box-shadow:none;text-shadow:none;}\n";
-				$css .= implode( ",\n", $button_hover_selectors ) . "{background:{$button_hover_background};border-color:{$button_hover_background};color:{$button_hover_text};box-shadow:0 0 0 1px rgba(0,0,0,.08);}\n";
+			.wp-list-table tr.wss-osc-colored-row .order-status,
+			.wp-list-table tr.wss-osc-colored-row .order-status span {
+				color: var(--wss-osc-text);
 			}
-		}
-
+			.wp-list-table tr.wss-osc-buttons-styled > th .button,
+			.wp-list-table tr.wss-osc-buttons-styled > td .button,
+			.wp-list-table tr.wss-osc-buttons-styled > th a.button,
+			.wp-list-table tr.wss-osc-buttons-styled > td a.button,
+			.wp-list-table tr.wss-osc-buttons-styled > th button.button,
+			.wp-list-table tr.wss-osc-buttons-styled > td button.button,
+			.wp-list-table tr.wss-osc-buttons-styled > th input.button,
+			.wp-list-table tr.wss-osc-buttons-styled > td input.button,
+			.wp-list-table tr.wss-osc-buttons-styled > td button:not(.toggle-row):not(.components-button),
+			.wp-list-table tr.wss-osc-buttons-styled > td a[class*="button"] {
+				background: var(--wss-osc-button-bg);
+				border-color: var(--wss-osc-button-border);
+				color: var(--wss-osc-button-text);
+				border-radius: var(--wss-osc-button-radius);
+				box-shadow: none;
+				text-shadow: none;
+			}
+			.wp-list-table tr.wss-osc-buttons-styled > th .button:hover,
+			.wp-list-table tr.wss-osc-buttons-styled > td .button:hover,
+			.wp-list-table tr.wss-osc-buttons-styled > th a.button:hover,
+			.wp-list-table tr.wss-osc-buttons-styled > td a.button:hover,
+			.wp-list-table tr.wss-osc-buttons-styled > th button.button:hover,
+			.wp-list-table tr.wss-osc-buttons-styled > td button.button:hover,
+			.wp-list-table tr.wss-osc-buttons-styled > th input.button:hover,
+			.wp-list-table tr.wss-osc-buttons-styled > td input.button:hover,
+			.wp-list-table tr.wss-osc-buttons-styled > td button:not(.toggle-row):not(.components-button):hover,
+			.wp-list-table tr.wss-osc-buttons-styled > td a[class*="button"]:hover,
+			.wp-list-table tr.wss-osc-buttons-styled > th .button:focus,
+			.wp-list-table tr.wss-osc-buttons-styled > td .button:focus {
+				background: var(--wss-osc-button-hover-bg);
+				border-color: var(--wss-osc-button-hover-bg);
+				color: var(--wss-osc-button-hover-text);
+				box-shadow: 0 0 0 1px rgba(0,0,0,.08);
+			}
+		';
 		wp_register_style( 'wss-osc-admin-inline', false, array(), WSS_OSC_VERSION );
 		wp_enqueue_style( 'wss-osc-admin-inline' );
 		wp_add_inline_style( 'wss-osc-admin-inline', $css );

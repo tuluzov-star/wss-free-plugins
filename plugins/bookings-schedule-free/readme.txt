@@ -4,7 +4,7 @@ Tags: woocommerce, bookings, schedule, availability
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.3.14
+Stable tag: 0.3.15
 License: GPLv2 or later
 
 Бесплатная витрина расписания для оригинального WooCommerce Bookings.
