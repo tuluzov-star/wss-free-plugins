@@ -1,0 +1,64 @@
+name: Publish Bookings Schedule 0.3.14
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-bookings-0314.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update manifest, readme and ZIP
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import json, re, zipfile
+
+          root = Path('plugins/bookings-schedule-free')
+
+          readme = root / 'readme.txt'
+          text = readme.read_text(encoding='utf-8')
+          text = re.sub(r'^Stable tag: .*$', 'Stable tag: 0.3.14', text, flags=re.M)
+          if '= 0.3.14 =' not in text:
+              marker = '== Изменения ==\n'
+              entry = '= 0.3.14 =\n* Полностью удалён frontend.js из Lite-сборки для исключения ложных срабатываний Microsoft Defender.\n* На мобильных устройствах дни доступны как обычные якорные ссылки без JavaScript.\n* Передача даты в WooCommerce Bookings остаётся на серверном фильтре.\n\n'
+              text = text.replace(marker, marker + '\n' + entry, 1)
+          readme.write_text(text, encoding='utf-8')
+
+          manifest_path = Path('manifest.json')
+          manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+          item = manifest['plugins']['wss_bookings_schedule_free']
+          item['version'] = '0.3.14'
+          item['zip_path'] = 'releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.14.zip'
+          item['compression'] = 'store'
+          manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          out = Path('releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.14.zip')
+          out.parent.mkdir(parents=True, exist_ok=True)
+          if out.exists(): out.unlink()
+          with zipfile.ZipFile(out, 'w', compression=zipfile.ZIP_STORED) as z:
+              for p in sorted(root.rglob('*')):
+                  if p.is_file():
+                      arc = Path('wss-bookings-schedule-lite') / p.relative_to(root)
+                      info = zipfile.ZipInfo(str(arc).replace('\\','/'))
+                      info.date_time = (2026, 9, 11, 12, 0, 0)
+                      info.compress_type = zipfile.ZIP_STORED
+                      info.external_attr = 0o644 << 16
+                      z.writestr(info, p.read_bytes())
+          PY
+      - name: Commit public release
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add plugins/bookings-schedule-free/readme.txt manifest.json releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.14.zip
+          git commit -m "Publish Bookings Schedule Lite 0.3.14 no-JS build"
+          git push
