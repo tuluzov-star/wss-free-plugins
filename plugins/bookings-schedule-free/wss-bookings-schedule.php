@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WSS Bookings Schedule Lite
  * Description: Витрина расписания для booking-товаров WooCommerce. Совместима с WSS WooCommerce Bookings и WooCommerce Bookings.
- * Version: 0.3.12
+ * Version: 0.3.13
  * Author: WSS
  * Author URI: https://website-support.ru/
  * Text Domain: wss-bookings-schedule
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/includes/wss-i18n.php';
 WSS_Plugin_I18n_202609::register(__FILE__, 'wss-bookings-schedule');
 
-define( 'WSS_BS_VERSION', '0.3.12' );
+define( 'WSS_BS_VERSION', '0.3.13' );
 define( 'WSS_BS_FILE', __FILE__ );
 define( 'WSS_BS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WSS_BS_URL', plugin_dir_url( __FILE__ ) );
@@ -41,3 +41,22 @@ if ( is_admin() && class_exists( 'WSS_BS_Updater' ) ) {
 }
 
 add_action( 'plugins_loaded', array( 'WSS_BS_Plugin', 'init' ) );
+
+/** Use the official WooCommerce Bookings default-date filter. */
+function wss_bs_override_booking_default_date( $default_date, $picker ) {
+    if ( isset( $_GET['wss_booking_start'] ) ) {
+        $timestamp = absint( wp_unslash( $_GET['wss_booking_start'] ) );
+        if ( $timestamp > 0 ) {
+            return $timestamp;
+        }
+    }
+    if ( isset( $_GET['wss_booking_date'] ) ) {
+        $date = sanitize_text_field( wp_unslash( $_GET['wss_booking_date'] ) );
+        $dt = DateTimeImmutable::createFromFormat( '!Y-m-d', $date, wp_timezone() );
+        if ( $dt instanceof DateTimeImmutable && $dt->format( 'Y-m-d' ) === $date ) {
+            return $dt->getTimestamp();
+        }
+    }
+    return $default_date;
+}
+add_filter( 'woocommerce_bookings_override_form_default_date', 'wss_bs_override_booking_default_date', 10, 2 );

@@ -25,9 +25,6 @@ class WSS_BS_Shortcode {
             true
         );
 
-        if ( isset( $_GET['wss_booking_date'] ) || isset( $_GET['wss_booking_time'] ) || isset( $_GET['wss_booking_start'] ) ) {
-            wp_enqueue_script( 'wss-bookings-schedule' );
-        }
     }
 
     public static function render( $atts = array() ) {
