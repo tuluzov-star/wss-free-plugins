@@ -1,11 +1,11 @@
-(function () {
+(function ($) {
     'use strict';
 
     var config = window.WSS_OSC || {};
     var colors = config.colors || {};
     var buttons = config.buttons || {};
 
-    function statusKeyVariants(statusKey) {
+    function statusVariants(statusKey) {
         var normalized = String(statusKey || '').replace(/^wc-/, '');
         return [
             'status-' + normalized,
@@ -15,33 +15,28 @@
         ];
     }
 
-    function findStatusKeyFromElement(el) {
-        if (!el || !el.classList) {
+    function statusFromMark(mark) {
+        if (!mark || !mark.classList) {
             return '';
         }
 
-        var classes = Array.prototype.slice.call(el.classList);
-        for (var i = 0; i < classes.length; i++) {
-            var className = classes[i];
+        for (var i = 0; i < mark.classList.length; i += 1) {
+            var className = mark.classList.item(i) || '';
             if (className.indexOf('status-') !== 0) {
                 continue;
             }
-
-            var slug = className.replace(/^status-/, '').replace(/^wc-/, '');
-            var candidate = 'wc-' + slug;
+            var candidate = 'wc-' + className.replace(/^status-/, '').replace(/^wc-/, '');
             if (colors[candidate]) {
                 return candidate;
             }
         }
-
         return '';
     }
 
-    function applyButtonStyles(row) {
+    function styleButtons(row) {
         if (!row || !buttons || !parseInt(buttons.enabled, 10)) {
             return;
         }
-
         row.classList.add('wss-osc-buttons-styled');
         row.style.setProperty('--wss-osc-button-bg', buttons.background || '#3157e7');
         row.style.setProperty('--wss-osc-button-text', buttons.text || '#ffffff');
@@ -51,7 +46,7 @@
         row.style.setProperty('--wss-osc-button-radius', parseInt(buttons.border_radius || 4, 10) + 'px');
     }
 
-    function applyColorToRow(row, mark, color) {
+    function styleRow(row, mark, color) {
         if (!row || !color || !color.background || !color.text) {
             return;
         }
@@ -59,13 +54,12 @@
         row.classList.add('wss-osc-colored-row');
         row.style.setProperty('--wss-osc-bg', color.background);
         row.style.setProperty('--wss-osc-text', color.text);
-        applyButtonStyles(row);
+        styleButtons(row);
 
         if (mark) {
             mark.style.backgroundColor = color.background;
             mark.style.color = color.text;
             mark.style.borderColor = 'rgba(0,0,0,.12)';
-
             var span = mark.querySelector('span');
             if (span) {
                 span.style.color = color.text;
@@ -74,45 +68,29 @@
     }
 
     function applyStatusColors() {
-        var marks = document.querySelectorAll('.wp-list-table .order-status, .wp-list-table mark[class*="status-"]');
-
-        marks.forEach(function (mark) {
-            var statusKey = findStatusKeyFromElement(mark);
+        Array.prototype.slice.call(document.querySelectorAll('.wp-list-table .order-status, .wp-list-table mark[class*="status-"]')).forEach(function (mark) {
+            var statusKey = statusFromMark(mark);
             if (!statusKey || !colors[statusKey]) {
                 return;
             }
-
-            var row = mark.closest('tr');
-            applyColorToRow(row, mark, colors[statusKey]);
+            styleRow(mark.closest('tr'), mark, colors[statusKey]);
         });
 
         Object.keys(colors).forEach(function (statusKey) {
-            statusKeyVariants(statusKey).forEach(function (className) {
-                var rows = document.querySelectorAll('.wp-list-table tr.' + className);
-                rows.forEach(function (row) {
-                    applyColorToRow(row, null, colors[statusKey]);
+            statusVariants(statusKey).forEach(function (className) {
+                Array.prototype.slice.call(document.querySelectorAll('.wp-list-table tr.' + className)).forEach(function (row) {
+                    styleRow(row, null, colors[statusKey]);
                 });
             });
         });
     }
 
-    function debounce(fn, delay) {
-        var timer = null;
-        return function () {
-            window.clearTimeout(timer);
-            timer = window.setTimeout(fn, delay);
-        };
+    var refreshTimer = null;
+    function scheduleRefresh() {
+        window.clearTimeout(refreshTimer);
+        refreshTimer = window.setTimeout(applyStatusColors, 60);
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', applyStatusColors);
-    } else {
-        applyStatusColors();
-    }
-
-    var observer = new MutationObserver(debounce(applyStatusColors, 80));
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-})();
+    $(applyStatusColors);
+    $(document).on('ajaxComplete.wssOsc', scheduleRefresh);
+})(jQuery);
