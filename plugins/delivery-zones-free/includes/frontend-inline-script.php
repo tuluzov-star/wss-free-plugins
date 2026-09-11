@@ -1,3 +1,9 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+
+/** Return the Delivery Zones frontend JavaScript as inline code. */
+function ydzs_get_frontend_inline_script(): string {
+    return <<<'YDZS_FRONTEND_JS'
 (function ($) {
 	'use strict';
 
@@ -1230,4 +1236,5 @@
 	window.YDZSFrontend.getAddressStatusForElement = getAddressStatusForElement;
 
 })(jQuery);
-
+YDZS_FRONTEND_JS;
+}

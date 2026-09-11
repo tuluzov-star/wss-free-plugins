@@ -6,9 +6,9 @@
   "plugins": {
     "ydzs_free": {
       "name": "Delivery Zones on Map for WooCommerce",
-      "version": "1.4.26",
+      "version": "1.4.27",
       "source_path": "plugins/delivery-zones-free",
-      "zip_path": "releases/delivery-zones/free/yd-zones-shipping-free-1.4.26.zip",
+      "zip_path": "releases/delivery-zones/free/yd-zones-shipping-free-1.4.27.zip",
       "homepage": "https://website-support.ru/plugins/delivery-zones-for-woocommerce/",
       "package_dir": "yd-zones-shipping",
       "type": "free",

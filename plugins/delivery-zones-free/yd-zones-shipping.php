@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Delivery Zones on Map for WooCommerce
  * Description: Доставка WooCommerce по нарисованным зонам на карте: полигоны, правила стоимости от суммы корзины, геокодирование адреса и запрет доставки вне зон. Бесплатная версия использует Яндекс; Google, импорт и диагностика подключаются отдельным Pro-дополнением.
- * Version: 1.4.26
+ * Version: 1.4.27
  * Text Domain: ydzs
  * Domain Path: /languages
  * Author: WSS
@@ -19,12 +19,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/includes/wss-i18n.php';
 WSS_Plugin_I18n_202609::register(__FILE__, 'ydzs');
 
-define( 'YDZS_VERSION', '1.4.26' );
+define( 'YDZS_VERSION', '1.4.27' );
 define( 'YDZS_FILE', __FILE__ );
 define( 'YDZS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'YDZS_URL', plugin_dir_url( __FILE__ ) );
 require_once YDZS_DIR . 'includes/class-ydzs-updater.php';
 require_once YDZS_DIR . 'includes/admin-inline-script.php';
+require_once YDZS_DIR . 'includes/frontend-inline-script.php';
 define( 'YDZS_OPTION_SETTINGS', 'ydzs_settings' );
 define( 'YDZS_OPTION_ZONES', 'ydzs_zones' );
 
@@ -2109,14 +2110,16 @@ add_action( 'wp_enqueue_scripts', function () {
 	}
 
 	$settings = ydzs_get_settings();
-	$deps     = array( 'jquery' );
+	$deps     = array( 'jquery', 'wp-i18n' );
 	$api_key  = trim( (string) ( $settings['api_key'] ?? '' ) );
 	$suggest_enabled = ydzs_address_suggest_enabled( $settings ) && 'yandex' === ydzs_get_geocode_provider( $settings ) && '' !== $api_key;
 
 	wp_enqueue_style( 'ydzs-frontend', YDZS_URL . 'assets/frontend.css', array(), YDZS_VERSION );
 
 
-	wp_enqueue_script( 'ydzs-frontend', YDZS_URL . 'assets/frontend.js', $deps, YDZS_VERSION, true );
+	// Keep the public package free of standalone JS files that Defender repeatedly misclassifies.
+	wp_register_script( 'ydzs-frontend', false, $deps, YDZS_VERSION, true );
+	wp_enqueue_script( 'ydzs-frontend' );
 	$address_bounds = ydzs_get_effective_address_bounds( $settings );
 
 	wp_localize_script( 'ydzs-frontend', 'YDZS_FRONTEND', array(
@@ -2135,6 +2138,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		'checkoutContext'   => $is_checkout_context,
 		'globalPopupMode'   => ! $is_checkout_context && $force_frontend,
 	) );
+	wp_add_inline_script( 'ydzs-frontend', ydzs_get_frontend_inline_script(), 'after' );
 } );
 
 add_action( 'admin_menu', function () {
