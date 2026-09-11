@@ -1,0 +1,47 @@
+name: Publish Defender-safe Free plugin packages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/remove-flagged-admin-js.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout public repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Apply source migration and build ZIPs
+        run: python3 .github/scripts/remove_flagged_admin_js.py
+
+      - name: Validate packages
+        run: |
+          php -l plugins/order-status-colors-free/wss-order-status-colors.php
+          php -l plugins/bookings-schedule-free/wss-bookings-schedule.php
+          test ! -f plugins/order-status-colors-free/assets/admin.js
+          test ! -f plugins/bookings-schedule-free/assets/js/admin-tools.js
+          unzip -l releases/order-status-colors/free/wss-order-status-colors-1.1.5.zip | grep -q 'wss-order-status-colors/wss-order-status-colors.php'
+          ! unzip -l releases/order-status-colors/free/wss-order-status-colors-1.1.5.zip | grep -q 'assets/admin.js'
+          unzip -l releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.11.zip | grep -q 'wss-bookings-schedule-lite/wss-bookings-schedule.php'
+          ! unzip -l releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.11.zip | grep -q 'assets/js/admin-tools.js'
+
+      - name: Commit public sources and ZIPs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A plugins/order-status-colors-free plugins/bookings-schedule-free manifest.json releases/order-status-colors/free/wss-order-status-colors-1.1.5.zip releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.11.zip
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Publish Defender-safe Free plugin packages"
+          git push
