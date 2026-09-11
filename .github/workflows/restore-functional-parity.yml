@@ -1,0 +1,147 @@
+name: Restore functional parity without standalone JS
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/restore-functional-parity.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Restore historical functionality and build Defender-safe packages
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import subprocess, json, re, zipfile, shutil
+
+          BASE = '8e0c164e4432e96983230c4da133fe32a04f902f'
+
+          def old(path):
+              return subprocess.check_output(['git', 'show', f'{BASE}:{path}']).decode('utf-8')
+
+          def inline_helper(function_name, marker, js):
+              return "<?php\nif ( ! defined( 'ABSPATH' ) ) { exit; }\n\nfunction %s(): string {\n    return <<<'%s'\n%s\n%s;\n}\n" % (function_name, marker, js.rstrip(), marker)
+
+          def build_zip(root, out, package_dir):
+              out.parent.mkdir(parents=True, exist_ok=True)
+              if out.exists():
+                  out.unlink()
+              with zipfile.ZipFile(out, 'w', compression=zipfile.ZIP_STORED) as z:
+                  for p in sorted(root.rglob('*')):
+                      if not p.is_file():
+                          continue
+                      if p.suffix.lower() == '.js':
+                          raise SystemExit(f'Standalone JS unexpectedly present: {p}')
+                      arc = Path(package_dir) / p.relative_to(root)
+                      info = zipfile.ZipInfo(str(arc).replace('\\\\','/'))
+                      info.date_time = (2026, 9, 11, 18, 30, 0)
+                      info.compress_type = zipfile.ZIP_STORED
+                      info.external_attr = 0o644 << 16
+                      z.writestr(info, p.read_bytes())
+
+          # ---------------- Bookings Schedule Lite 0.3.15 ----------------
+          bs_root = Path('plugins/bookings-schedule-free')
+          bs_main = old('plugins/bookings-schedule-free/wss-bookings-schedule.php')
+          bs_shortcode = old('plugins/bookings-schedule-free/includes/class-wss-bs-shortcode.php')
+          bs_admin_js = old('plugins/bookings-schedule-free/assets/js/admin-tools.js')
+          bs_front_js = old('plugins/bookings-schedule-free/assets/js/frontend.js')
+
+          bs_main = bs_main.replace(' * Version: 0.3.8', ' * Version: 0.3.15')
+          bs_main = bs_main.replace("define( 'WSS_BS_VERSION', '0.3.8' );", "define( 'WSS_BS_VERSION', '0.3.15' );")
+          updater = "require_once WSS_BS_DIR . 'includes/class-wss-bs-updater.php';"
+          bs_main = bs_main.replace(
+              updater,
+              updater + "\nrequire_once WSS_BS_DIR . 'includes/admin-inline-script.php';\nrequire_once WSS_BS_DIR . 'includes/frontend-inline-script.php';"
+          )
+          old_admin_enqueue = """        wp_enqueue_script(\n            'wss-bookings-schedule-admin-tools',\n            WSS_BS_URL . 'assets/js/admin-tools.js',\n            array(),\n            WSS_BS_VERSION,\n            true\n        );"""
+          new_admin_enqueue = """        wp_register_script(\n            'wss-bookings-schedule-admin-tools',\n            false,\n            array( 'wp-i18n' ),\n            WSS_BS_VERSION,\n            true\n        );\n        wp_enqueue_script( 'wss-bookings-schedule-admin-tools' );\n        wp_add_inline_script(\n            'wss-bookings-schedule-admin-tools',\n            wss_bs_get_admin_inline_script(),\n            'after'\n        );"""
+          if old_admin_enqueue not in bs_main:
+              raise SystemExit('Bookings admin enqueue block not found in historical source')
+          bs_main = bs_main.replace(old_admin_enqueue, new_admin_enqueue)
+
+          old_front_register = """        wp_register_script(\n            'wss-bookings-schedule',\n            WSS_BS_URL . 'assets/js/frontend.js',\n            array( 'jquery' ),\n            WSS_BS_VERSION,\n            true\n        );"""
+          new_front_register = """        wp_register_script(\n            'wss-bookings-schedule',\n            false,\n            array( 'jquery', 'wp-i18n' ),\n            WSS_BS_VERSION,\n            true\n        );\n        wp_add_inline_script(\n            'wss-bookings-schedule',\n            wss_bs_get_frontend_inline_script(),\n            'after'\n        );"""
+          if old_front_register not in bs_shortcode:
+              raise SystemExit('Bookings frontend register block not found in historical source')
+          bs_shortcode = bs_shortcode.replace(old_front_register, new_front_register)
+
+          (bs_root / 'wss-bookings-schedule.php').write_text(bs_main, encoding='utf-8')
+          (bs_root / 'includes/class-wss-bs-shortcode.php').write_text(bs_shortcode, encoding='utf-8')
+          (bs_root / 'includes/admin-inline-script.php').write_text(
+              inline_helper('wss_bs_get_admin_inline_script', 'WSS_BS_ADMIN_JS', bs_admin_js), encoding='utf-8'
+          )
+          (bs_root / 'includes/frontend-inline-script.php').write_text(
+              inline_helper('wss_bs_get_frontend_inline_script', 'WSS_BS_FRONTEND_JS', bs_front_js), encoding='utf-8'
+          )
+          js_dir = bs_root / 'assets/js'
+          if js_dir.exists():
+              shutil.rmtree(js_dir)
+
+          readme = bs_root / 'readme.txt'
+          if readme.exists():
+              text = readme.read_text(encoding='utf-8')
+              text = re.sub(r'^Stable tag: .*$', 'Stable tag: 0.3.15', text, flags=re.M)
+              readme.write_text(text, encoding='utf-8')
+
+          # ---------------- Order Status Colors 1.1.6 ----------------
+          osc_root = Path('plugins/order-status-colors-free')
+          osc_main = old('plugins/order-status-colors-free/wss-order-status-colors.php')
+          osc_js = old('plugins/order-status-colors-free/assets/admin.js')
+          osc_main = osc_main.replace(' * Version: 1.1.2', ' * Version: 1.1.6')
+          osc_main = osc_main.replace("define( 'WSS_OSC_VERSION', '1.1.2' );", "define( 'WSS_OSC_VERSION', '1.1.6' );")
+          osc_updater = "require_once WSS_OSC_DIR . 'includes/class-wss-osc-updater.php';"
+          osc_main = osc_main.replace(osc_updater, osc_updater + "\nrequire_once WSS_OSC_DIR . 'includes/admin-inline-script.php';")
+          old_osc_enqueue = """\t\twp_enqueue_script(\n\t\t\t'wss-osc-admin',\n\t\t\tWSS_OSC_URL . 'assets/admin.js',\n\t\t\tarray(),\n\t\t\tWSS_OSC_VERSION,\n\t\t\ttrue\n\t\t);"""
+          new_osc_enqueue = """\t\twp_register_script(\n\t\t\t'wss-osc-admin',\n\t\t\tfalse,\n\t\t\tarray(),\n\t\t\tWSS_OSC_VERSION,\n\t\t\ttrue\n\t\t);\n\t\twp_enqueue_script( 'wss-osc-admin' );"""
+          if old_osc_enqueue not in osc_main:
+              raise SystemExit('OSC enqueue block not found in historical source')
+          osc_main = osc_main.replace(old_osc_enqueue, new_osc_enqueue)
+          config_end = """\t\t\t'before'\n\t\t);"""
+          helper_call = """\t\t\t'before'\n\t\t);\n\n\t\twp_add_inline_script(\n\t\t\t'wss-osc-admin',\n\t\t\twss_osc_get_admin_inline_script(),\n\t\t\t'after'\n\t\t);"""
+          if config_end not in osc_main:
+              raise SystemExit('OSC config inline block end not found')
+          osc_main = osc_main.replace(config_end, helper_call, 1)
+          (osc_root / 'wss-order-status-colors.php').write_text(osc_main, encoding='utf-8')
+          (osc_root / 'includes/admin-inline-script.php').write_text(
+              inline_helper('wss_osc_get_admin_inline_script', 'WSS_OSC_ADMIN_JS', osc_js), encoding='utf-8'
+          )
+          osc_admin_js = osc_root / 'assets/admin.js'
+          if osc_admin_js.exists():
+              osc_admin_js.unlink()
+
+          # Update public manifest.
+          manifest_path = Path('manifest.json')
+          manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+          manifest['plugins']['wss_bookings_schedule_free']['version'] = '0.3.15'
+          manifest['plugins']['wss_bookings_schedule_free']['zip_path'] = 'releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.15.zip'
+          manifest['plugins']['wss_bookings_schedule_free']['compression'] = 'store'
+          manifest['plugins']['order_status_colors_free']['version'] = '1.1.6'
+          manifest['plugins']['order_status_colors_free']['zip_path'] = 'releases/order-status-colors/free/wss-order-status-colors-1.1.6.zip'
+          manifest['plugins']['order_status_colors_free']['compression'] = 'store'
+          manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          build_zip(bs_root, Path('releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.15.zip'), 'wss-bookings-schedule-lite')
+          build_zip(osc_root, Path('releases/order-status-colors/free/wss-order-status-colors-1.1.6.zip'), 'wss-order-status-colors')
+          PY
+
+      - name: Validate PHP
+        run: |
+          find plugins/bookings-schedule-free plugins/order-status-colors-free -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Commit restored releases
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A plugins/bookings-schedule-free plugins/order-status-colors-free manifest.json releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.15.zip releases/order-status-colors/free/wss-order-status-colors-1.1.6.zip
+          git commit -m "Restore Bookings and Order Status functional parity without standalone JS"
+          git push
