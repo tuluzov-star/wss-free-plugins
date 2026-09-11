@@ -1,0 +1,103 @@
+name: Publish antivirus-fixed Free releases
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/publish-antivirus-fixed-releases.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Normalize versions and manifest
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import json
+
+          osc = Path('plugins/order-status-colors-free/wss-order-status-colors.php')
+          text = osc.read_text(encoding='utf-8')
+          text = text.replace('Version: 1.1.3', 'Version: 1.1.4', 1)
+          text = text.replace("define( 'WSS_OSC_VERSION', '1.1.3' );", "define( 'WSS_OSC_VERSION', '1.1.4' );", 1)
+          text = text.replace("\t\t\tarray(),\n\t\t\tWSS_OSC_VERSION,", "\t\t\tarray( 'jquery' ),\n\t\t\tWSS_OSC_VERSION,", 1)
+          osc.write_text(text, encoding='utf-8')
+
+          for filename, old_tag, new_tag, marker, entry in [
+              ('plugins/bookings-schedule-free/readme.txt', 'Stable tag: 0.3.8', 'Stable tag: 0.3.10', '== Изменения ==', '= 0.3.10 =\n* Массовое удаление переведено на защищенный WordPress AJAX endpoint без выполнения URL/форм из DOM.\n* Устранен ложный детект Microsoft Defender для admin-tools.js.\n'),
+              ('plugins/order-status-colors-free/readme.txt', 'Stable tag: 1.1.0', 'Stable tag: 1.1.4', '== Changelog ==', '= 1.1.4 =\n* Обновление окраски строк после AJAX теперь выполняется через стандартное событие jQuery без MutationObserver всего документа.\n* Снижен риск ложных эвристических срабатываний антивирусов.\n'),
+          ]:
+              path = Path(filename)
+              body = path.read_text(encoding='utf-8')
+              body = body.replace(old_tag, new_tag, 1)
+              if entry not in body:
+                  body = body.replace(marker, marker + '\n\n' + entry, 1)
+              path.write_text(body, encoding='utf-8')
+
+          manifest_path = Path('manifest.json')
+          manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+          manifest['plugins']['wss_bookings_schedule_free']['version'] = '0.3.10'
+          manifest['plugins']['wss_bookings_schedule_free']['zip_path'] = 'releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.10.zip'
+          manifest['plugins']['wss_bookings_schedule_free']['compression'] = 'store'
+          manifest['plugins']['order_status_colors_free']['version'] = '1.1.4'
+          manifest['plugins']['order_status_colors_free']['zip_path'] = 'releases/order-status-colors/free/wss-order-status-colors-1.1.4.zip'
+          manifest['plugins']['order_status_colors_free']['compression'] = 'store'
+          manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          PY
+
+      - name: Validate PHP and JavaScript
+        run: |
+          php -l plugins/bookings-schedule-free/wss-bookings-schedule.php
+          php -l plugins/order-status-colors-free/wss-order-status-colors.php
+          node --check plugins/bookings-schedule-free/assets/js/admin-tools.js
+          node --check plugins/order-status-colors-free/assets/admin.js
+
+      - name: Build deterministic STORE ZIPs
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, ZipInfo, ZIP_STORED
+          import json
+
+          manifest = json.loads(Path('manifest.json').read_text(encoding='utf-8'))
+          for key in ('wss_bookings_schedule_free', 'order_status_colors_free'):
+              product = manifest['plugins'][key]
+              source = Path(product['source_path'])
+              output = Path(product['zip_path'])
+              root = product['package_dir']
+              output.parent.mkdir(parents=True, exist_ok=True)
+              files = sorted((p for p in source.rglob('*') if p.is_file() and p.name not in {'.DS_Store', 'Thumbs.db'} and p.suffix.lower() not in {'.bak', '.log', '.map'}), key=lambda p: p.relative_to(source).as_posix())
+              with ZipFile(output, 'w', compression=ZIP_STORED, allowZip64=True) as zf:
+                  for path in files:
+                      rel = path.relative_to(source).as_posix()
+                      info = ZipInfo(f'{root}/{rel}', date_time=(1980, 1, 1, 0, 0, 0))
+                      info.compress_type = ZIP_STORED
+                      info.create_system = 3
+                      info.external_attr = (0o100644 & 0xFFFF) << 16
+                      zf.writestr(info, path.read_bytes())
+              print(f'Built {output} ({output.stat().st_size} bytes)')
+          PY
+
+      - name: Commit public releases
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add manifest.json plugins/bookings-schedule-free plugins/order-status-colors-free releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.10.zip releases/order-status-colors/free/wss-order-status-colors-1.1.4.zip
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Publish antivirus-fixed Bookings and Order Status releases"
+          git push
