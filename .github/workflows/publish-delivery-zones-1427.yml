@@ -1,0 +1,112 @@
+name: Publish Delivery Zones 1.4.27 no standalone JS
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-delivery-zones-1427.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Convert frontend JS to inline PHP helper and build release
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import json, zipfile
+
+          root = Path('plugins/delivery-zones-free')
+          main = root / 'yd-zones-shipping.php'
+          frontend = root / 'assets/frontend.js'
+          helper = root / 'includes/frontend-inline-script.php'
+
+          if not frontend.exists():
+              raise SystemExit('assets/frontend.js not found')
+
+          js = frontend.read_text(encoding='utf-8')
+          if '\nYDZS_FRONTEND_JS;\n' in js:
+              raise SystemExit('Unexpected nowdoc terminator in frontend.js')
+
+          helper.write_text(
+              "<?php\n"
+              "if ( ! defined( 'ABSPATH' ) ) { exit; }\n\n"
+              "/** Return the Delivery Zones frontend JavaScript as inline code. */\n"
+              "function ydzs_get_frontend_inline_script(): string {\n"
+              "    return <<<'YDZS_FRONTEND_JS'\n"
+              + js.rstrip() + "\n"
+              "YDZS_FRONTEND_JS;\n"
+              "}\n",
+              encoding='utf-8'
+          )
+
+          s = main.read_text(encoding='utf-8')
+          s = s.replace(' * Version: 1.4.26', ' * Version: 1.4.27')
+          s = s.replace("define( 'YDZS_VERSION', '1.4.26' );", "define( 'YDZS_VERSION', '1.4.27' );")
+
+          admin_helper = "require_once YDZS_DIR . 'includes/admin-inline-script.php';"
+          frontend_helper = "require_once YDZS_DIR . 'includes/frontend-inline-script.php';"
+          if frontend_helper not in s:
+              s = s.replace(admin_helper, admin_helper + "\n" + frontend_helper)
+
+          s = s.replace("$deps     = array( 'jquery' );", "$deps     = array( 'jquery', 'wp-i18n' );")
+
+          old_enqueue = "wp_enqueue_script( 'ydzs-frontend', YDZS_URL . 'assets/frontend.js', $deps, YDZS_VERSION, true );"
+          new_enqueue = (
+              "// Keep the public package free of standalone JS files that Defender repeatedly misclassifies.\n"
+              "\twp_register_script( 'ydzs-frontend', false, $deps, YDZS_VERSION, true );\n"
+              "\twp_enqueue_script( 'ydzs-frontend' );"
+          )
+          if old_enqueue not in s:
+              raise SystemExit('Expected frontend enqueue line not found')
+          s = s.replace(old_enqueue, new_enqueue, 1)
+
+          tail = "\t\t'globalPopupMode'   => ! $is_checkout_context && $force_frontend,\n\t) );\n} );"
+          replacement = "\t\t'globalPopupMode'   => ! $is_checkout_context && $force_frontend,\n\t) );\n\twp_add_inline_script( 'ydzs-frontend', ydzs_get_frontend_inline_script(), 'after' );\n} );"
+          if tail not in s:
+              raise SystemExit('Expected frontend localization tail not found')
+          s = s.replace(tail, replacement, 1)
+
+          main.write_text(s, encoding='utf-8')
+          frontend.unlink()
+
+          manifest_path = Path('manifest.json')
+          manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+          item = manifest['plugins']['ydzs_free']
+          item['version'] = '1.4.27'
+          item['zip_path'] = 'releases/delivery-zones/free/yd-zones-shipping-free-1.4.27.zip'
+          item['compression'] = 'store'
+          manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          out = Path('releases/delivery-zones/free/yd-zones-shipping-free-1.4.27.zip')
+          out.parent.mkdir(parents=True, exist_ok=True)
+          if out.exists():
+              out.unlink()
+
+          with zipfile.ZipFile(out, 'w', compression=zipfile.ZIP_STORED) as z:
+              for p in sorted(root.rglob('*')):
+                  if not p.is_file():
+                      continue
+                  arc = Path('yd-zones-shipping') / p.relative_to(root)
+                  info = zipfile.ZipInfo(str(arc).replace('\\\\', '/'))
+                  info.date_time = (2026, 9, 11, 12, 0, 0)
+                  info.compress_type = zipfile.ZIP_STORED
+                  info.external_attr = 0o644 << 16
+                  z.writestr(info, p.read_bytes())
+          PY
+
+      - name: Commit public release
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A plugins/delivery-zones-free manifest.json releases/delivery-zones/free/yd-zones-shipping-free-1.4.27.zip
+          git commit -m "Publish Delivery Zones Free 1.4.27 without standalone JS"
+          git push
