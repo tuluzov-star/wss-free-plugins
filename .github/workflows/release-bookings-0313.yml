@@ -1,0 +1,77 @@
+name: Publish Bookings Schedule 0.3.13
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/release-bookings-0313.yml'
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Patch public source and manifest
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile, ZipInfo, ZIP_STORED
+          import json, re
+
+          root = Path('plugins/bookings-schedule-free')
+
+          shortcode = root / 'includes/class-wss-bs-shortcode.php'
+          text = shortcode.read_text(encoding='utf-8')
+          block = "\n        if ( isset( $_GET['wss_booking_date'] ) || isset( $_GET['wss_booking_time'] ) || isset( $_GET['wss_booking_start'] ) ) {\n            wp_enqueue_script( 'wss-bookings-schedule' );\n        }\n"
+          text = text.replace(block, '\n')
+          shortcode.write_text(text, encoding='utf-8')
+
+          main = root / 'wss-bookings-schedule.php'
+          text = main.read_text(encoding='utf-8')
+          text = text.replace('Version: 0.3.12', 'Version: 0.3.13')
+          text = text.replace("define( 'WSS_BS_VERSION', '0.3.12' );", "define( 'WSS_BS_VERSION', '0.3.13' );")
+          if 'wss_bs_override_booking_default_date' not in text:
+              text += "\n/** Use the official WooCommerce Bookings default-date filter. */\nfunction wss_bs_override_booking_default_date( $default_date, $picker ) {\n    if ( isset( $_GET['wss_booking_start'] ) ) {\n        $timestamp = absint( wp_unslash( $_GET['wss_booking_start'] ) );\n        if ( $timestamp > 0 ) {\n            return $timestamp;\n        }\n    }\n    if ( isset( $_GET['wss_booking_date'] ) ) {\n        $date = sanitize_text_field( wp_unslash( $_GET['wss_booking_date'] ) );\n        $dt = DateTimeImmutable::createFromFormat( '!Y-m-d', $date, wp_timezone() );\n        if ( $dt instanceof DateTimeImmutable && $dt->format( 'Y-m-d' ) === $date ) {\n            return $dt->getTimestamp();\n        }\n    }\n    return $default_date;\n}\nadd_filter( 'woocommerce_bookings_override_form_default_date', 'wss_bs_override_booking_default_date', 10, 2 );\n"
+          main.write_text(text, encoding='utf-8')
+
+          readme = root / 'readme.txt'
+          text = readme.read_text(encoding='utf-8')
+          text = re.sub(r'^Stable tag: .*$', 'Stable tag: 0.3.13', text, flags=re.M)
+          marker = '== Изменения ==\n'
+          if '= 0.3.13 =' not in text and marker in text:
+              text = text.replace(marker, marker + '\n= 0.3.13 =\n* Убрано чтение URL-параметров и программное изменение полей бронирования из frontend.js.\n* Выбор даты WooCommerce Bookings перенесен на официальный серверный фильтр.\n* JS Lite теперь отвечает только за переключение дней на мобильных устройствах.\n\n', 1)
+          readme.write_text(text, encoding='utf-8')
+
+          manifest_path = Path('manifest.json')
+          manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+          item = manifest['plugins']['wss_bookings_schedule_free']
+          item['version'] = '0.3.13'
+          item['zip_path'] = 'releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.13.zip'
+          item['compression'] = 'store'
+          manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+          out = Path('releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.13.zip')
+          out.parent.mkdir(parents=True, exist_ok=True)
+          fixed = (2026, 9, 11, 12, 0, 0)
+          with ZipFile(out, 'w', compression=ZIP_STORED) as z:
+              for path in sorted(root.rglob('*')):
+                  if not path.is_file():
+                      continue
+                  rel = Path('wss-bookings-schedule-lite') / path.relative_to(root)
+                  info = ZipInfo(str(rel).replace('\\', '/'), fixed)
+                  info.compress_type = ZIP_STORED
+                  info.external_attr = 0o644 << 16
+                  z.writestr(info, path.read_bytes())
+          print(out, out.stat().st_size)
+          PY
+      - name: Commit public release
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add plugins/bookings-schedule-free manifest.json releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.13.zip
+          git commit -m "Publish Bookings Schedule Lite 0.3.13"
+          git push
