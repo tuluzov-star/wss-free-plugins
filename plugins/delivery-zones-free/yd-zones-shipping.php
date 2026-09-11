@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Delivery Zones on Map for WooCommerce
  * Description: Доставка WooCommerce по нарисованным зонам на карте: полигоны, правила стоимости от суммы корзины, геокодирование адреса и запрет доставки вне зон. Бесплатная версия использует Яндекс; Google, импорт и диагностика подключаются отдельным Pro-дополнением.
- * Version: 1.4.24
+ * Version: 1.4.25
  * Text Domain: ydzs
  * Domain Path: /languages
  * Author: WSS
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/includes/wss-i18n.php';
 WSS_Plugin_I18n_202609::register(__FILE__, 'ydzs');
 
-define( 'YDZS_VERSION', '1.4.24' );
+define( 'YDZS_VERSION', '1.4.25' );
 define( 'YDZS_FILE', __FILE__ );
 define( 'YDZS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'YDZS_URL', plugin_dir_url( __FILE__ ) );

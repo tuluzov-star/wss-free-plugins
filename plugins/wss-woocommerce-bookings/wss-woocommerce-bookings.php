@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WSS WooCommerce Bookings
  * Description: Lightweight booking slots manager for WooCommerce products: schedule slots, frontend calendar, capacity checks and order item metadata. Pro add-on unlocks migrations, blocks, booking calendar, ticket types and exports.
- * Version: 0.5.2
+ * Version: 0.5.3
  * Author: WSS
  * Author URI: https://website-support.ru/
  * Text Domain: wss-wc-bookings
@@ -20,7 +20,7 @@ require_once __DIR__ . '/includes/wss-i18n.php';
 WSS_Plugin_I18n_202609::register(__FILE__, 'wss-wc-bookings');
 
 final class WSS_WooCommerce_Bookings {
-    const VERSION = '0.5.2';
+    const VERSION = '0.5.3';
     const PRODUCT_META_ENABLED = '_wss_booking_enabled';
     const PRODUCT_META_DISABLE_AUTO_ALL_DAY = '_wss_booking_disable_auto_all_day';
     const ORDER_META_RESERVED = '_wss_booking_reserved';

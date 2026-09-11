@@ -297,7 +297,9 @@
 			'<tr>' +
 				'<td><input type="text" name="rules_min[]" value="0"></td>' +
 				'<td><input type="text" name="rules_cost[]" value="0"></td>' +
-				wp.i18n.__( "<td><button type=\"button\" class=\"button ydzs-remove-rule\">Удалить</button></td>", "ydzs" ) +
+				'<td><button type="button" class="button ydzs-remove-rule">' +
+				wp.i18n.__( "Удалить", "ydzs" ) +
+				'</button></td>' +
 			'</tr>'
 		);
 	});

@@ -6,38 +6,53 @@
   "plugins": {
     "ydzs_free": {
       "name": "Delivery Zones on Map for WooCommerce",
-      "version": "1.4.24",
+      "version": "1.4.25",
       "source_path": "plugins/delivery-zones-free",
-      "zip_path": "releases/delivery-zones/free/yd-zones-shipping-free-1.4.24.zip",
-      "homepage": "https://website-support.ru/plugins/delivery-zones-for-woocommerce/"
+      "zip_path": "releases/delivery-zones/free/yd-zones-shipping-free-1.4.25.zip",
+      "homepage": "https://website-support.ru/plugins/delivery-zones-for-woocommerce/",
+      "package_dir": "yd-zones-shipping",
+      "type": "free",
+      "compression": "store"
     },
     "order_status_colors_free": {
       "name": "WSS Order Status Colors for WooCommerce",
-      "version": "1.1.2",
+      "version": "1.1.3",
       "source_path": "plugins/order-status-colors-free",
-      "zip_path": "releases/order-status-colors/free/wss-order-status-colors-1.1.2.zip",
-      "homepage": "https://website-support.ru/plugins/order-status-colors-for-woocommerce/"
+      "zip_path": "releases/order-status-colors/free/wss-order-status-colors-1.1.3.zip",
+      "homepage": "https://website-support.ru/plugins/order-status-colors-for-woocommerce/",
+      "package_dir": "wss-order-status-colors",
+      "type": "free",
+      "compression": "store"
     },
     "wss_bookings_schedule_free": {
       "name": "WSS Bookings Schedule Lite",
-      "version": "0.3.8",
+      "version": "0.3.9",
       "source_path": "plugins/bookings-schedule-free",
-      "zip_path": "releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.8.zip",
-      "homepage": "https://website-support.ru/plugins/wss-bookings-schedule/"
+      "zip_path": "releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.9.zip",
+      "homepage": "https://website-support.ru/plugins/wss-bookings-schedule/",
+      "package_dir": "wss-bookings-schedule-lite",
+      "type": "free",
+      "compression": "store"
     },
     "wss_yandex_calendar_sync_free": {
       "name": "WSS Yandex Calendar for WooCommerce Bookings",
       "version": "1.0.2",
       "source_path": "plugins/yandex-calendar-sync-free",
       "zip_path": "releases/yandex-calendar-sync/free/wss-wc-bookings-yandex-calendar-free-1.0.2.zip",
-      "homepage": "https://website-support.ru/plugins/yandex-calendar-for-woocommerce-bookings/"
+      "homepage": "https://website-support.ru/plugins/yandex-calendar-for-woocommerce-bookings/",
+      "type": "free",
+      "package_dir": "wss-wc-bookings-yandex-calendar"
     },
     "wss_woocommerce_bookings_free": {
       "name": "WSS WooCommerce Bookings",
-      "version": "0.5.2",
+      "version": "0.5.3",
       "source_path": "plugins/wss-woocommerce-bookings",
-      "zip_path": "releases/wss-woocommerce-bookings/free/wss-woocommerce-bookings-0.5.2-free.zip",
-      "homepage": "https://website-support.ru/plugins/wss-woocommerce-bookings/"
+      "zip_path": "releases/wss-woocommerce-bookings/free/wss-woocommerce-bookings-0.5.3-free.zip",
+      "homepage": "https://website-support.ru/plugins/wss-woocommerce-bookings/",
+      "package_dir": "wss-woocommerce-bookings",
+      "type": "free",
+      "compression": "store"
     }
-  }
+  },
+  "branch": "main"
 }
