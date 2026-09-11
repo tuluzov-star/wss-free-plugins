@@ -4,7 +4,7 @@ Tags: woocommerce, orders, statuses, admin, colors
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.1.4
 License: GPLv2 or later
 
 Цветовое выделение заказов WooCommerce в админке по статусам.
@@ -24,6 +24,11 @@ Pro-дополнение добавляет создание собственн�
 3. Откройте WooCommerce → Цвета заказов.
 
 == Changelog ==
+
+= 1.1.4 =
+* Обновление окраски строк после AJAX теперь выполняется через стандартное событие jQuery без MutationObserver всего документа.
+* Снижен риск ложных эвристических срабатываний антивирусов.
+
 
 = 1.1.0 =
 * Добавлена вкладка «Кнопки в заказах».
