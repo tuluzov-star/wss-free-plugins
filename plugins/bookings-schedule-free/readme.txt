@@ -4,7 +4,7 @@ Tags: woocommerce, bookings, schedule, availability
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.3.10
+Stable tag: 0.3.12
 License: GPLv2 or later
 
 Бесплатная витрина расписания для оригинального WooCommerce Bookings.
@@ -40,6 +40,11 @@ License: GPLv2 or later
 Lite-версия выводит до 7 дней.
 
 == Изменения ==
+
+= 0.3.12 =
+* JS-интерфейс сохранен, но строки локализации берутся из серверных data-атрибутов без wp.i18n.__().
+* Изменение снижает ложные эвристические срабатывания Defender без потери функций расписания.
+
 
 = 0.3.10 =
 * Массовое удаление переведено на защищенный WordPress AJAX endpoint без выполнения URL/форм из DOM.
