@@ -3,7 +3,7 @@
  * Plugin Name: WSS Order Status Colors for WooCommerce
  * Plugin URI: https://website-support.ru/plugins/order-status-colors-for-woocommerce/
  * Description: Цветовое выделение заказов WooCommerce в админке в зависимости от статуса заказа.
- * Version: 1.1.6
+ * Version: 1.1.7
  * Author: WSS
  * Author URI: https://website-support.ru/
  * Text Domain: wss-order-status-colors
@@ -11,7 +11,8 @@
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * WC requires at least: 5.0
- * WC tested up to: 9.9
+ * WC tested up to: 11.1
+ * Requires Plugins: woocommerce
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/includes/wss-i18n.php';
 WSS_Plugin_I18n_202609::register(__FILE__, 'wss-order-status-colors');
 
-define( 'WSS_OSC_VERSION', '1.1.6' );
+define( 'WSS_OSC_VERSION', '1.1.7' );
 define( 'WSS_OSC_FILE', __FILE__ );
 define( 'WSS_OSC_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WSS_OSC_URL', plugin_dir_url( __FILE__ ) );
