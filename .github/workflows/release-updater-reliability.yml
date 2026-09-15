@@ -1,0 +1,42 @@
+name: Release public updater reliability fixes
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/release-updater-reliability.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - name: Prepare public releases
+        run: python3 .github/scripts/release-updater-reliability.py
+      - name: Validate PHP and ZIPs
+        run: |
+          set -e
+          find plugins -name '*.php' -print0 | xargs -0 -n1 php -l >/dev/null
+          grep -q '"version": "1.4.29"' manifest.json
+          grep -q '"version": "1.0.4"' manifest.json
+          grep -q '"version": "0.5.5"' manifest.json
+          test -f releases/delivery-zones/free/yd-zones-shipping-free-1.4.29.zip
+          test -f releases/yandex-calendar-sync/free/wss-wc-bookings-yandex-calendar-free-1.0.4.zip
+          test -f releases/wss-woocommerce-bookings/free/wss-woocommerce-bookings-0.5.5-free.zip
+          unzip -l releases/wss-woocommerce-bookings/free/wss-woocommerce-bookings-0.5.5-free.zip | grep -q 'class-wss-wc-bookings-free-updater.php'
+      - name: Commit public releases
+        run: |
+          git config user.name 'WSS Release Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add plugins releases manifest.json
+          git diff --cached --quiet && exit 0
+          git commit -m 'Publish updater reliability fixes for Free plugins'
+          git push
