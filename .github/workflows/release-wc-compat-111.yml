@@ -1,0 +1,73 @@
+name: Release public WooCommerce 11.1 compatibility packages
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/scripts/release-wc-compat-111.py'
+      - '.github/workflows/release-wc-compat-111.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Prepare public releases
+        run: python3 .github/scripts/release-wc-compat-111.py
+      - name: Validate PHP and metadata
+        run: |
+          set -euo pipefail
+          files=(
+            plugins/delivery-zones-free/yd-zones-shipping.php
+            plugins/order-status-colors-free/wss-order-status-colors.php
+            plugins/bookings-schedule-free/wss-bookings-schedule.php
+            plugins/yandex-calendar-sync-free/wss-wc-bookings-yandex-calendar.php
+            plugins/wss-woocommerce-bookings/wss-woocommerce-bookings.php
+          )
+          for f in "${files[@]}"; do
+            php -l "$f"
+            grep -q '^ \* WC tested up to: 11.1' "$f"
+            grep -q '^ \* Requires Plugins: .*woocommerce' "$f"
+          done
+          python3 - <<'PY'
+          import json, zipfile
+          from pathlib import Path
+          manifest=json.loads(Path('manifest.json').read_text())
+          expected={
+            'ydzs_free':('1.4.28','yd-zones-shipping'),
+            'order_status_colors_free':('1.1.7','wss-order-status-colors'),
+            'wss_bookings_schedule_free':('0.3.16','wss-bookings-schedule-lite'),
+            'wss_yandex_calendar_sync_free':('1.0.3','wss-wc-bookings-yandex-calendar'),
+            'wss_woocommerce_bookings_free':('0.5.4','wss-woocommerce-bookings'),
+          }
+          for pid,(version,root) in expected.items():
+            item=manifest['plugins'][pid]
+            assert item['version']==version,(pid,item['version'])
+            zp=Path(item['zip_path']); assert zp.exists(),zp
+            with zipfile.ZipFile(zp) as z:
+              names=z.namelist(); assert names and all(n.startswith(root + '/') for n in names), pid
+          print('Public ZIP validation passed')
+          PY
+      - name: Commit public releases
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add plugins manifest.json \
+            releases/delivery-zones/free/yd-zones-shipping-free-1.4.28.zip \
+            releases/order-status-colors/free/wss-order-status-colors-1.1.7.zip \
+            releases/bookings-schedule/free/wss-bookings-schedule-lite-0.3.16.zip \
+            releases/yandex-calendar-sync/free/wss-wc-bookings-yandex-calendar-free-1.0.3.zip \
+            releases/wss-woocommerce-bookings/free/wss-woocommerce-bookings-0.5.4-free.zip
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+            exit 0
+          fi
+          git commit -m "Release WooCommerce 11.1 compatible Free packages"
+          git push
