@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Delivery Zones on Map for WooCommerce
  * Description: Доставка WooCommerce по нарисованным зонам на карте: полигоны, правила стоимости от суммы корзины, геокодирование адреса и запрет доставки вне зон. Бесплатная версия использует Яндекс; Google, импорт и диагностика подключаются отдельным Pro-дополнением.
- * Version: 1.4.30
+ * Version: 1.4.31
  * Text Domain: ydzs
  * Domain Path: /languages
  * Author: WSS
@@ -23,7 +23,7 @@ WSS_Plugin_I18n_202609::register(__FILE__, 'ydzs');
 require_once __DIR__ . '/includes/class-wss-update-cache-control.php';
 WSS_Update_Cache_Control_20260915::register( 'ydzs_free_update_info' );
 
-define( 'YDZS_VERSION', '1.4.30' );
+define( 'YDZS_VERSION', '1.4.31' );
 define( 'YDZS_FILE', __FILE__ );
 define( 'YDZS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'YDZS_URL', plugin_dir_url( __FILE__ ) );
@@ -46,7 +46,9 @@ register_activation_hook( __FILE__, function () {
 
 	$settings = wp_parse_args( $settings, array(
 		'api_key'       => '',
-		'google_api_key'=> '',
+		'google_api_key'         => '', // Legacy shared key; kept for backward compatibility.
+		'google_browser_api_key' => '',
+		'google_server_api_key'  => '',
 		'provider'      => 'yandex',
 		'advanced_providers' => 'no',
 		'map_provider'  => 'yandex',
@@ -134,7 +136,9 @@ function ydzs_get_settings(): array {
 
 	$settings = wp_parse_args( $raw, array(
 		'api_key'       => '',
-		'google_api_key'=> '',
+		'google_api_key'         => '', // Legacy shared key; kept for backward compatibility.
+		'google_browser_api_key' => '',
+		'google_server_api_key'  => '',
 		'provider'      => '',
 		'advanced_providers' => 'no',
 		'map_provider'  => 'yandex',
@@ -186,6 +190,20 @@ function ydzs_get_settings(): array {
 	}
 
 	return WSS_Plugin_I18n_202609::defaults($settings, 'ydzs');
+}
+
+/** Return the browser-restricted Google key, falling back to the legacy shared key. */
+function ydzs_get_google_browser_api_key( ?array $settings = null ): string {
+	$settings = $settings ?? ydzs_get_settings();
+	$key      = trim( (string) ( $settings['google_browser_api_key'] ?? '' ) );
+	return '' !== $key ? $key : trim( (string) ( $settings['google_api_key'] ?? '' ) );
+}
+
+/** Return the server-restricted Google key, falling back to the legacy shared key. */
+function ydzs_get_google_server_api_key( ?array $settings = null ): string {
+	$settings = $settings ?? ydzs_get_settings();
+	$key      = trim( (string) ( $settings['google_server_api_key'] ?? '' ) );
+	return '' !== $key ? $key : trim( (string) ( $settings['google_api_key'] ?? '' ) );
 }
 
 function ydzs_get_address_hint_text( ?array $settings = null ): string {
@@ -1312,7 +1330,7 @@ function ydzs_geocode_address( string $address ): ?array {
 	$address  = trim( wp_strip_all_tags( $address ) );
 	$settings = ydzs_get_settings();
 	$provider = ydzs_get_geocode_provider( $settings );
-	$api_key  = 'google' === $provider ? trim( (string) ( $settings['google_api_key'] ?? '' ) ) : trim( (string) ( $settings['api_key'] ?? '' ) );
+	$api_key  = 'google' === $provider ? ydzs_get_google_server_api_key( $settings ) : trim( (string) ( $settings['api_key'] ?? '' ) );
 	$context  = ydzs_get_address_context_text( $settings );
 	$bounds   = 'yandex' === $provider ? ydzs_get_effective_address_bounds( $settings ) : null;
 
@@ -1890,7 +1908,7 @@ function ydzs_ajax_address_suggest(): void {
 
 	$settings = ydzs_get_settings();
 	$provider = ydzs_get_geocode_provider( $settings );
-	$api_key  = 'google' === $provider ? trim( (string) ( $settings['google_api_key'] ?? '' ) ) : trim( (string) ( $settings['api_key'] ?? '' ) );
+	$api_key  = 'google' === $provider ? ydzs_get_google_server_api_key( $settings ) : trim( (string) ( $settings['api_key'] ?? '' ) );
 
 	if ( 'yandex' !== $provider || '' === $api_key ) {
 		wp_send_json_success( array(
@@ -1952,7 +1970,7 @@ function ydzs_ajax_validate_address(): void {
 
 	$settings = ydzs_get_settings();
 	$provider = ydzs_get_geocode_provider( $settings );
-	$api_key  = 'google' === $provider ? trim( (string) ( $settings['google_api_key'] ?? '' ) ) : trim( (string) ( $settings['api_key'] ?? '' ) );
+	$api_key  = 'google' === $provider ? ydzs_get_google_server_api_key( $settings ) : trim( (string) ( $settings['api_key'] ?? '' ) );
 
 	if ( '' === $api_key ) {
 		wp_send_json_success( array(
@@ -2133,6 +2151,8 @@ add_action( 'wp_enqueue_scripts', function () {
 	wp_register_script( 'ydzs-frontend', false, $deps, YDZS_VERSION, true );
 	wp_enqueue_script( 'ydzs-frontend' );
 	$address_bounds = ydzs_get_effective_address_bounds( $settings );
+	$suggest_delay  = (int) apply_filters( 'ydzs_address_suggest_delay_ms', 600, $settings );
+	$suggest_delay  = max( 250, min( 2000, $suggest_delay ) );
 
 	wp_localize_script( 'ydzs-frontend', 'YDZS_FRONTEND', array(
 		'ajaxUrl'           => admin_url( 'admin-ajax.php' ),
@@ -2143,6 +2163,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		'hint'              => ydzs_get_address_hint_text( $settings ),
 		'houseHint'         => ydzs_get_address_house_hint_text( $settings ),
 		'suggestEnabled'    => $suggest_enabled,
+		'suggestDelay'      => $suggest_delay,
 		'validateEnabled'   => $validate_enabled,
 		'addressContext'    => ydzs_get_address_context_text( $settings ),
 		'restrictToZones'   => ydzs_address_restrict_to_zones_enabled( $settings ),
@@ -2171,7 +2192,7 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 
 	$settings     = ydzs_get_settings();
 	$map_provider = ydzs_get_map_provider( $settings );
-	$api_key      = 'google' === $map_provider ? trim( (string) ( $settings['google_api_key'] ?? '' ) ) : trim( (string) ( $settings['api_key'] ?? '' ) );
+	$api_key      = 'google' === $map_provider ? ydzs_get_google_browser_api_key( $settings ) : trim( (string) ( $settings['api_key'] ?? '' ) );
 
 	wp_enqueue_style( 'ydzs-admin', YDZS_URL . 'assets/admin.css', array(), YDZS_VERSION );
 
@@ -2247,8 +2268,8 @@ function ydzs_render_admin_page(): void {
 		<?php endif; ?>
 
 		<?php
-		$map_key_ok = 'google' === ydzs_get_map_provider( $settings ) ? ! empty( $settings['google_api_key'] ) : ! empty( $settings['api_key'] );
-		$geo_key_ok = 'google' === ydzs_get_geocode_provider( $settings ) ? ! empty( $settings['google_api_key'] ) : ! empty( $settings['api_key'] );
+		$map_key_ok = 'google' === ydzs_get_map_provider( $settings ) ? '' !== ydzs_get_google_browser_api_key( $settings ) : ! empty( $settings['api_key'] );
+		$geo_key_ok = 'google' === ydzs_get_geocode_provider( $settings ) ? '' !== ydzs_get_google_server_api_key( $settings ) : ! empty( $settings['api_key'] );
 		?>
 		<?php if ( ! $map_key_ok || ! $geo_key_ok ) : ?>
 			<div class="notice notice-warning"><p><?php echo esc_html__( 'Укажите API-ключ выбранного провайдера карт/геокодирования. Без него карта и расчет по адресу не заработают.', 'ydzs' ); ?></p></div>
@@ -2328,17 +2349,24 @@ function ydzs_render_admin_page(): void {
 						</tr>
 						<?php if ( ydzs_feature_enabled( 'google' ) ) : ?>
 						<tr>
-							<th><label for="ydzs_google_api_key"><?php echo esc_html__( 'API-ключ Google', 'ydzs' ); ?></label></th>
+							<th><label for="ydzs_google_browser_api_key"><?php echo esc_html__( 'API-ключ Google для браузера', 'ydzs' ); ?></label></th>
 							<td>
-								<input type="text" class="regular-text" id="ydzs_google_api_key" name="google_api_key" value="<?php echo esc_attr( $settings['google_api_key'] ?? '' ); ?>">
-								<p class="description"><?php echo esc_html__( 'Нужен для Google Maps JavaScript API и Google Geocoding API. В Google Cloud должен быть включен billing.', 'ydzs' ); ?></p>
+								<input type="text" class="regular-text" id="ydzs_google_browser_api_key" name="google_browser_api_key" value="<?php echo esc_attr( ydzs_get_google_browser_api_key( $settings ) ); ?>" autocomplete="off">
+								<p class="description"><?php echo esc_html__( 'Используется только Google Maps JavaScript API в браузере. Ограничьте ключ по HTTP referrer доменами вашего сайта.', 'ydzs' ); ?></p>
+							</td>
+						</tr>
+						<tr>
+							<th><label for="ydzs_google_server_api_key"><?php echo esc_html__( 'API-ключ Google для сервера', 'ydzs' ); ?></label></th>
+							<td>
+								<input type="password" class="regular-text" id="ydzs_google_server_api_key" name="google_server_api_key" value="<?php echo esc_attr( ydzs_get_google_server_api_key( $settings ) ); ?>" autocomplete="new-password">
+								<p class="description"><?php echo esc_html__( 'Используется на сервере для Google Geocoding API и Places API (New). Ограничьте ключ IP-адресом веб-сервера и не публикуйте его.', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 						<tr>
 							<th><label for="ydzs_google_region"><?php echo esc_html__( 'Регион Google', 'ydzs' ); ?></label></th>
 							<td>
 								<input type="text" class="small-text" id="ydzs_google_region" name="google_region" value="<?php echo esc_attr( $settings['google_region'] ?? 'ru' ); ?>">
-								<p class="description"><?php echo esc_html__( 'Например: ru, nl, ee. Используется как подсказка региона для Google Geocoding API.', 'ydzs' ); ?></p>
+								<p class="description"><?php echo esc_html__( 'Например: uk, nl, ee. Используется как регион для Google Geocoding API и Places API (New).', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 						<?php else : ?>
@@ -2381,19 +2409,19 @@ function ydzs_render_admin_page(): void {
 							<td>
 								<label>
 									<input type="checkbox" name="address_suggest" value="yes" <?php checked( ydzs_address_suggest_enabled( $settings ) ); ?>>
-									<?php echo esc_html__( 'Показывать покупателю выпадающий список адресов Яндекс.Карт при вводе', 'ydzs' ); ?>
+									<?php echo esc_html__( 'Показывать покупателю выпадающий список адресов при вводе', 'ydzs' ); ?>
 								</label>
-								<p class="description"><?php echo esc_html__( 'Для работы нужен API-ключ Яндекс.Карт. Покупателю проще выбрать полный адрес из списка, а плагин сразу проверит, входит ли выбранный адрес в зону доставки.', 'ydzs' ); ?></p>
+								<p class="description"><?php echo esc_html__( 'Используется активный провайдер геокодирования: Яндекс в Free или Google Places в Pro. Запрос отправляется только после короткой паузы во вводе, затем выбранный адрес проверяется по зонам доставки.', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th><?php echo esc_html__( 'Границы поиска адреса', 'ydzs' ); ?></th>
+							<th><?php echo esc_html__( 'Ограничение поиска зоной доставки', 'ydzs' ); ?></th>
 							<td>
 								<label>
 									<input type="checkbox" name="address_restrict_to_zones" value="yes" <?php checked( ydzs_address_restrict_to_zones_enabled( $settings ) ); ?>>
 									<?php echo esc_html__( 'Искать и подсказывать адреса в пределах нарисованных зон доставки', 'ydzs' ); ?>
 								</label>
-								<p class="description"><?php echo esc_html__( 'Плагин строит техническую рамку по полигонам зон и передаёт её в Яндекс.Карты/геокодер. Это лучше, чем общий регион вроде «Ленинградская область», потому что одинаковые улицы из других районов не должны попадать в приоритет.', 'ydzs' ); ?></p>
+								<p class="description"><?php echo esc_html__( 'Плагин строит техническую рамку по полигонам и передаёт её активному провайдеру подсказок/геокодирования. Это уменьшает количество нерелевантных адресов за пределами области доставки; точное попадание всё равно проверяется по самим полигонам.', 'ydzs' ); ?></p>
 							</td>
 						</tr>
 						<tr>
@@ -2663,9 +2691,14 @@ add_action( 'admin_post_ydzs_save_settings', function () {
 		$geocode_provider = $provider;
 	}
 
+	$current_settings = ydzs_get_settings();
+	$legacy_google_key = trim( (string) ( $current_settings['google_api_key'] ?? '' ) );
+
 	$settings = array(
 		'api_key'       => isset( $_POST['api_key'] ) ? sanitize_text_field( wp_unslash( $_POST['api_key'] ) ) : '',
-		'google_api_key'=> isset( $_POST['google_api_key'] ) ? sanitize_text_field( wp_unslash( $_POST['google_api_key'] ) ) : '',
+		'google_api_key'         => $legacy_google_key,
+		'google_browser_api_key' => isset( $_POST['google_browser_api_key'] ) ? sanitize_text_field( wp_unslash( $_POST['google_browser_api_key'] ) ) : '',
+		'google_server_api_key'  => isset( $_POST['google_server_api_key'] ) ? sanitize_text_field( wp_unslash( $_POST['google_server_api_key'] ) ) : '',
 		'provider'      => $provider,
 		'advanced_providers' => $advanced_providers,
 		'map_provider'  => $map_provider,

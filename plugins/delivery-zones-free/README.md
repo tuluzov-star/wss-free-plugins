@@ -109,3 +109,9 @@ Existing plugin directory and main file are unchanged.
 
 - Added backward-compatible filters for provider add-ons to enable the existing checkout address suggestion and validation UI.
 - Default Yandex behavior is unchanged.
+
+## 1.4.31
+
+- Address suggestions now use a 600 ms debounce after the customer pauses typing (filterable with `ydzs_address_suggest_delay_ms`).
+- Google Pro settings now support separate browser and server API keys with backward compatibility for the legacy shared key.
+- Address suggestion and delivery-area restriction help text is provider-neutral for Yandex/Google.

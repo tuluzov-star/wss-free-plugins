@@ -14,6 +14,7 @@ function ydzs_get_frontend_inline_script(): string {
 	const hint = typeof cfg.hint === 'string' ? cfg.hint.trim() : '';
 	const houseHint = typeof cfg.houseHint === 'string' ? cfg.houseHint.trim() : '';
 	const suggestEnabled = !!cfg.suggestEnabled && typeof cfg.ajaxUrl === 'string' && cfg.ajaxUrl;
+	const suggestDelay = Number.isFinite(Number(cfg.suggestDelay)) ? Math.max(250, Math.min(2000, Number(cfg.suggestDelay))) : 600;
 	const validateEnabled = !!cfg.validateEnabled && typeof cfg.ajaxUrl === 'string' && cfg.ajaxUrl;
 	const ajaxUrl = typeof cfg.ajaxUrl === 'string' ? cfg.ajaxUrl : '';
 	const nonce = typeof cfg.nonce === 'string' ? cfg.nonce : '';
@@ -700,7 +701,7 @@ function ydzs_get_frontend_inline_script(): string {
 			}).fail(function (xhr, status) {
 				if (status !== 'abort') hideSuggestions($field);
 			});
-		}, 300);
+		}, suggestDelay);
 	}
 
 	function applyValidationResponse($field, response, selected) {

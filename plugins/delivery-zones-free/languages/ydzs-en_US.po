@@ -592,3 +592,39 @@ msgstr "Could not find a matching address. Check the town or city, street and ho
 #: yd-zones-shipping.php
 msgid "Доставка WooCommerce по нарисованным зонам на карте: полигоны, правила стоимости от суммы корзины, геокодирование адреса и запрет доставки вне зон. Бесплатная версия использует Яндекс; Google, импорт и диагностика подключаются отдельным Pro-дополнением."
 msgstr "WooCommerce shipping with map-drawn zones: polygons, cart-based pricing, address geocoding and delivery boundaries. The free edition uses Yandex; Google, imports and diagnostics are provided by the separate Pro add-on."
+
+#: yd-zones-shipping.php
+msgid "API-ключ Google для браузера"
+msgstr "Google browser API key"
+
+#: yd-zones-shipping.php
+msgid "Используется только Google Maps JavaScript API в браузере. Ограничьте ключ по HTTP referrer доменами вашего сайта."
+msgstr "Used only by Google Maps JavaScript API in the browser. Restrict this key by HTTP referrer to your site domains."
+
+#: yd-zones-shipping.php
+msgid "API-ключ Google для сервера"
+msgstr "Google server API key"
+
+#: yd-zones-shipping.php
+msgid "Используется на сервере для Google Geocoding API и Places API (New). Ограничьте ключ IP-адресом веб-сервера и не публикуйте его."
+msgstr "Used server-side by Google Geocoding API and Places API (New). Restrict this key by the web server IP address and do not expose it publicly."
+
+#: yd-zones-shipping.php
+msgid "Например: uk, nl, ee. Используется как регион для Google Geocoding API и Places API (New)."
+msgstr "For example: uk, nl, ee. Used as the region for Google Geocoding API and Places API (New)."
+
+#: yd-zones-shipping.php
+msgid "Показывать покупателю выпадающий список адресов при вводе"
+msgstr "Show address suggestions while the customer types"
+
+#: yd-zones-shipping.php
+msgid "Используется активный провайдер геокодирования: Яндекс в Free или Google Places в Pro. Запрос отправляется только после короткой паузы во вводе, затем выбранный адрес проверяется по зонам доставки."
+msgstr "Uses the active geocoding provider: Yandex in Free or Google Places in Pro. A request is sent only after a short pause in typing, then the selected address is checked against the delivery zones."
+
+#: yd-zones-shipping.php
+msgid "Ограничение поиска зоной доставки"
+msgstr "Limit address search to the delivery area"
+
+#: yd-zones-shipping.php
+msgid "Плагин строит техническую рамку по полигонам и передаёт её активному провайдеру подсказок/геокодирования. Это уменьшает количество нерелевантных адресов за пределами области доставки; точное попадание всё равно проверяется по самим полигонам."
+msgstr "The plugin builds a bounding box from the delivery polygons and sends it to the active suggestion/geocoding provider. This reduces irrelevant addresses outside the delivery area; the exact match is still checked against the actual polygons."
