@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WSS Bookings Schedule Lite
  * Description: Витрина расписания для booking-товаров WooCommerce. Совместима с WSS WooCommerce Bookings и WooCommerce Bookings.
- * Version: 0.3.17
+ * Version: 0.3.18
  * Author: WSS
  * Author URI: https://website-support.ru/
  * Update URI: https://website-support.ru/plugins/wss-bookings-schedule/
@@ -22,7 +22,7 @@ WSS_Plugin_I18n_202609::register(__FILE__, 'wss-bookings-schedule');
 require_once __DIR__ . '/includes/class-wss-update-cache-control.php';
 WSS_Update_Cache_Control_20260915::register( 'wss_bs_free_update_info' );
 
-define( 'WSS_BS_VERSION', '0.3.17' );
+define( 'WSS_BS_VERSION', '0.3.18' );
 define( 'WSS_BS_FILE', __FILE__ );
 define( 'WSS_BS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WSS_BS_URL', plugin_dir_url( __FILE__ ) );
@@ -40,6 +40,12 @@ require_once WSS_BS_DIR . 'includes/class-wss-bs-query.php';
 add_action(
     'admin_enqueue_scripts',
     static function ( $hook_suffix ) {
+        // Pro owns the schedule/admin runtime when both packages are active.
+        // Lite stays active as the paired Free/base package and keeps its updater.
+        if ( defined( 'WSS_BSP_VERSION' ) ) {
+            return;
+        }
+
         $page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
         $is_booking_page = false !== strpos( $page, 'booking' ) || false !== strpos( $page, 'schedule' );
         $is_woocommerce_page = false !== strpos( (string) $hook_suffix, 'woocommerce' );
@@ -62,11 +68,7 @@ add_action(
             true
         );
         wp_enqueue_script( 'wss-bookings-schedule-admin-tools' );
-        wp_add_inline_script(
-            'wss-bookings-schedule-admin-tools',
-            wss_bs_get_admin_inline_script(),
-            'after'
-        );
+        wp_add_inline_script( 'wss-bookings-schedule-admin-tools', wss_bs_get_admin_inline_script(), 'after' );
     }
 );
 
@@ -80,5 +82,14 @@ if ( class_exists( 'WSS_BS_Updater' ) ) {
 	);
 }
 
-add_action( 'plugins_loaded', array( 'WSS_BS_Plugin', 'init' ) );
-
+add_action(
+    'plugins_loaded',
+    static function (): void {
+        // Avoid duplicate shortcode/settings runtime when Pro is active.
+        if ( defined( 'WSS_BSP_VERSION' ) ) {
+            return;
+        }
+        WSS_BS_Plugin::init();
+    },
+    20
+);
