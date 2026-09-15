@@ -2,9 +2,10 @@
 /**
  * Plugin Name: WSS Yandex Calendar for WooCommerce Bookings
  * Description: Бесплатная версия: односторонняя синхронизация новых будущих бронирований WooCommerce Bookings в Яндекс.Календарь через CalDAV.
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: WSS
  * Author URI: https://website-support.ru/
+ * Update URI: https://website-support.ru/plugins/yandex-calendar-for-woocommerce-bookings/
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * WC requires at least: 7.0
@@ -20,14 +21,16 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/includes/wss-i18n.php';
 WSS_Plugin_I18n_202609::register(__FILE__, 'wss-wcb-yandex-calendar');
+require_once __DIR__ . '/includes/class-wss-update-cache-control.php';
+WSS_Update_Cache_Control_20260915::register( 'wss_wcb_yc_free_update_info' );
 
-define('WSS_WCB_YC_VERSION', '1.0.3');
+define('WSS_WCB_YC_VERSION', '1.0.4');
 define('WSS_WCB_YC_FILE', __FILE__);
 define('WSS_WCB_YC_PATH', plugin_dir_path(__FILE__));
 define('WSS_WCB_YC_URL', plugin_dir_url(__FILE__));
 require_once WSS_WCB_YC_PATH . 'includes/class-wss-wcb-yc-updater.php';
 
-if (is_admin() && class_exists('WSS_WCB_YC_Updater')) {
+if (class_exists('WSS_WCB_YC_Updater')) {
     new WSS_WCB_YC_Updater(
         WSS_WCB_YC_FILE,
         WSS_WCB_YC_VERSION,

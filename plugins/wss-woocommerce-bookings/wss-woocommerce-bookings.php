@@ -2,9 +2,10 @@
 /**
  * Plugin Name: WSS WooCommerce Bookings
  * Description: Lightweight booking slots manager for WooCommerce products: schedule slots, frontend calendar, capacity checks and order item metadata. Pro add-on unlocks migrations, blocks, booking calendar, ticket types and exports.
- * Version: 0.5.4
+ * Version: 0.5.5
  * Author: WSS
  * Author URI: https://website-support.ru/
+ * Update URI: https://website-support.ru/plugins/wss-woocommerce-bookings/
  * Text Domain: wss-wc-bookings
  * Domain Path: /languages
  * Requires at least: 6.0
@@ -20,9 +21,12 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/includes/wss-i18n.php';
 WSS_Plugin_I18n_202609::register(__FILE__, 'wss-wc-bookings');
+require_once __DIR__ . '/includes/class-wss-update-cache-control.php';
+require_once __DIR__ . '/includes/class-wss-wc-bookings-free-updater.php';
+WSS_Update_Cache_Control_20260915::register( 'wss_wc_bookings_free_update_info' );
 
 final class WSS_WooCommerce_Bookings {
-    const VERSION = '0.5.4';
+    const VERSION = '0.5.5';
     const PRODUCT_META_ENABLED = '_wss_booking_enabled';
     const PRODUCT_META_DISABLE_AUTO_ALL_DAY = '_wss_booking_disable_auto_all_day';
     const ORDER_META_RESERVED = '_wss_booking_reserved';
@@ -3613,3 +3617,7 @@ final class WSS_WooCommerce_Bookings {
 }
 
 WSS_WooCommerce_Bookings::instance();
+
+if ( class_exists( 'WSS_WC_Bookings_Free_Updater' ) ) {
+    new WSS_WC_Bookings_Free_Updater( __FILE__, WSS_WooCommerce_Bookings::VERSION, 'https://website-support.ru/plugins/wss-woocommerce-bookings/' );
+}

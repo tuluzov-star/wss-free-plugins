@@ -3,9 +3,10 @@
  * Plugin Name: WSS Order Status Colors for WooCommerce
  * Plugin URI: https://website-support.ru/plugins/order-status-colors-for-woocommerce/
  * Description: Цветовое выделение заказов WooCommerce в админке в зависимости от статуса заказа.
- * Version: 1.1.7
+ * Version: 1.1.8
  * Author: WSS
  * Author URI: https://website-support.ru/
+ * Update URI: https://website-support.ru/plugins/order-status-colors-for-woocommerce/
  * Text Domain: wss-order-status-colors
  * Domain Path: /languages
  * Requires at least: 5.8
@@ -21,8 +22,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once __DIR__ . '/includes/wss-i18n.php';
 WSS_Plugin_I18n_202609::register(__FILE__, 'wss-order-status-colors');
+require_once __DIR__ . '/includes/class-wss-update-cache-control.php';
+WSS_Update_Cache_Control_20260915::register( 'wss_osc_free_update_info' );
 
-define( 'WSS_OSC_VERSION', '1.1.7' );
+define( 'WSS_OSC_VERSION', '1.1.8' );
 define( 'WSS_OSC_FILE', __FILE__ );
 define( 'WSS_OSC_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WSS_OSC_URL', plugin_dir_url( __FILE__ ) );
@@ -56,7 +59,7 @@ final class WSS_Order_Status_Colors {
 		add_action( 'admin_init', array( $this, 'handle_settings_save' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
-		if ( is_admin() && class_exists( 'WSS_OSC_Updater' ) ) {
+		if ( class_exists( 'WSS_OSC_Updater' ) ) {
 			new WSS_OSC_Updater(
 				WSS_OSC_FILE,
 				WSS_OSC_VERSION,

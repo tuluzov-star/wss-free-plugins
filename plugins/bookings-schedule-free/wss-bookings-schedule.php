@@ -2,9 +2,10 @@
 /**
  * Plugin Name: WSS Bookings Schedule Lite
  * Description: Витрина расписания для booking-товаров WooCommerce. Совместима с WSS WooCommerce Bookings и WooCommerce Bookings.
- * Version: 0.3.16
+ * Version: 0.3.17
  * Author: WSS
  * Author URI: https://website-support.ru/
+ * Update URI: https://website-support.ru/plugins/wss-bookings-schedule/
  * Text Domain: wss-bookings-schedule
  * Domain Path: /languages
  * WC requires at least: 7.0
@@ -18,8 +19,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once __DIR__ . '/includes/wss-i18n.php';
 WSS_Plugin_I18n_202609::register(__FILE__, 'wss-bookings-schedule');
+require_once __DIR__ . '/includes/class-wss-update-cache-control.php';
+WSS_Update_Cache_Control_20260915::register( 'wss_bs_free_update_info' );
 
-define( 'WSS_BS_VERSION', '0.3.16' );
+define( 'WSS_BS_VERSION', '0.3.17' );
 define( 'WSS_BS_FILE', __FILE__ );
 define( 'WSS_BS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WSS_BS_URL', plugin_dir_url( __FILE__ ) );
@@ -69,7 +72,7 @@ add_action(
 
 register_activation_hook( __FILE__, array( 'WSS_BS_Plugin', 'activate' ) );
 
-if ( is_admin() && class_exists( 'WSS_BS_Updater' ) ) {
+if ( class_exists( 'WSS_BS_Updater' ) ) {
 	new WSS_BS_Updater(
 		WSS_BS_FILE,
 		WSS_BS_VERSION,
