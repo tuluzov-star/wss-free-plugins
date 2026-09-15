@@ -103,3 +103,9 @@ Free-ядро оставляет только безопасные хуки и U
 
 English PHP and JavaScript translations are bundled. Russian remains available.
 Existing plugin directory and main file are unchanged.
+
+
+## 1.4.30 — provider frontend hooks
+
+- Added backward-compatible filters for provider add-ons to enable the existing checkout address suggestion and validation UI.
+- Default Yandex behavior is unchanged.

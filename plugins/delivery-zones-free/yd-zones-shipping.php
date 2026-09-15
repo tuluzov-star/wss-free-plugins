@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Delivery Zones on Map for WooCommerce
  * Description: Доставка WooCommerce по нарисованным зонам на карте: полигоны, правила стоимости от суммы корзины, геокодирование адреса и запрет доставки вне зон. Бесплатная версия использует Яндекс; Google, импорт и диагностика подключаются отдельным Pro-дополнением.
- * Version: 1.4.29
+ * Version: 1.4.30
  * Text Domain: ydzs
  * Domain Path: /languages
  * Author: WSS
@@ -23,7 +23,7 @@ WSS_Plugin_I18n_202609::register(__FILE__, 'ydzs');
 require_once __DIR__ . '/includes/class-wss-update-cache-control.php';
 WSS_Update_Cache_Control_20260915::register( 'ydzs_free_update_info' );
 
-define( 'YDZS_VERSION', '1.4.29' );
+define( 'YDZS_VERSION', '1.4.30' );
 define( 'YDZS_FILE', __FILE__ );
 define( 'YDZS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'YDZS_URL', plugin_dir_url( __FILE__ ) );
@@ -2115,13 +2115,21 @@ add_action( 'wp_enqueue_scripts', function () {
 
 	$settings = ydzs_get_settings();
 	$deps     = array( 'jquery', 'wp-i18n' );
-	$api_key  = trim( (string) ( $settings['api_key'] ?? '' ) );
-	$suggest_enabled = ydzs_address_suggest_enabled( $settings ) && 'yandex' === ydzs_get_geocode_provider( $settings ) && '' !== $api_key;
+	$api_key          = trim( (string) ( $settings['api_key'] ?? '' ) );
+	$suggest_enabled  = ydzs_address_suggest_enabled( $settings ) && 'yandex' === ydzs_get_geocode_provider( $settings ) && '' !== $api_key;
+	$validate_enabled = 'yandex' === ydzs_get_geocode_provider( $settings ) && '' !== $api_key;
+
+	/**
+	 * Allow provider add-ons to enable the existing address suggestion/validation UI.
+	 * The Free Yandex defaults above remain unchanged when no add-on is active.
+	 */
+	$suggest_enabled  = (bool) apply_filters( 'ydzs_frontend_suggest_enabled', $suggest_enabled, $settings );
+	$validate_enabled = (bool) apply_filters( 'ydzs_frontend_validate_enabled', $validate_enabled, $settings );
 
 	wp_enqueue_style( 'ydzs-frontend', YDZS_URL . 'assets/frontend.css', array(), YDZS_VERSION );
 
 
-	// Keep the public package free of standalone JS files that Defender repeatedly misclassifies.
+	// Keep the package free of standalone JS files that Defender repeatedly misclassifies.
 	wp_register_script( 'ydzs-frontend', false, $deps, YDZS_VERSION, true );
 	wp_enqueue_script( 'ydzs-frontend' );
 	$address_bounds = ydzs_get_effective_address_bounds( $settings );
@@ -2135,7 +2143,7 @@ add_action( 'wp_enqueue_scripts', function () {
 		'hint'              => ydzs_get_address_hint_text( $settings ),
 		'houseHint'         => ydzs_get_address_house_hint_text( $settings ),
 		'suggestEnabled'    => $suggest_enabled,
-		'validateEnabled'   => 'yandex' === ydzs_get_geocode_provider( $settings ) && '' !== $api_key,
+		'validateEnabled'   => $validate_enabled,
 		'addressContext'    => ydzs_get_address_context_text( $settings ),
 		'restrictToZones'   => ydzs_address_restrict_to_zones_enabled( $settings ),
 		'suggestBounds'     => ydzs_get_yandex_suggest_bounds( $address_bounds ),
