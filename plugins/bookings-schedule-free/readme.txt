@@ -4,7 +4,7 @@ Tags: woocommerce, bookings, schedule, availability
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.3.18
+Stable tag: 0.3.19
 License: GPLv2 or later
 
 Бесплатная витрина расписания для оригинального WooCommerce Bookings.
@@ -40,6 +40,9 @@ License: GPLv2 or later
 Lite-версия выводит до 7 дней.
 
 == Изменения ==
+
+= 0.3.19 =
+* Объявлена совместимость с High-Performance Order Storage (HPOS) WooCommerce после проверки используемых API.
 
 = 0.3.18 =
 * Lite закреплён как базовая Free-версия для WSS Bookings Schedule Pro.
