@@ -4,7 +4,7 @@ Tags: woocommerce, bookings, schedule, availability
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.3.16
+Stable tag: 0.3.18
 License: GPLv2 or later
 
 Бесплатная витрина расписания для оригинального WooCommerce Bookings.
@@ -28,7 +28,7 @@ License: GPLv2 or later
 
 == Установка ==
 
-1. Установить WooCommerce и оригинальный WooCommerce Bookings.
+1. Установить WooCommerce и поддерживаемый движок бронирований: WSS WooCommerce Bookings или WooCommerce Bookings.
 2. Установить и активировать этот плагин.
 3. Перейти в WooCommerce → WSS Bookings Schedule.
 4. Добавить на страницу шорткод: [wss_bookings_schedule].
@@ -40,6 +40,11 @@ License: GPLv2 or later
 Lite-версия выводит до 7 дней.
 
 == Изменения ==
+
+= 0.3.18 =
+* Lite закреплён как базовая Free-версия для WSS Bookings Schedule Pro.
+* При активной Pro-версии Lite сохраняет updater и пакетную зависимость, но не запускает второй экземпляр шорткода, настроек и admin-assets.
+* После деактивации Pro Lite автоматически возвращается к обычному самостоятельному режиму работы.
 
 = 0.3.14 =
 * Полностью удалён frontend.js из Lite-сборки для исключения ложных срабатываний Microsoft Defender.
