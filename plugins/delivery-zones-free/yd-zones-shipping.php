@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Delivery Zones on Map for WooCommerce
  * Description: Доставка WooCommerce по нарисованным зонам на карте: полигоны, правила стоимости от суммы корзины, геокодирование адреса и запрет доставки вне зон. Бесплатная версия использует Яндекс; Google, импорт и диагностика подключаются отдельным Pro-дополнением.
- * Version: 1.4.31
+ * Version: 1.4.32
  * Text Domain: ydzs
  * Domain Path: /languages
  * Author: WSS
@@ -23,7 +23,7 @@ WSS_Plugin_I18n_202609::register(__FILE__, 'ydzs');
 require_once __DIR__ . '/includes/class-wss-update-cache-control.php';
 WSS_Update_Cache_Control_20260915::register( 'ydzs_free_update_info' );
 
-define( 'YDZS_VERSION', '1.4.31' );
+define( 'YDZS_VERSION', '1.4.32' );
 define( 'YDZS_FILE', __FILE__ );
 define( 'YDZS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'YDZS_URL', plugin_dir_url( __FILE__ ) );
@@ -2170,6 +2170,22 @@ add_action( 'wp_enqueue_scripts', function () {
 		'suggestBounds'     => ydzs_get_yandex_suggest_bounds( $address_bounds ),
 		'checkoutContext'   => $is_checkout_context,
 		'globalPopupMode'   => ! $is_checkout_context && $force_frontend,
+		'messages'          => array(
+			'chooseExact'      => __( 'Выберите точный адрес из списка подсказок, чтобы мы не рассчитали доставку по другому адресу.', 'ydzs' ),
+			'insideZone'       => __( 'Адрес входит в зону доставки', 'ydzs' ),
+			'outsideZones'     => __( 'Адрес отсутствует в зонах доставки. Для этого адреса доступен только самовывоз.', 'ydzs' ),
+			'notFound'         => __( 'Не удалось найти подходящий адрес. Уточните населённый пункт, улицу и дом или выберите адрес из списка подсказок.', 'ydzs' ),
+			'suggestionsLabel' => __( 'Подсказки адреса', 'ydzs' ),
+			'zoneLabel'        => __( 'Зона доставки: ', 'ydzs' ),
+			'noExactInZones'   => __( 'Не нашли точный адрес в зонах доставки. Уточните населённый пункт, улицу и дом или выберите адрес из списка подсказок.', 'ydzs' ),
+			'refineAddress'     => __( 'Уточните адрес и выберите вариант из списка.', 'ydzs' ),
+			'checkingAddress'   => __( 'Проверяем адрес...', 'ydzs' ),
+			'checkFailedLong'   => __( 'Не удалось проверить адрес сейчас. Уточните адрес или попробуйте оформить заказ ещё раз.', 'ydzs' ),
+			'checkingSelected'  => __( 'Проверяем выбранный адрес...', 'ydzs' ),
+			'validateOnSubmit'  => __( 'Адрес будет проверен при оформлении заказа.', 'ydzs' ),
+			'checkFailedShort'  => __( 'Не удалось проверить адрес сейчас. Попробуйте ещё раз.', 'ydzs' ),
+			'fieldNotFound'     => __( 'Поле адреса не найдено.', 'ydzs' ),
+		),
 	) );
 	wp_add_inline_script( 'ydzs-frontend', ydzs_get_frontend_inline_script(), 'after' );
 } );

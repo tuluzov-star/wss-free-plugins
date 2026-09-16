@@ -115,3 +115,8 @@ Existing plugin directory and main file are unchanged.
 - Address suggestions now use a 600 ms debounce after the customer pauses typing (filterable with `ydzs_address_suggest_delay_ms`).
 - Google Pro settings now support separate browser and server API keys with backward compatibility for the legacy shared key.
 - Address suggestion and delivery-area restriction help text is provider-neutral for Yandex/Google.
+
+## 1.4.32
+
+- Frontend helper and suggestion strings are localized on the PHP side, which also works reliably for the inline checkout script.
+- Keeps the 600 ms suggestion debounce introduced in 1.4.31.
