@@ -100,3 +100,68 @@
 }
 
 .ydzs-pro-badge{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:999px;background:#1d2327;color:#fff;font-size:11px;line-height:18px;font-weight:600;vertical-align:middle}.ydzs-wrap select option:disabled{color:#8c8f94}
+
+
+.ydzs-checkout-fields-settings {
+	display: grid;
+	gap: 16px;
+	max-width: 720px;
+}
+
+.ydzs-checkout-fields-settings--card {
+	box-sizing: border-box;
+	padding: 16px;
+	border: 1px solid #c3c4c7;
+	border-radius: 6px;
+	background: #fff;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.ydzs-checkout-fields-settings__intro {
+	padding: 12px 14px;
+	border-radius: 4px;
+	background: #f6f7f7;
+}
+
+.ydzs-checkout-fields-settings__intro .ydzs-checkout-fields-settings__option {
+	font-weight: 600;
+}
+
+.ydzs-checkout-fields-settings__dependent {
+	display: grid;
+	gap: 16px;
+	padding-top: 16px;
+	border-top: 1px solid #dcdcde;
+	transition: opacity 0.15s ease;
+}
+
+.ydzs-checkout-fields-settings__dependent.is-disabled {
+	opacity: 0.5;
+}
+
+.ydzs-checkout-fields-settings__intro,
+.ydzs-checkout-fields-settings__choices,
+.ydzs-checkout-fields-settings__country {
+	display: grid;
+	gap: 8px;
+}
+
+.ydzs-checkout-fields-settings__option {
+	display: flex;
+	gap: 6px;
+	align-items: flex-start;
+	line-height: 1.4;
+}
+
+.ydzs-checkout-fields-settings__option input[type="checkbox"] {
+	margin-top: 2px;
+}
+
+.ydzs-checkout-fields-settings .description {
+	margin: 0;
+}
+
+.ydzs-checkout-fields-settings__country select {
+	min-width: 240px;
+	max-width: 100%;
+}
