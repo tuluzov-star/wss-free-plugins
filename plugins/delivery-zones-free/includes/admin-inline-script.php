@@ -10,6 +10,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+add_action( 'admin_enqueue_scripts', function ( $hook ) {
+	if ( 'woocommerce_page_ydzs-zones' !== $hook ) {
+		return;
+	}
+
+	wp_enqueue_script( 'wc-enhanced-select' );
+	wp_enqueue_style( 'woocommerce_admin_styles' );
+}, 20 );
+
 function ydzs_get_admin_inline_script(): string {
 	return <<<'YDZSJS'
 (function ($) {
@@ -268,7 +277,48 @@ function ydzs_get_admin_inline_script(): string {
 		$('.ydzs-advanced-provider-row').toggleClass('is-hidden', !enabled);
 	}
 
+	function ensureCheckoutFieldSettingsStructure() {
+		const $settings = $('.ydzs-checkout-fields-settings');
+
+		if (!$settings.length) {
+			return;
+		}
+
+		$settings.addClass('ydzs-checkout-fields-settings--card');
+
+		if ($settings.children('.ydzs-checkout-fields-settings__dependent').length) {
+			return;
+		}
+
+		const $choices = $settings.children('.ydzs-checkout-fields-settings__choices');
+		const $country = $settings.children('.ydzs-checkout-fields-settings__country');
+
+		if ($choices.length && $country.length) {
+			$choices.add($country).wrapAll('<div class="ydzs-checkout-fields-settings__dependent"></div>');
+		}
+	}
+
+	function toggleCheckoutFieldSettings() {
+		const enabled = $('input[name="checkout_simplify_address"]').is(':checked');
+		const $dependent = $('.ydzs-checkout-fields-settings__dependent');
+
+		if (!$dependent.length) {
+			return;
+		}
+
+		$dependent
+			.toggleClass('is-disabled', !enabled)
+			.attr('aria-disabled', enabled ? 'false' : 'true');
+
+		if (enabled) {
+			$dependent.removeAttr('inert');
+		} else {
+			$dependent.attr('inert', '');
+		}
+	}
+
 	$(document).on('change', 'input[name="advanced_providers"]', toggleAdvancedProviderRows);
+	$(document).on('change', 'input[name="checkout_simplify_address"]', toggleCheckoutFieldSettings);
 
 	$(document).on('click', '#ydzs-draw-zone', function (e) {
 		if (provider !== 'yandex') {
@@ -349,7 +399,16 @@ function ydzs_get_admin_inline_script(): string {
 	});
 
 	$(function () {
+		ensureCheckoutFieldSettingsStructure();
 		toggleAdvancedProviderRows();
+
+		const $fixedCountry = $('#ydzs_checkout_fixed_country');
+		if ($fixedCountry.length) {
+			$fixedCountry.addClass('wc-enhanced-select');
+			$(document.body).trigger('wc-enhanced-select-init');
+		}
+
+		toggleCheckoutFieldSettings();
 		initMap();
 	});
 })(jQuery);
