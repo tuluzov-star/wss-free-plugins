@@ -628,3 +628,47 @@ msgstr "Limit address search to the delivery area"
 #: yd-zones-shipping.php
 msgid "Плагин строит техническую рамку по полигонам и передаёт её активному провайдеру подсказок/геокодирования. Это уменьшает количество нерелевантных адресов за пределами области доставки; точное попадание всё равно проверяется по самим полигонам."
 msgstr "The plugin builds a bounding box from the delivery polygons and sends it to the active suggestion/geocoding provider. This reduces irrelevant addresses outside the delivery area; the exact match is still checked against the actual polygons."
+
+#: yd-zones-shipping.php
+msgid "Поля оформления заказа"
+msgstr "Checkout fields"
+
+#: yd-zones-shipping.php
+msgid "Упрощать адрес доставки"
+msgstr "Simplify delivery address"
+
+#: yd-zones-shipping.php
+msgid "Выключено по умолчанию. При включении Delivery Zones может скрыть второстепенные адресные поля. Скрытие города, индекса или региона может влиять на налоги и сторонние службы доставки."
+msgstr "Disabled by default. When enabled, Delivery Zones can hide secondary address fields. Hiding the city, postcode or state/region may affect taxes and third-party shipping services."
+
+#: yd-zones-shipping.php
+msgid "Показывать Address line 2"
+msgstr "Show Address line 2"
+
+#: yd-zones-shipping.php
+msgid "Показывать город"
+msgstr "Show city"
+
+#: yd-zones-shipping.php
+msgid "Показывать область / штат"
+msgstr "Show state / region"
+
+#: yd-zones-shipping.php
+msgid "Показывать почтовый индекс"
+msgstr "Show postcode"
+
+#: yd-zones-shipping.php
+msgid "Фиксированная страна доставки"
+msgstr "Fixed delivery country"
+
+#: yd-zones-shipping.php
+msgid "Не фиксировать"
+msgstr "Do not fix"
+
+#: yd-zones-shipping.php
+msgid "Показывать поле страны"
+msgstr "Show country field"
+
+#: yd-zones-shipping.php
+msgid "Поле страны можно скрыть только при выбранной фиксированной стране. Показанные город, индекс, регион и страна автоматически заполняются после выбора и успешной проверки точного адреса."
+msgstr "The country field can only be hidden when a fixed country is selected. Visible city, postcode, state/region and country fields are filled automatically after selecting and successfully validating an exact address."
