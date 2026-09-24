@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Delivery Zones on Map for WooCommerce
  * Description: Доставка WooCommerce по нарисованным зонам на карте: полигоны, правила стоимости от суммы корзины, геокодирование адреса и запрет доставки вне зон. Бесплатная версия использует Яндекс; Google, импорт и диагностика подключаются отдельным Pro-дополнением.
- * Version: 1.4.32
+ * Version: 1.4.38
  * Text Domain: ydzs
  * Domain Path: /languages
  * Author: WSS
@@ -23,13 +23,16 @@ WSS_Plugin_I18n_202609::register(__FILE__, 'ydzs');
 require_once __DIR__ . '/includes/class-wss-update-cache-control.php';
 WSS_Update_Cache_Control_20260915::register( 'ydzs_free_update_info' );
 
-define( 'YDZS_VERSION', '1.4.32' );
+define( 'YDZS_VERSION', '1.4.38' );
 define( 'YDZS_FILE', __FILE__ );
 define( 'YDZS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'YDZS_URL', plugin_dir_url( __FILE__ ) );
 require_once YDZS_DIR . 'includes/class-ydzs-updater.php';
 require_once YDZS_DIR . 'includes/admin-inline-script.php';
 require_once YDZS_DIR . 'includes/frontend-inline-script.php';
+require_once YDZS_DIR . 'includes/address-components.php';
+require_once YDZS_DIR . 'includes/checkout-address-fields.php';
+require_once YDZS_DIR . 'includes/checkout-address-fields-inline-script.php';
 define( 'YDZS_OPTION_SETTINGS', 'ydzs_settings' );
 define( 'YDZS_OPTION_ZONES', 'ydzs_zones' );
 
@@ -66,6 +69,13 @@ register_activation_hook( __FILE__, function () {
 		'address_placeholder' => __( 'Например: Санкт-Петербург, Невский проспект, 10', 'ydzs' ),
 		'address_hint'        => __( 'Начните вводить адрес и выберите подходящий вариант из списка. Обязательно укажите населённый пункт, улицу и номер дома.', 'ydzs' ),
 		'address_house_hint'  => __( 'Добавьте номер дома — без него карта может определить только улицу, и доставка может не рассчитаться.', 'ydzs' ),
+		'checkout_simplify_address' => 'no',
+		'checkout_show_address_2'   => 'no',
+		'checkout_show_city'        => 'no',
+		'checkout_show_state'       => 'no',
+		'checkout_show_postcode'    => 'no',
+		'checkout_fixed_country'    => '',
+		'checkout_show_country'     => 'yes',
 	) );
 
 	update_option( YDZS_OPTION_SETTINGS, $settings, false );
@@ -156,6 +166,13 @@ function ydzs_get_settings(): array {
 		'address_placeholder' => __( 'Например: Санкт-Петербург, Невский проспект, 10', 'ydzs' ),
 		'address_hint'        => __( 'Начните вводить адрес и выберите подходящий вариант из списка. Обязательно укажите населённый пункт, улицу и номер дома.', 'ydzs' ),
 		'address_house_hint'  => __( 'Добавьте номер дома — без него карта может определить только улицу, и доставка может не рассчитаться.', 'ydzs' ),
+		'checkout_simplify_address' => 'no',
+		'checkout_show_address_2'   => 'no',
+		'checkout_show_city'        => 'no',
+		'checkout_show_state'       => 'no',
+		'checkout_show_postcode'    => 'no',
+		'checkout_fixed_country'    => '',
+		'checkout_show_country'     => 'yes',
 	) );
 
 	$valid = array_keys( ydzs_get_available_providers() );
@@ -196,6 +213,7 @@ function ydzs_get_settings(): array {
 function ydzs_get_google_browser_api_key( ?array $settings = null ): string {
 	$settings = $settings ?? ydzs_get_settings();
 	$key      = trim( (string) ( $settings['google_browser_api_key'] ?? '' ) );
+
 	return '' !== $key ? $key : trim( (string) ( $settings['google_api_key'] ?? '' ) );
 }
 
@@ -203,6 +221,7 @@ function ydzs_get_google_browser_api_key( ?array $settings = null ): string {
 function ydzs_get_google_server_api_key( ?array $settings = null ): string {
 	$settings = $settings ?? ydzs_get_settings();
 	$key      = trim( (string) ( $settings['google_server_api_key'] ?? '' ) );
+
 	return '' !== $key ? $key : trim( (string) ( $settings['google_api_key'] ?? '' ) );
 }
 
@@ -1036,71 +1055,79 @@ add_action( 'woocommerce_checkout_update_order_review', function ( $post_data ) 
 	$data = array();
 	parse_str( (string) $post_data, $data );
 
-	if ( ! empty( $data['ydzs_address_user_cleared'] ) ) {
-		WC()->customer->set_shipping_address_1( '' );
-		WC()->customer->set_billing_address_1( '' );
-		WC()->customer->set_shipping_city( '' );
-		WC()->customer->set_billing_city( '' );
-		WC()->customer->set_calculated_shipping( true );
-		ydzs_reset_shipping_cache();
-
-		if ( method_exists( WC()->customer, 'save' ) ) {
-			WC()->customer->save();
-		}
-
-		ydzs_log( 'Checkout address was explicitly cleared by customer; WC customer address cleared.' );
-		return;
-	}
-
+	$source_name = '';
+	$address     = null;
 	foreach ( ydzs_get_ordered_address_field_names() as $name ) {
 		if ( ! array_key_exists( $name, $data ) ) {
 			continue;
 		}
+		$source_name = $name;
+		$address     = trim( wc_clean( wp_strip_all_tags( (string) $data[ $name ] ) ) );
+		break;
+	}
 
-		$address = trim( wc_clean( wp_strip_all_tags( (string) $data[ $name ] ) ) );
+	if ( '' === $source_name || null === $address ) {
+		return;
+	}
 
-		if ( '' === $address ) {
+	$context = ydzs_checkout_address_context_from_field_name( $source_name );
+	$cleared = ! empty( $data['ydzs_address_user_cleared'] ) || '' === $address;
+
+	if ( $cleared ) {
+		if ( ydzs_checkout_fields_enabled() ) {
+			ydzs_checkout_apply_customer_address_updates( WC()->customer, $context, '' );
+		} else {
+			// Backward compatibility for stores that have not enabled checkout simplification.
 			WC()->customer->set_shipping_address_1( '' );
 			WC()->customer->set_billing_address_1( '' );
 			WC()->customer->set_shipping_city( '' );
 			WC()->customer->set_billing_city( '' );
-			WC()->customer->set_calculated_shipping( true );
-			ydzs_reset_shipping_cache();
-
-			if ( method_exists( WC()->customer, 'save' ) ) {
-				WC()->customer->save();
-			}
-
-			ydzs_log( 'Checkout address cleared and shipping cache cleared.', array( 'field' => $name ) );
-			break;
 		}
 
-		if ( ydzs_posted_address_is_unconfirmed() ) {
-			WC()->customer->set_calculated_shipping( true );
-			ydzs_reset_shipping_cache();
-
-			ydzs_log( 'Checkout address is not confirmed; WC customer address was not overwritten.', array(
-				'field'   => $name,
-				'address' => $address,
-				'status'  => ydzs_get_posted_address_status(),
-			) );
-			break;
-		}
-
-		WC()->customer->set_shipping_address_1( $address );
-		WC()->customer->set_billing_address_1( $address );
 		WC()->customer->set_calculated_shipping( true );
-
-		// Иначе WooCommerce может взять cached rates из сессии и вообще не вызвать calculate_shipping().
 		ydzs_reset_shipping_cache();
 
 		if ( method_exists( WC()->customer, 'save' ) ) {
 			WC()->customer->save();
 		}
 
-		ydzs_log( 'Checkout address synced to WC customer and shipping cache cleared.', array( 'field' => $name, 'address' => $address ) );
-		break;
+		ydzs_log( 'Checkout address cleared and shipping cache cleared.', array( 'field' => $source_name, 'context' => $context ) );
+		return;
 	}
+
+	if ( ydzs_posted_address_is_unconfirmed() ) {
+		WC()->customer->set_calculated_shipping( true );
+		ydzs_reset_shipping_cache();
+
+		ydzs_log( 'Checkout address is not confirmed; WC customer address was not overwritten.', array(
+			'field'   => $source_name,
+			'address' => $address,
+			'status'  => ydzs_get_posted_address_status(),
+		) );
+		return;
+	}
+
+	if ( ydzs_checkout_fields_enabled() ) {
+		ydzs_checkout_apply_customer_address_updates( WC()->customer, $context, $address );
+	} else {
+		// Preserve the pre-existing synchronization unless the new opt-in mode is enabled.
+		WC()->customer->set_shipping_address_1( $address );
+		WC()->customer->set_billing_address_1( $address );
+	}
+	WC()->customer->set_calculated_shipping( true );
+
+	// Иначе WooCommerce может взять cached rates из сессии и вообще не вызвать calculate_shipping().
+	ydzs_reset_shipping_cache();
+
+	if ( method_exists( WC()->customer, 'save' ) ) {
+		WC()->customer->save();
+	}
+
+	ydzs_log( 'Checkout address synced to WC customer and shipping cache cleared.', array(
+		'field'   => $source_name,
+		'address' => $address,
+		'context' => $context,
+	) );
 }, 5 );
 
 function ydzs_yandex_geocode_candidates( string $query, string $api_key, string $provider, string $original_address, ?array $bounds = null ): array {
@@ -1186,6 +1213,7 @@ function ydzs_yandex_geocode_candidates( string $query, string $api_key, string 
 			'house'     => ydzs_yandex_component_name( is_array( $meta ) ? $meta : array(), 'house' ),
 			'street'    => ydzs_yandex_component_name( is_array( $meta ) ? $meta : array(), 'street' ),
 			'locality'  => ydzs_yandex_component_name( is_array( $meta ) ? $meta : array(), 'locality' ),
+			'components' => ydzs_yandex_address_components( is_array( $meta ) ? $meta : array() ),
 		);
 	}
 
@@ -1367,10 +1395,14 @@ function ydzs_geocode_address( string $address ): ?array {
 	$cached    = get_transient( $cache_key );
 
 	if ( is_array( $cached ) && isset( $cached['lat'], $cached['lon'] ) ) {
-		return array(
+		$result = array(
 			'lat' => (float) $cached['lat'],
 			'lon' => (float) $cached['lon'],
 		);
+		if ( isset( $cached['components'] ) && is_array( $cached['components'] ) ) {
+			$result['components'] = ydzs_public_address_components( $cached['components'] );
+		}
+		return $result;
 	}
 
 	if ( 'yandex' !== $provider ) {
@@ -1381,6 +1413,9 @@ function ydzs_geocode_address( string $address ): ?array {
 		$external = apply_filters( 'ydzs_geocode_provider_' . $provider, null, $address, $settings, $api_key );
 		if ( is_array( $external ) && isset( $external['lat'], $external['lon'] ) ) {
 			$result = array( 'lat' => (float) $external['lat'], 'lon' => (float) $external['lon'] );
+			if ( isset( $external['components'] ) && is_array( $external['components'] ) ) {
+				$result['components'] = ydzs_public_address_components( $external['components'] );
+			}
 			set_transient( $cache_key, $result, WEEK_IN_SECONDS );
 			ydzs_log( 'Geocode success.', array(
 				'provider' => $provider,
@@ -1418,8 +1453,9 @@ function ydzs_geocode_address( string $address ): ?array {
 	}
 
 	$result = array(
-		'lat' => (float) $result['lat'],
-		'lon' => (float) $result['lon'],
+		'lat'        => (float) $result['lat'],
+		'lon'        => (float) $result['lon'],
+		'components' => isset( $result['components'] ) && is_array( $result['components'] ) ? ydzs_public_address_components( $result['components'] ) : array(),
 	);
 
 	set_transient( $cache_key, $result, WEEK_IN_SECONDS );
@@ -2016,6 +2052,7 @@ function ydzs_ajax_validate_address(): void {
 			'cartTotal'         => $rule_status['cart_total'] ?? $cart_total,
 			'amountLeft'        => $rule_status['amount_left'] ?? 0,
 			'minMessage'        => ! empty( $rule_status['message'] ) ? (string) $rule_status['message'] : '',
+			'components'        => isset( $point['components'] ) && is_array( $point['components'] ) ? ydzs_checkout_address_components( $point['components'] ) : array(),
 		) );
 	}
 
@@ -2102,6 +2139,7 @@ function ydzs_ajax_validate_address(): void {
 		'cartTotal'         => $rule_status['cart_total'] ?? $cart_total,
 		'amountLeft'        => $rule_status['amount_left'] ?? 0,
 		'minMessage'        => ! empty( $rule_status['message'] ) ? (string) $rule_status['message'] : '',
+		'components'        => isset( $selected_candidate['components'] ) && is_array( $selected_candidate['components'] ) ? ydzs_checkout_address_components( $selected_candidate['components'] ) : array(),
 	) );
 }
 add_action( 'wp_ajax_ydzs_validate_address', 'ydzs_ajax_validate_address' );
@@ -2188,6 +2226,21 @@ add_action( 'wp_enqueue_scripts', function () {
 		),
 	) );
 	wp_add_inline_script( 'ydzs-frontend', ydzs_get_frontend_inline_script(), 'after' );
+
+	$checkout_settings = ydzs_checkout_fields_settings( $settings );
+	wp_localize_script( 'ydzs-frontend', 'YDZS_CHECKOUT_FIELDS', array(
+		'enabled'      => ydzs_checkout_fields_enabled( $checkout_settings ),
+		'fixedCountry' => ydzs_checkout_fixed_country( $checkout_settings ),
+		'visible'      => array(
+			'address_1' => true,
+			'address_2' => 'yes' === $checkout_settings['checkout_show_address_2'],
+			'city'      => 'yes' === $checkout_settings['checkout_show_city'],
+			'state'     => 'yes' === $checkout_settings['checkout_show_state'],
+			'postcode'  => 'yes' === $checkout_settings['checkout_show_postcode'],
+			'country'   => 'yes' === $checkout_settings['checkout_show_country'],
+		),
+	) );
+	wp_add_inline_script( 'ydzs-frontend', ydzs_get_checkout_address_fields_inline_script(), 'after' );
 } );
 
 add_action( 'admin_menu', function () {
@@ -2405,6 +2458,38 @@ function ydzs_render_admin_page(): void {
 						<tr>
 							<th><label for="ydzs_default_title"><?php echo esc_html__( 'Название доставки', 'ydzs' ); ?></label></th>
 							<td><input type="text" class="regular-text" id="ydzs_default_title" name="default_title" value="<?php echo esc_attr( $settings['default_title'] ); ?>"></td>
+						</tr>
+						<?php
+						$checkout_settings  = ydzs_checkout_fields_settings( $settings );
+						$checkout_countries = function_exists( 'WC' ) && WC() && isset( WC()->countries ) && WC()->countries ? WC()->countries->get_countries() : array();
+						?>
+						<tr>
+							<th><?php echo esc_html__( 'Поля оформления заказа', 'ydzs' ); ?></th>
+							<td>
+								<div class="ydzs-checkout-fields-settings">
+									<div class="ydzs-checkout-fields-settings__intro">
+										<label class="ydzs-checkout-fields-settings__option"><input type="checkbox" name="checkout_simplify_address" value="yes" <?php checked( $checkout_settings['checkout_simplify_address'], 'yes' ); ?>> <span><?php echo esc_html__( 'Упрощать адрес доставки', 'ydzs' ); ?></span></label>
+										<p class="description"><?php echo esc_html__( 'Выключено по умолчанию. При включении Delivery Zones может скрыть второстепенные адресные поля. Скрытие города, индекса или региона может влиять на налоги и сторонние службы доставки.', 'ydzs' ); ?></p>
+									</div>
+									<div class="ydzs-checkout-fields-settings__choices">
+										<label class="ydzs-checkout-fields-settings__option"><input type="checkbox" name="checkout_show_address_2" value="yes" <?php checked( $checkout_settings['checkout_show_address_2'], 'yes' ); ?>> <span><?php echo esc_html__( 'Показывать Address line 2', 'ydzs' ); ?></span></label>
+										<label class="ydzs-checkout-fields-settings__option"><input type="checkbox" name="checkout_show_city" value="yes" <?php checked( $checkout_settings['checkout_show_city'], 'yes' ); ?>> <span><?php echo esc_html__( 'Показывать город', 'ydzs' ); ?></span></label>
+										<label class="ydzs-checkout-fields-settings__option"><input type="checkbox" name="checkout_show_state" value="yes" <?php checked( $checkout_settings['checkout_show_state'], 'yes' ); ?>> <span><?php echo esc_html__( 'Показывать область / штат', 'ydzs' ); ?></span></label>
+										<label class="ydzs-checkout-fields-settings__option"><input type="checkbox" name="checkout_show_postcode" value="yes" <?php checked( $checkout_settings['checkout_show_postcode'], 'yes' ); ?>> <span><?php echo esc_html__( 'Показывать почтовый индекс', 'ydzs' ); ?></span></label>
+									</div>
+									<div class="ydzs-checkout-fields-settings__country">
+										<label for="ydzs_checkout_fixed_country"><strong><?php echo esc_html__( 'Фиксированная страна доставки', 'ydzs' ); ?></strong></label>
+										<select id="ydzs_checkout_fixed_country" name="checkout_fixed_country">
+											<option value=""><?php echo esc_html__( 'Не фиксировать', 'ydzs' ); ?></option>
+											<?php foreach ( $checkout_countries as $country_code => $country_name ) : ?>
+												<option value="<?php echo esc_attr( $country_code ); ?>" <?php selected( $checkout_settings['checkout_fixed_country'], $country_code ); ?>><?php echo esc_html( $country_name ); ?></option>
+											<?php endforeach; ?>
+										</select>
+										<label class="ydzs-checkout-fields-settings__option"><input type="checkbox" name="checkout_show_country" value="yes" <?php checked( $checkout_settings['checkout_show_country'], 'yes' ); ?>> <span><?php echo esc_html__( 'Показывать поле страны', 'ydzs' ); ?></span></label>
+										<p class="description"><?php echo esc_html__( 'Поле страны можно скрыть только при выбранной фиксированной стране. Показанные город, индекс, регион и страна автоматически заполняются после выбора и успешной проверки точного адреса.', 'ydzs' ); ?></p>
+									</div>
+								</div>
+							</td>
 						</tr>
 						<tr>
 							<th><label for="ydzs_address_field_names"><?php echo esc_html__( 'Имена полей адреса', 'ydzs' ); ?></label></th>
@@ -2709,6 +2794,8 @@ add_action( 'admin_post_ydzs_save_settings', function () {
 
 	$current_settings = ydzs_get_settings();
 	$legacy_google_key = trim( (string) ( $current_settings['google_api_key'] ?? '' ) );
+	$checkout_countries = function_exists( 'WC' ) && WC() && isset( WC()->countries ) && WC()->countries ? WC()->countries->get_countries() : array();
+	$checkout_field_settings = ydzs_sanitize_checkout_field_settings( wp_unslash( $_POST ), is_array( $checkout_countries ) ? $checkout_countries : array() );
 
 	$settings = array(
 		'api_key'       => isset( $_POST['api_key'] ) ? sanitize_text_field( wp_unslash( $_POST['api_key'] ) ) : '',
@@ -2733,6 +2820,7 @@ add_action( 'admin_post_ydzs_save_settings', function () {
 		'address_hint'        => isset( $_POST['address_hint'] ) ? sanitize_textarea_field( wp_unslash( $_POST['address_hint'] ) ) : __( 'Начните вводить адрес и выберите подходящий вариант из списка. Обязательно укажите населённый пункт, улицу и номер дома.', 'ydzs' ),
 		'address_house_hint'  => isset( $_POST['address_house_hint'] ) ? sanitize_textarea_field( wp_unslash( $_POST['address_house_hint'] ) ) : __( 'Добавьте номер дома — без него карта может определить только улицу, и доставка может не рассчитаться.', 'ydzs' ),
 	);
+	$settings = array_merge( $settings, $checkout_field_settings );
 
 	update_option( YDZS_OPTION_SETTINGS, $settings, false );
 
