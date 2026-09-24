@@ -120,3 +120,48 @@ Existing plugin directory and main file are unchanged.
 
 - Frontend helper and suggestion strings are localized on the PHP side, which also works reliably for the inline checkout script.
 - Keeps the 600 ms suggestion debounce introduced in 1.4.31.
+
+## 1.4.33
+
+- Added an opt-in **Checkout address fields** section. Existing installations remain unchanged until **Simplify delivery address** is enabled.
+- Added a validated fixed delivery country and independent visibility controls for Address line 2, City, State/County and Postcode. Address line 1 remains the Delivery Zones source field.
+- Yandex geocoding now exposes normalized address components; the shared component contract is also used by Pro providers.
+- Confirmed exact addresses can autofill the visible standard WooCommerce address fields in both Classic Checkout and Checkout Block.
+- Checkout Block synchronization uses the WooCommerce cart data store and Store API instead of relying on Classic Checkout AJAX.
+- Fields manually edited after autofill become user-owned and are not overwritten by later address selections.
+- Corrupt or unknown stored country codes fail safe: the country is not fixed or hidden.
+
+
+## 1.4.34
+
+- Added the missing English translations for the Checkout address fields settings introduced in 1.4.33.
+- Improved spacing and grouping of the Checkout address fields admin controls without forced CSS overrides.
+- Checkout field behavior, address validation and autofill logic are unchanged from 1.4.33.
+
+
+## 1.4.35
+
+- The fixed delivery country selector is now searchable in the Delivery Zones settings.
+- Search uses the canonical WooCommerce country name and ISO country code only; no aliases or duplicate country names are added.
+- The selector uses WooCommerce SelectWoo and keeps the existing saved country code and checkout behavior unchanged.
+
+
+## 1.4.36
+
+- Fixed the searchable **Fixed delivery country** selector on the Delivery Zones admin page by using WooCommerce's native enhanced-select initialization.
+- The country list still contains one canonical WooCommerce name per country; no aliases or duplicate country entries are added.
+- Delivery calculations, checkout field settings and saved country codes are unchanged.
+
+
+## 1.4.38
+
+- Исправлен расчёт доставки на кастомных Classic Checkout, которые используют подтверждённый адрес Delivery Zones, но скрывают стандартные поля региона/индекса WooCommerce.
+- Требования `state` и `postcode` снимаются только для адреса со статусом `inside` и корректным серверным HMAC-токеном Delivery Zones.
+- Неподтверждённый, очищенный, находящийся вне зон или подменённый адрес не меняет штатную готовность WooCommerce к расчёту доставки.
+- Обычные checkout без подтверждённого Delivery Zones адреса работают без изменений.
+
+## 1.4.37
+
+- Grouped all **Simplify delivery address** options into one visual admin card so country settings are clearly part of the same feature.
+- Child field/country controls are visually dimmed and made inert while Simplify is disabled, then re-enabled immediately when the master checkbox is turned on.
+- Child values are preserved while the UI is inactive; checkout behavior and saved settings are unchanged.
