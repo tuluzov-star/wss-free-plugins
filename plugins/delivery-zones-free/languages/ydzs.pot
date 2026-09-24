@@ -628,3 +628,47 @@ msgstr ""
 #: yd-zones-shipping.php
 msgid "Плагин строит техническую рамку по полигонам и передаёт её активному провайдеру подсказок/геокодирования. Это уменьшает количество нерелевантных адресов за пределами области доставки; точное попадание всё равно проверяется по самим полигонам."
 msgstr ""
+
+#: yd-zones-shipping.php
+msgid "Поля оформления заказа"
+msgstr ""
+
+#: yd-zones-shipping.php
+msgid "Упрощать адрес доставки"
+msgstr ""
+
+#: yd-zones-shipping.php
+msgid "Выключено по умолчанию. При включении Delivery Zones может скрыть второстепенные адресные поля. Скрытие города, индекса или региона может влиять на налоги и сторонние службы доставки."
+msgstr ""
+
+#: yd-zones-shipping.php
+msgid "Показывать Address line 2"
+msgstr ""
+
+#: yd-zones-shipping.php
+msgid "Показывать город"
+msgstr ""
+
+#: yd-zones-shipping.php
+msgid "Показывать область / штат"
+msgstr ""
+
+#: yd-zones-shipping.php
+msgid "Показывать почтовый индекс"
+msgstr ""
+
+#: yd-zones-shipping.php
+msgid "Фиксированная страна доставки"
+msgstr ""
+
+#: yd-zones-shipping.php
+msgid "Не фиксировать"
+msgstr ""
+
+#: yd-zones-shipping.php
+msgid "Показывать поле страны"
+msgstr ""
+
+#: yd-zones-shipping.php
+msgid "Поле страны можно скрыть только при выбранной фиксированной стране. Показанные город, индекс, регион и страна автоматически заполняются после выбора и успешной проверки точного адреса."
+msgstr ""
