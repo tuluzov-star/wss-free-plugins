@@ -739,6 +739,9 @@ function ydzs_get_frontend_inline_script(): string {
 
 			hideSuggestions($field);
 			setHelperStatus($field, message, deliveryAvailable ? 'success' : 'warning');
+			if (selected) {
+				$(document.body).trigger('ydzs_address_confirmed', [$field.get(0), data]);
+			}
 			if (deliveryAvailable) {
 				scheduleAutoSelectDelivery();
 			} else {
