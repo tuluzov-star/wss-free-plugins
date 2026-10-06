@@ -17,6 +17,7 @@ This repository contains public Free/Lite source code only. Commercial Pro editi
 | WSS Bookings Schedule Lite | Front-end availability schedule for WooCommerce Bookings | [`plugins/bookings-schedule-free`](plugins/bookings-schedule-free) | https://website-support.ru/plugins/wss-bookings-schedule/ |
 | WSS Yandex Calendar for WooCommerce Bookings | Booking-to-calendar synchronization integration | [`plugins/yandex-calendar-sync-free`](plugins/yandex-calendar-sync-free) | https://website-support.ru/plugins/yandex-calendar-for-woocommerce-bookings/ |
 | WSS WooCommerce Bookings | Custom booking functionality for WooCommerce | [`plugins/wss-woocommerce-bookings`](plugins/wss-woocommerce-bookings) | https://website-support.ru/plugins/wss-woocommerce-bookings/ |
+| WSS Woo Catalog Loader | Infinite Scroll, Load More and AJAX pagination for classic WooCommerce product archives | [`plugins/wss-woo-catalog-loader`](plugins/wss-woo-catalog-loader) | https://website-support.ru/plugins/ |
 
 ## Development focus
 
