@@ -19,6 +19,22 @@ This repository contains public Free/Lite source code only. Commercial Pro editi
 | WSS WooCommerce Bookings | Custom booking functionality for WooCommerce | [`plugins/wss-woocommerce-bookings`](plugins/wss-woocommerce-bookings) | https://website-support.ru/plugins/wss-woocommerce-bookings/ |
 | WSS Woo Catalog Loader | Infinite Scroll, Load More and AJAX pagination for classic WooCommerce product archives | [`plugins/wss-woo-catalog-loader`](plugins/wss-woo-catalog-loader) | https://website-support.ru/plugins/ |
 
+## See the plugins in action
+
+The English-language [WordPress and WooCommerce demo site](https://demo.tuluzov.com/) presents five focused examples. The demos use fictional/sample data and are not a live customer store.
+
+| Demo | What to explore | Mode |
+| --- | --- | --- |
+| [Delivery Zones](https://demo.tuluzov.com/delivery-zones/) | Address-based delivery areas and checkout pricing | Interactive WooCommerce scenario |
+| [WSS Bookings](https://demo.tuluzov.com/bookings/) | Tour availability, ticket types and the WooCommerce booking journey | Interactive product flow |
+| [Bookings Schedule](https://demo.tuluzov.com/schedule/) | Availability overview and links to bookable products | Interactive schedule |
+| [Order Status Colors](https://demo.tuluzov.com/order-status-colors/) | Status highlighting in a fictional order queue | Safe admin-style preview |
+| [Yandex Calendar Sync](https://demo.tuluzov.com/calendar-sync/) | One-way WooCommerce Bookings → Yandex Calendar workflow | Read-only integration walkthrough |
+
+**Compatibility note:** Yandex Calendar Sync integrates with the *official WooCommerce Bookings extension*. The interactive tour booking demo uses the separate *WSS WooCommerce Bookings* plugin. Tour bookings on the demo site should not be interpreted as live Yandex Calendar synchronization.
+
+These pages illustrate the product experience; real-world availability of checkout and server-side actions depends on the demo environment. For engineering case studies and contact information, see [tuluzov.com](https://tuluzov.com/).
+
 ## Development focus
 
 The WSS plugin family covers practical WooCommerce business workflows such as:
